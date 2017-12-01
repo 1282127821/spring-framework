@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.core.task.support;
@@ -44,50 +41,50 @@ import org.springframework.util.Assert;
  */
 public class ExecutorServiceAdapter extends AbstractExecutorService {
 
-	private final TaskExecutor taskExecutor;
+    private final TaskExecutor taskExecutor;
 
 
-	/**
-	 * Create a new ExecutorServiceAdapter, using the given target executor.
-	 * @param taskExecutor the target executor to delegate to
-	 */
-	public ExecutorServiceAdapter(TaskExecutor taskExecutor) {
-		Assert.notNull(taskExecutor, "TaskExecutor must not be null");
-		this.taskExecutor = taskExecutor;
-	}
+    /**
+     * Create a new ExecutorServiceAdapter, using the given target executor.
+     * @param taskExecutor the target executor to delegate to
+     */
+    public ExecutorServiceAdapter(TaskExecutor taskExecutor) {
+        Assert.notNull(taskExecutor, "TaskExecutor must not be null");
+        this.taskExecutor = taskExecutor;
+    }
 
 
-	@Override
-	public void execute(Runnable task) {
-		this.taskExecutor.execute(task);
-	}
+    @Override
+    public void execute(Runnable task) {
+        this.taskExecutor.execute(task);
+    }
 
-	@Override
-	public void shutdown() {
-		throw new IllegalStateException(
-				"Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
-	}
+    @Override
+    public void shutdown() {
+        throw new IllegalStateException(
+                "Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
+    }
 
-	@Override
-	public List<Runnable> shutdownNow() {
-		throw new IllegalStateException(
-				"Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
-	}
+    @Override
+    public List<Runnable> shutdownNow() {
+        throw new IllegalStateException(
+                "Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
+    }
 
-	@Override
-	public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-		throw new IllegalStateException(
-				"Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
-	}
+    @Override
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        throw new IllegalStateException(
+                "Manual shutdown not supported - ExecutorServiceAdapter is dependent on an external lifecycle");
+    }
 
-	@Override
-	public boolean isShutdown() {
-		return false;
-	}
+    @Override
+    public boolean isShutdown() {
+        return false;
+    }
 
-	@Override
-	public boolean isTerminated() {
-		return false;
-	}
+    @Override
+    public boolean isTerminated() {
+        return false;
+    }
 
 }

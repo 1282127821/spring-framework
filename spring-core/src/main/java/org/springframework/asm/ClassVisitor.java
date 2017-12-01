@@ -1,31 +1,21 @@
 /***
- * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
- * All rights reserved.
+ * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA, France Telecom All
+ * rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+ * following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution. 3. Neither the name of the copyright holders nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.springframework.asm;
 
@@ -107,8 +97,7 @@ public abstract class ClassVisitor {
      *            {@link Type#getInternalName() getInternalName}). May be
      *            <tt>null</tt>.
      */
-    public void visit(int version, int access, String name, String signature,
-            String superName, String[] interfaces) {
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         if (cv != null) {
             cv.visit(version, access, name, signature, superName, interfaces);
         }
@@ -191,9 +180,8 @@ public abstract class ClassVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitTypeAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
@@ -234,8 +222,7 @@ public abstract class ClassVisitor {
      *            the access flags of the inner class as originally declared in
      *            the enclosing class.
      */
-    public void visitInnerClass(String name, String outerName,
-            String innerName, int access) {
+    public void visitInnerClass(String name, String outerName, String innerName, int access) {
         if (cv != null) {
             cv.visitInnerClass(name, outerName, innerName, access);
         }
@@ -268,8 +255,7 @@ public abstract class ClassVisitor {
      *         <tt>null</tt> if this class visitor is not interested in visiting
      *         these annotations and attributes.
      */
-    public FieldVisitor visitField(int access, String name, String desc,
-            String signature, Object value) {
+    public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
         if (cv != null) {
             return cv.visitField(access, name, desc, signature, value);
         }
@@ -301,8 +287,7 @@ public abstract class ClassVisitor {
      *         if this class visitor is not interested in visiting the code of
      *         this method.
      */
-    public MethodVisitor visitMethod(int access, String name, String desc,
-            String signature, String[] exceptions) {
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         if (cv != null) {
             return cv.visitMethod(access, name, desc, signature, exceptions);
         }

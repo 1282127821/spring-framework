@@ -1,31 +1,21 @@
 /***
- * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
- * All rights reserved.
+ * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA, France Telecom All
+ * rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+ * following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution. 3. Neither the name of the copyright holders nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.springframework.asm;
 
@@ -102,8 +92,8 @@ final class AnnotationWriter extends AnnotationVisitor {
      *            where in <tt>parent</tt> the number of annotation values must
      *            be stored.
      */
-    AnnotationWriter(final ClassWriter cw, final boolean named,
-            final ByteVector bv, final ByteVector parent, final int offset) {
+    AnnotationWriter(final ClassWriter cw, final boolean named, final ByteVector bv, final ByteVector parent,
+            final int offset) {
         super(Opcodes.ASM5);
         this.cw = cw;
         this.named = named;
@@ -190,8 +180,7 @@ final class AnnotationWriter extends AnnotationVisitor {
     }
 
     @Override
-    public void visitEnum(final String name, final String desc,
-            final String value) {
+    public void visitEnum(final String name, final String desc, final String value) {
         ++size;
         if (named) {
             bv.putShort(cw.newUTF8(name));
@@ -200,8 +189,7 @@ final class AnnotationWriter extends AnnotationVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(final String name,
-            final String desc) {
+    public AnnotationVisitor visitAnnotation(final String name, final String desc) {
         ++size;
         if (named) {
             bv.putShort(cw.newUTF8(name));
@@ -289,8 +277,7 @@ final class AnnotationWriter extends AnnotationVisitor {
      * @param out
      *            where the annotations must be put.
      */
-    static void put(final AnnotationWriter[] panns, final int off,
-            final ByteVector out) {
+    static void put(final AnnotationWriter[] panns, final int off, final ByteVector out) {
         int size = 1 + 2 * (panns.length - off);
         for (int i = off; i < panns.length; ++i) {
             size += panns[i] == null ? 0 : panns[i].getSize();
@@ -331,35 +318,35 @@ final class AnnotationWriter extends AnnotationVisitor {
      */
     static void putTarget(int typeRef, TypePath typePath, ByteVector out) {
         switch (typeRef >>> 24) {
-        case 0x00: // CLASS_TYPE_PARAMETER
-        case 0x01: // METHOD_TYPE_PARAMETER
-        case 0x16: // METHOD_FORMAL_PARAMETER
-            out.putShort(typeRef >>> 16);
-            break;
-        case 0x13: // FIELD
-        case 0x14: // METHOD_RETURN
-        case 0x15: // METHOD_RECEIVER
-            out.putByte(typeRef >>> 24);
-            break;
-        case 0x47: // CAST
-        case 0x48: // CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT
-        case 0x49: // METHOD_INVOCATION_TYPE_ARGUMENT
-        case 0x4A: // CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT
-        case 0x4B: // METHOD_REFERENCE_TYPE_ARGUMENT
-            out.putInt(typeRef);
-            break;
-        // case 0x10: // CLASS_EXTENDS
-        // case 0x11: // CLASS_TYPE_PARAMETER_BOUND
-        // case 0x12: // METHOD_TYPE_PARAMETER_BOUND
-        // case 0x17: // THROWS
-        // case 0x42: // EXCEPTION_PARAMETER
-        // case 0x43: // INSTANCEOF
-        // case 0x44: // NEW
-        // case 0x45: // CONSTRUCTOR_REFERENCE
-        // case 0x46: // METHOD_REFERENCE
-        default:
-            out.put12(typeRef >>> 24, (typeRef & 0xFFFF00) >> 8);
-            break;
+            case 0x00: // CLASS_TYPE_PARAMETER
+            case 0x01: // METHOD_TYPE_PARAMETER
+            case 0x16: // METHOD_FORMAL_PARAMETER
+                out.putShort(typeRef >>> 16);
+                break;
+            case 0x13: // FIELD
+            case 0x14: // METHOD_RETURN
+            case 0x15: // METHOD_RECEIVER
+                out.putByte(typeRef >>> 24);
+                break;
+            case 0x47: // CAST
+            case 0x48: // CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT
+            case 0x49: // METHOD_INVOCATION_TYPE_ARGUMENT
+            case 0x4A: // CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT
+            case 0x4B: // METHOD_REFERENCE_TYPE_ARGUMENT
+                out.putInt(typeRef);
+                break;
+            // case 0x10: // CLASS_EXTENDS
+            // case 0x11: // CLASS_TYPE_PARAMETER_BOUND
+            // case 0x12: // METHOD_TYPE_PARAMETER_BOUND
+            // case 0x17: // THROWS
+            // case 0x42: // EXCEPTION_PARAMETER
+            // case 0x43: // INSTANCEOF
+            // case 0x44: // NEW
+            // case 0x45: // CONSTRUCTOR_REFERENCE
+            // case 0x46: // METHOD_REFERENCE
+            default:
+                out.put12(typeRef >>> 24, (typeRef & 0xFFFF00) >> 8);
+                break;
         }
         if (typePath == null) {
             out.putByte(0);

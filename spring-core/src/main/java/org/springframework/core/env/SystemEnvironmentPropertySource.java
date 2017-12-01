@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.core.env;
@@ -63,76 +60,75 @@ import org.springframework.util.Assert;
  */
 public class SystemEnvironmentPropertySource extends MapPropertySource {
 
-	/**
-	 * Create a new {@code SystemEnvironmentPropertySource} with the given name and
-	 * delegating to the given {@code MapPropertySource}.
-	 */
-	public SystemEnvironmentPropertySource(String name, Map<String, Object> source) {
-		super(name, source);
-	}
+    /**
+     * Create a new {@code SystemEnvironmentPropertySource} with the given name and
+     * delegating to the given {@code MapPropertySource}.
+     */
+    public SystemEnvironmentPropertySource(String name, Map<String, Object> source) {
+        super(name, source);
+    }
 
 
-	/**
-	 * Return {@code true} if a property with the given name or any underscore/uppercase variant
-	 * thereof exists in this property source.
-	 */
-	@Override
-	public boolean containsProperty(String name) {
-		return (getProperty(name) != null);
-	}
+    /**
+     * Return {@code true} if a property with the given name or any underscore/uppercase variant
+     * thereof exists in this property source.
+     */
+    @Override
+    public boolean containsProperty(String name) {
+        return (getProperty(name) != null);
+    }
 
-	/**
-	 * This implementation returns {@code true} if a property with the given name or
-	 * any underscore/uppercase variant thereof exists in this property source.
-	 */
-	@Override
-	public Object getProperty(String name) {
-		String actualName = resolvePropertyName(name);
-		if (logger.isDebugEnabled() && !name.equals(actualName)) {
-			logger.debug(String.format("PropertySource [%s] does not contain '%s', but found equivalent '%s'",
-					getName(), name, actualName));
-		}
-		return super.getProperty(actualName);
-	}
+    /**
+     * This implementation returns {@code true} if a property with the given name or
+     * any underscore/uppercase variant thereof exists in this property source.
+     */
+    @Override
+    public Object getProperty(String name) {
+        String actualName = resolvePropertyName(name);
+        if (logger.isDebugEnabled() && !name.equals(actualName)) {
+            logger.debug(String.format("PropertySource [%s] does not contain '%s', but found equivalent '%s'",
+                    getName(), name, actualName));
+        }
+        return super.getProperty(actualName);
+    }
 
-	/**
-	 * Check to see if this property source contains a property with the given name, or
-	 * any underscore / uppercase variation thereof. Return the resolved name if one is
-	 * found or otherwise the original name. Never returns {@code null}.
-	 */
-	private String resolvePropertyName(String name) {
-		Assert.notNull(name, "Property name must not be null");
-		if (containsKey(name)) {
-			return name;
-		}
+    /**
+     * Check to see if this property source contains a property with the given name, or
+     * any underscore / uppercase variation thereof. Return the resolved name if one is
+     * found or otherwise the original name. Never returns {@code null}.
+     */
+    private String resolvePropertyName(String name) {
+        Assert.notNull(name, "Property name must not be null");
+        if (containsKey(name)) {
+            return name;
+        }
 
-		String usName = name.replace('.', '_');
-		if (!name.equals(usName) && containsKey(usName)) {
-			return usName;
-		}
+        String usName = name.replace('.', '_');
+        if (!name.equals(usName) && containsKey(usName)) {
+            return usName;
+        }
 
-		String ucName = name.toUpperCase();
-		if (!name.equals(ucName)) {
-			if (containsKey(ucName)) {
-				return ucName;
-			}
-			else {
-				String usUcName = ucName.replace('.', '_');
-				if (!ucName.equals(usUcName) && containsKey(usUcName)) {
-					return usUcName;
-				}
-			}
-		}
+        String ucName = name.toUpperCase();
+        if (!name.equals(ucName)) {
+            if (containsKey(ucName)) {
+                return ucName;
+            } else {
+                String usUcName = ucName.replace('.', '_');
+                if (!ucName.equals(usUcName) && containsKey(usUcName)) {
+                    return usUcName;
+                }
+            }
+        }
 
-		return name;
-	}
+        return name;
+    }
 
-	private boolean containsKey(String name) {
-		return (isSecurityManagerPresent() ? this.source.keySet().contains(name) : this.source.containsKey(name));
-	}
+    private boolean containsKey(String name) {
+        return (isSecurityManagerPresent() ? this.source.keySet().contains(name) : this.source.containsKey(name));
+    }
 
-	protected boolean isSecurityManagerPresent() {
-		return (System.getSecurityManager() != null);
-	}
+    protected boolean isSecurityManagerPresent() {
+        return (System.getSecurityManager() != null);
+    }
 
 }

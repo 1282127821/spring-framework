@@ -1,31 +1,21 @@
 /***
- * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
- * All rights reserved.
+ * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA, France Telecom All
+ * rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+ * following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution. 3. Neither the name of the copyright holders nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.springframework.asm;
 
@@ -257,8 +247,7 @@ public class Label {
     /**
      * Constructs a new label.
      */
-    public Label() {
-    }
+    public Label() {}
 
     // ------------------------------------------------------------------------
     // Methods to compute offsets and to manage forward references
@@ -276,8 +265,7 @@ public class Label {
      */
     public int getOffset() {
         if ((status & RESOLVED) == 0) {
-            throw new IllegalStateException(
-                    "Label offset position has not been resolved yet");
+            throw new IllegalStateException("Label offset position has not been resolved yet");
         }
         return position;
     }
@@ -301,8 +289,7 @@ public class Label {
      * @throws IllegalArgumentException
      *             if this label has not been created by the given code writer.
      */
-    void put(final MethodWriter owner, final ByteVector out, final int source,
-            final boolean wideOffset) {
+    void put(final MethodWriter owner, final ByteVector out, final int source, final boolean wideOffset) {
         if ((status & RESOLVED) == 0) {
             if (wideOffset) {
                 addReference(-1 - source, out.length);
@@ -333,15 +320,13 @@ public class Label {
      *            the position where the offset for this forward reference must
      *            be stored.
      */
-    private void addReference(final int sourcePosition,
-            final int referencePosition) {
+    private void addReference(final int sourcePosition, final int referencePosition) {
         if (srcAndRefPositions == null) {
             srcAndRefPositions = new int[6];
         }
         if (referenceCount >= srcAndRefPositions.length) {
             int[] a = new int[srcAndRefPositions.length + 6];
-            System.arraycopy(srcAndRefPositions, 0, a, 0,
-                    srcAndRefPositions.length);
+            System.arraycopy(srcAndRefPositions, 0, a, 0, srcAndRefPositions.length);
             srcAndRefPositions = a;
         }
         srcAndRefPositions[referenceCount++] = sourcePosition;
@@ -371,8 +356,7 @@ public class Label {
      *             if this label has already been resolved, or if it has not
      *             been created by the given code writer.
      */
-    boolean resolve(final MethodWriter owner, final int position,
-            final byte[] data) {
+    boolean resolve(final MethodWriter owner, final int position, final byte[] data) {
         boolean needUpdate = false;
         this.status |= RESOLVED;
         this.position = position;

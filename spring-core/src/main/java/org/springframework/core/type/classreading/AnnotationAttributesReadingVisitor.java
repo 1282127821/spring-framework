@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.core.type.classreading;
@@ -44,61 +41,61 @@ import org.springframework.util.ObjectUtils;
  */
 final class AnnotationAttributesReadingVisitor extends RecursiveAnnotationAttributesVisitor {
 
-	private final String annotationType;
+    private final String annotationType;
 
-	private final MultiValueMap<String, AnnotationAttributes> attributesMap;
+    private final MultiValueMap<String, AnnotationAttributes> attributesMap;
 
-	private final Map<String, Set<String>> metaAnnotationMap;
-
-
-	public AnnotationAttributesReadingVisitor(String annotationType,
-			MultiValueMap<String, AnnotationAttributes> attributesMap, Map<String, Set<String>> metaAnnotationMap,
-			ClassLoader classLoader) {
-
-		super(annotationType, new AnnotationAttributes(), classLoader);
-		this.annotationType = annotationType;
-		this.attributesMap = attributesMap;
-		this.metaAnnotationMap = metaAnnotationMap;
-	}
+    private final Map<String, Set<String>> metaAnnotationMap;
 
 
-	@Override
-	public void doVisitEnd(Class<?> annotationClass) {
-		super.doVisitEnd(annotationClass);
-		List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
-		if (attributes == null) {
-			this.attributesMap.add(this.annotationType, this.attributes);
-		}
-		else {
-			attributes.add(0, this.attributes);
-		}
-		Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
-		Annotation[] metaAnnotations = AnnotationUtils.getAnnotations(annotationClass);
-		if (!ObjectUtils.isEmpty(metaAnnotations)) {
-			for (Annotation metaAnnotation : metaAnnotations) {
-				if (!AnnotationUtils.isInJavaLangAnnotationPackage(metaAnnotation)) {
-					recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
-				}
-			}
-		}
-		if (this.metaAnnotationMap != null) {
-			this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
-		}
-	}
+    public AnnotationAttributesReadingVisitor(String annotationType,
+            MultiValueMap<String, AnnotationAttributes> attributesMap, Map<String, Set<String>> metaAnnotationMap,
+            ClassLoader classLoader) {
 
-	private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
-		String annotationName = annotation.annotationType().getName();
-		if (!AnnotationUtils.isInJavaLangAnnotationPackage(annotation) && visited.add(annotationName)) {
-			// Only do further scanning for public annotations; we'd run into
-			// IllegalAccessExceptions otherwise, and we don't want to mess with
-			// accessibility in a SecurityManager environment.
-			if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
-				this.attributesMap.add(annotationName, AnnotationUtils.getAnnotationAttributes(annotation, false, true));
-				for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
-					recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
-				}
-			}
-		}
-	}
+        super(annotationType, new AnnotationAttributes(), classLoader);
+        this.annotationType = annotationType;
+        this.attributesMap = attributesMap;
+        this.metaAnnotationMap = metaAnnotationMap;
+    }
+
+
+    @Override
+    public void doVisitEnd(Class<?> annotationClass) {
+        super.doVisitEnd(annotationClass);
+        List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
+        if (attributes == null) {
+            this.attributesMap.add(this.annotationType, this.attributes);
+        } else {
+            attributes.add(0, this.attributes);
+        }
+        Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
+        Annotation[] metaAnnotations = AnnotationUtils.getAnnotations(annotationClass);
+        if (!ObjectUtils.isEmpty(metaAnnotations)) {
+            for (Annotation metaAnnotation : metaAnnotations) {
+                if (!AnnotationUtils.isInJavaLangAnnotationPackage(metaAnnotation)) {
+                    recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
+                }
+            }
+        }
+        if (this.metaAnnotationMap != null) {
+            this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
+        }
+    }
+
+    private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
+        String annotationName = annotation.annotationType().getName();
+        if (!AnnotationUtils.isInJavaLangAnnotationPackage(annotation) && visited.add(annotationName)) {
+            // Only do further scanning for public annotations; we'd run into
+            // IllegalAccessExceptions otherwise, and we don't want to mess with
+            // accessibility in a SecurityManager environment.
+            if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
+                this.attributesMap.add(annotationName,
+                        AnnotationUtils.getAnnotationAttributes(annotation, false, true));
+                for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
+                    recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
+                }
+            }
+        }
+    }
 
 }

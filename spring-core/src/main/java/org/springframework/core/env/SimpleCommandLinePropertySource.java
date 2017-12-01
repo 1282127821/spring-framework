@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2013 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.core.env;
@@ -77,45 +74,45 @@ import java.util.List;
  */
 public class SimpleCommandLinePropertySource extends CommandLinePropertySource<CommandLineArgs> {
 
-	/**
-	 * Create a new {@code SimpleCommandLinePropertySource} having the default name
-	 * and backed by the given {@code String[]} of command line arguments.
-	 * @see CommandLinePropertySource#COMMAND_LINE_PROPERTY_SOURCE_NAME
-	 * @see CommandLinePropertySource#CommandLinePropertySource(Object)
-	 */
-	public SimpleCommandLinePropertySource(String... args) {
-		super(new SimpleCommandLineArgsParser().parse(args));
-	}
+    /**
+     * Create a new {@code SimpleCommandLinePropertySource} having the default name
+     * and backed by the given {@code String[]} of command line arguments.
+     * @see CommandLinePropertySource#COMMAND_LINE_PROPERTY_SOURCE_NAME
+     * @see CommandLinePropertySource#CommandLinePropertySource(Object)
+     */
+    public SimpleCommandLinePropertySource(String... args) {
+        super(new SimpleCommandLineArgsParser().parse(args));
+    }
 
-	/**
-	 * Create a new {@code SimpleCommandLinePropertySource} having the given name
-	 * and backed by the given {@code String[]} of command line arguments.
-	 */
-	public SimpleCommandLinePropertySource(String name, String[] args) {
-		super(name, new SimpleCommandLineArgsParser().parse(args));
-	}
+    /**
+     * Create a new {@code SimpleCommandLinePropertySource} having the given name
+     * and backed by the given {@code String[]} of command line arguments.
+     */
+    public SimpleCommandLinePropertySource(String name, String[] args) {
+        super(name, new SimpleCommandLineArgsParser().parse(args));
+    }
 
-	/**
-	 * Get the property names for the option arguments.
-	 */
-	@Override
-	public String[] getPropertyNames() {
-		return source.getOptionNames().toArray(new String[source.getOptionNames().size()]);
-	}
+    /**
+     * Get the property names for the option arguments.
+     */
+    @Override
+    public String[] getPropertyNames() {
+        return source.getOptionNames().toArray(new String[source.getOptionNames().size()]);
+    }
 
-	@Override
-	protected boolean containsOption(String name) {
-		return this.source.containsOption(name);
-	}
+    @Override
+    protected boolean containsOption(String name) {
+        return this.source.containsOption(name);
+    }
 
-	@Override
-	protected List<String> getOptionValues(String name) {
-		return this.source.getOptionValues(name);
-	}
+    @Override
+    protected List<String> getOptionValues(String name) {
+        return this.source.getOptionValues(name);
+    }
 
-	@Override
-	protected List<String> getNonOptionArgs() {
-		return this.source.getNonOptionArgs();
-	}
+    @Override
+    protected List<String> getNonOptionArgs() {
+        return this.source.getNonOptionArgs();
+    }
 
 }

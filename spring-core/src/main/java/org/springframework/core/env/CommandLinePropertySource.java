@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.core.env;
@@ -187,112 +184,110 @@ import org.springframework.util.StringUtils;
  */
 public abstract class CommandLinePropertySource<T> extends EnumerablePropertySource<T> {
 
-	/** The default name given to {@link CommandLinePropertySource} instances: {@value} */
-	public static final String COMMAND_LINE_PROPERTY_SOURCE_NAME = "commandLineArgs";
+    /** The default name given to {@link CommandLinePropertySource} instances: {@value} */
+    public static final String COMMAND_LINE_PROPERTY_SOURCE_NAME = "commandLineArgs";
 
-	/** The default name of the property representing non-option arguments: {@value} */
-	public static final String DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME = "nonOptionArgs";
-
-
-	private String nonOptionArgsPropertyName = DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME;
+    /** The default name of the property representing non-option arguments: {@value} */
+    public static final String DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME = "nonOptionArgs";
 
 
-	/**
-	 * Create a new {@code CommandLinePropertySource} having the default name
-	 * {@value #COMMAND_LINE_PROPERTY_SOURCE_NAME} and backed by the given source object.
-	 */
-	public CommandLinePropertySource(T source) {
-		super(COMMAND_LINE_PROPERTY_SOURCE_NAME, source);
-	}
-
-	/**
-	 * Create a new {@link CommandLinePropertySource} having the given name
-	 * and backed by the given source object.
-	 */
-	public CommandLinePropertySource(String name, T source) {
-		super(name, source);
-	}
+    private String nonOptionArgsPropertyName = DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME;
 
 
-	/**
-	 * Specify the name of the special "non-option arguments" property.
-	 * The default is {@value #DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME}.
-	 */
-	public void setNonOptionArgsPropertyName(String nonOptionArgsPropertyName) {
-		this.nonOptionArgsPropertyName = nonOptionArgsPropertyName;
-	}
+    /**
+     * Create a new {@code CommandLinePropertySource} having the default name
+     * {@value #COMMAND_LINE_PROPERTY_SOURCE_NAME} and backed by the given source object.
+     */
+    public CommandLinePropertySource(T source) {
+        super(COMMAND_LINE_PROPERTY_SOURCE_NAME, source);
+    }
 
-	/**
-	 * This implementation first checks to see if the name specified is the special
-	 * {@linkplain #setNonOptionArgsPropertyName(String) "non-option arguments" property},
-	 * and if so delegates to the abstract {@link #getNonOptionArgs()} method
-	 * checking to see whether it returns an empty collection. Otherwise delegates to and
-	 * returns the value of the abstract {@link #containsOption(String)} method.
-	 */
-	@Override
-	public final boolean containsProperty(String name) {
-		if (this.nonOptionArgsPropertyName.equals(name)) {
-			return !this.getNonOptionArgs().isEmpty();
-		}
-		return this.containsOption(name);
-	}
-
-	/**
-	 * This implementation first checks to see if the name specified is the special
-	 * {@linkplain #setNonOptionArgsPropertyName(String) "non-option arguments" property},
-	 * and if so delegates to the abstract {@link #getNonOptionArgs()} method. If so
-	 * and the collection of non-option arguments is empty, this method returns {@code
-	 * null}. If not empty, it returns a comma-separated String of all non-option
-	 * arguments. Otherwise delegates to and returns the result of the abstract {@link
-	 * #getOptionValues(String)} method.
-	 */
-	@Override
-	public final String getProperty(String name) {
-		if (this.nonOptionArgsPropertyName.equals(name)) {
-			Collection<String> nonOptionArguments = this.getNonOptionArgs();
-			if (nonOptionArguments.isEmpty()) {
-				return null;
-			}
-			else {
-				return StringUtils.collectionToCommaDelimitedString(nonOptionArguments);
-			}
-		}
-		Collection<String> optionValues = this.getOptionValues(name);
-		if (optionValues == null) {
-			return null;
-		}
-		else {
-			return StringUtils.collectionToCommaDelimitedString(optionValues);
-		}
-	}
+    /**
+     * Create a new {@link CommandLinePropertySource} having the given name
+     * and backed by the given source object.
+     */
+    public CommandLinePropertySource(String name, T source) {
+        super(name, source);
+    }
 
 
-	/**
-	 * Return whether the set of option arguments parsed from the command line contains
-	 * an option with the given name.
-	 */
-	protected abstract boolean containsOption(String name);
+    /**
+     * Specify the name of the special "non-option arguments" property.
+     * The default is {@value #DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME}.
+     */
+    public void setNonOptionArgsPropertyName(String nonOptionArgsPropertyName) {
+        this.nonOptionArgsPropertyName = nonOptionArgsPropertyName;
+    }
 
-	/**
-	 * Return the collection of values associated with the command line option having the
-	 * given name.
-	 * <ul>
-	 * <li>if the option is present and has no argument (e.g.: "--foo"), return an empty
-	 * collection ({@code []})</li>
-	 * <li>if the option is present and has a single value (e.g. "--foo=bar"), return a
-	 * collection having one element ({@code ["bar"]})</li>
-	 * <li>if the option is present and the underlying command line parsing library
-	 * supports multiple arguments (e.g. "--foo=bar --foo=baz"), return a collection
-	 * having elements for each value ({@code ["bar", "baz"]})</li>
-	 * <li>if the option is not present, return {@code null}</li>
-	 * </ul>
-	 */
-	protected abstract List<String> getOptionValues(String name);
+    /**
+     * This implementation first checks to see if the name specified is the special
+     * {@linkplain #setNonOptionArgsPropertyName(String) "non-option arguments" property},
+     * and if so delegates to the abstract {@link #getNonOptionArgs()} method
+     * checking to see whether it returns an empty collection. Otherwise delegates to and
+     * returns the value of the abstract {@link #containsOption(String)} method.
+     */
+    @Override
+    public final boolean containsProperty(String name) {
+        if (this.nonOptionArgsPropertyName.equals(name)) {
+            return !this.getNonOptionArgs().isEmpty();
+        }
+        return this.containsOption(name);
+    }
 
-	/**
-	 * Return the collection of non-option arguments parsed from the command line.
-	 * Never {@code null}.
-	 */
-	protected abstract List<String> getNonOptionArgs();
+    /**
+     * This implementation first checks to see if the name specified is the special
+     * {@linkplain #setNonOptionArgsPropertyName(String) "non-option arguments" property},
+     * and if so delegates to the abstract {@link #getNonOptionArgs()} method. If so
+     * and the collection of non-option arguments is empty, this method returns {@code
+     * null}. If not empty, it returns a comma-separated String of all non-option
+     * arguments. Otherwise delegates to and returns the result of the abstract {@link
+     * #getOptionValues(String)} method.
+     */
+    @Override
+    public final String getProperty(String name) {
+        if (this.nonOptionArgsPropertyName.equals(name)) {
+            Collection<String> nonOptionArguments = this.getNonOptionArgs();
+            if (nonOptionArguments.isEmpty()) {
+                return null;
+            } else {
+                return StringUtils.collectionToCommaDelimitedString(nonOptionArguments);
+            }
+        }
+        Collection<String> optionValues = this.getOptionValues(name);
+        if (optionValues == null) {
+            return null;
+        } else {
+            return StringUtils.collectionToCommaDelimitedString(optionValues);
+        }
+    }
+
+
+    /**
+     * Return whether the set of option arguments parsed from the command line contains
+     * an option with the given name.
+     */
+    protected abstract boolean containsOption(String name);
+
+    /**
+     * Return the collection of values associated with the command line option having the
+     * given name.
+     * <ul>
+     * <li>if the option is present and has no argument (e.g.: "--foo"), return an empty
+     * collection ({@code []})</li>
+     * <li>if the option is present and has a single value (e.g. "--foo=bar"), return a
+     * collection having one element ({@code ["bar"]})</li>
+     * <li>if the option is present and the underlying command line parsing library
+     * supports multiple arguments (e.g. "--foo=bar --foo=baz"), return a collection
+     * having elements for each value ({@code ["bar", "baz"]})</li>
+     * <li>if the option is not present, return {@code null}</li>
+     * </ul>
+     */
+    protected abstract List<String> getOptionValues(String name);
+
+    /**
+     * Return the collection of non-option arguments parsed from the command line.
+     * Never {@code null}.
+     */
+    protected abstract List<String> getNonOptionArgs();
 
 }

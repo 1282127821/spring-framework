@@ -1,31 +1,21 @@
 /***
- * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
- * All rights reserved.
+ * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA, France Telecom All
+ * rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+ * following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution. 3. Neither the name of the copyright holders nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.springframework.asm;
 
@@ -116,8 +106,8 @@ final class FieldWriter extends FieldVisitor {
      * @param value
      *            the field's constant value. May be <tt>null</tt>.
      */
-    FieldWriter(final ClassWriter cw, final int access, final String name,
-            final String desc, final String signature, final Object value) {
+    FieldWriter(final ClassWriter cw, final int access, final String name, final String desc, final String signature,
+            final Object value) {
         super(Opcodes.ASM5);
         if (cw.firstField == null) {
             cw.firstField = this;
@@ -142,8 +132,7 @@ final class FieldWriter extends FieldVisitor {
     // ------------------------------------------------------------------------
 
     @Override
-    public AnnotationVisitor visitAnnotation(final String desc,
-            final boolean visible) {
+    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         if (!ClassReader.ANNOTATIONS) {
             return null;
         }
@@ -162,8 +151,8 @@ final class FieldWriter extends FieldVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitTypeAnnotation(final int typeRef,
-            final TypePath typePath, final String desc, final boolean visible) {
+    public AnnotationVisitor visitTypeAnnotation(final int typeRef, final TypePath typePath, final String desc,
+            final boolean visible) {
         if (!ClassReader.ANNOTATIONS) {
             return null;
         }
@@ -172,8 +161,7 @@ final class FieldWriter extends FieldVisitor {
         AnnotationWriter.putTarget(typeRef, typePath, bv);
         // write type, and reserve space for values count
         bv.putShort(cw.newUTF8(desc)).putShort(0);
-        AnnotationWriter aw = new AnnotationWriter(cw, true, bv, bv,
-                bv.length - 2);
+        AnnotationWriter aw = new AnnotationWriter(cw, true, bv, bv, bv.length - 2);
         if (visible) {
             aw.next = tanns;
             tanns = aw;
@@ -191,8 +179,7 @@ final class FieldWriter extends FieldVisitor {
     }
 
     @Override
-    public void visitEnd() {
-    }
+    public void visitEnd() {}
 
     // ------------------------------------------------------------------------
     // Utility methods
@@ -210,8 +197,7 @@ final class FieldWriter extends FieldVisitor {
             size += 8;
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-            if ((cw.version & 0xFFFF) < Opcodes.V1_5
-                    || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
+            if ((cw.version & 0xFFFF) < Opcodes.V1_5 || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
                 cw.newUTF8("Synthetic");
                 size += 6;
             }
@@ -262,8 +248,7 @@ final class FieldWriter extends FieldVisitor {
             ++attributeCount;
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-            if ((cw.version & 0xFFFF) < Opcodes.V1_5
-                    || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
+            if ((cw.version & 0xFFFF) < Opcodes.V1_5 || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
                 ++attributeCount;
             }
         }
@@ -294,8 +279,7 @@ final class FieldWriter extends FieldVisitor {
             out.putInt(2).putShort(value);
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-            if ((cw.version & 0xFFFF) < Opcodes.V1_5
-                    || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
+            if ((cw.version & 0xFFFF) < Opcodes.V1_5 || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
                 out.putShort(cw.newUTF8("Synthetic")).putInt(0);
             }
         }
