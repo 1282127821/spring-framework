@@ -25,23 +25,23 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class MustBeInitialized implements InitializingBean {
 
-	private boolean inited;
+    private boolean inited;
 
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.inited = true;
-	}
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.inited = true;
+    }
 
-	/**
-	 * Dummy business method that will fail unless the factory
-	 * managed the bean's lifecycle correctly
-	 */
-	public void businessMethod() {
-		if (!this.inited)
-			throw new RuntimeException("Factory didn't call afterPropertiesSet() on MustBeInitialized object");
-	}
+    /**
+     * Dummy business method that will fail unless the factory
+     * managed the bean's lifecycle correctly
+     */
+    public void businessMethod() {
+        if (!this.inited)
+            throw new RuntimeException("Factory didn't call afterPropertiesSet() on MustBeInitialized object");
+    }
 
 }

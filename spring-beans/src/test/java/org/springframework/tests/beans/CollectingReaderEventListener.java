@@ -36,59 +36,59 @@ import org.springframework.beans.factory.parsing.ReaderEventListener;
  */
 public class CollectingReaderEventListener implements ReaderEventListener {
 
-	private final List defaults = new LinkedList();
+    private final List defaults = new LinkedList();
 
-	private final Map componentDefinitions = new LinkedHashMap<>(8);
+    private final Map componentDefinitions = new LinkedHashMap<>(8);
 
-	private final Map aliasMap = new LinkedHashMap<>(8);
+    private final Map aliasMap = new LinkedHashMap<>(8);
 
-	private final List imports = new LinkedList();
+    private final List imports = new LinkedList();
 
-	@Override
-	public void defaultsRegistered(DefaultsDefinition defaultsDefinition) {
-		this.defaults.add(defaultsDefinition);
-	}
+    @Override
+    public void defaultsRegistered(DefaultsDefinition defaultsDefinition) {
+        this.defaults.add(defaultsDefinition);
+    }
 
-	public List getDefaults() {
-		return Collections.unmodifiableList(this.defaults);
-	}
+    public List getDefaults() {
+        return Collections.unmodifiableList(this.defaults);
+    }
 
-	@Override
-	public void componentRegistered(ComponentDefinition componentDefinition) {
-		this.componentDefinitions.put(componentDefinition.getName(), componentDefinition);
-	}
+    @Override
+    public void componentRegistered(ComponentDefinition componentDefinition) {
+        this.componentDefinitions.put(componentDefinition.getName(), componentDefinition);
+    }
 
-	public ComponentDefinition getComponentDefinition(String name) {
-		return (ComponentDefinition) this.componentDefinitions.get(name);
-	}
+    public ComponentDefinition getComponentDefinition(String name) {
+        return (ComponentDefinition) this.componentDefinitions.get(name);
+    }
 
-	public ComponentDefinition[] getComponentDefinitions() {
-		Collection collection = this.componentDefinitions.values();
-		return (ComponentDefinition[]) collection.toArray(new ComponentDefinition[collection.size()]);
-	}
+    public ComponentDefinition[] getComponentDefinitions() {
+        Collection collection = this.componentDefinitions.values();
+        return (ComponentDefinition[]) collection.toArray(new ComponentDefinition[collection.size()]);
+    }
 
-	@Override
-	public void aliasRegistered(AliasDefinition aliasDefinition) {
-		List aliases = (List) this.aliasMap.get(aliasDefinition.getBeanName());
-		if(aliases == null) {
-			aliases = new ArrayList();
-			this.aliasMap.put(aliasDefinition.getBeanName(), aliases);
-		}
-		aliases.add(aliasDefinition);
-	}
+    @Override
+    public void aliasRegistered(AliasDefinition aliasDefinition) {
+        List aliases = (List) this.aliasMap.get(aliasDefinition.getBeanName());
+        if (aliases == null) {
+            aliases = new ArrayList();
+            this.aliasMap.put(aliasDefinition.getBeanName(), aliases);
+        }
+        aliases.add(aliasDefinition);
+    }
 
-	public List getAliases(String beanName) {
-		List aliases = (List) this.aliasMap.get(beanName);
-		return aliases == null ? null : Collections.unmodifiableList(aliases);
-	}
+    public List getAliases(String beanName) {
+        List aliases = (List) this.aliasMap.get(beanName);
+        return aliases == null ? null : Collections.unmodifiableList(aliases);
+    }
 
-	@Override
-	public void importProcessed(ImportDefinition importDefinition) {
-		this.imports.add(importDefinition);
-	}
+    @Override
+    public void importProcessed(ImportDefinition importDefinition) {
+        this.imports.add(importDefinition);
+    }
 
-	public List getImports() {
-		return Collections.unmodifiableList(this.imports);
-	}
+    public List getImports() {
+        return Collections.unmodifiableList(this.imports);
+    }
 
 }

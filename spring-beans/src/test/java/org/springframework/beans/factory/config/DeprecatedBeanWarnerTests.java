@@ -16,50 +16,49 @@
 
 package org.springframework.beans.factory.config;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Arjen Poutsma
  */
 public class DeprecatedBeanWarnerTests {
 
-	private DefaultListableBeanFactory beanFactory;
+    private DefaultListableBeanFactory beanFactory;
 
-	private String beanName;
+    private String beanName;
 
-	private BeanDefinition beanDefinition;
+    private BeanDefinition beanDefinition;
 
-	private DeprecatedBeanWarner warner;
-
-
-	@Test
-	@SuppressWarnings("deprecation")
-	public void postProcess() {
-		beanFactory = new DefaultListableBeanFactory();
-		BeanDefinition def = new RootBeanDefinition(MyDeprecatedBean.class);
-		String beanName = "deprecated";
-		beanFactory.registerBeanDefinition(beanName, def);
-
-		warner = new MyDeprecatedBeanWarner();
-		warner.postProcessBeanFactory(beanFactory);
-		assertEquals(beanName, this.beanName);
-		assertEquals(def, this.beanDefinition);
-
-	}
+    private DeprecatedBeanWarner warner;
 
 
-	private class MyDeprecatedBeanWarner extends DeprecatedBeanWarner {
+    @Test
+    @SuppressWarnings("deprecation")
+    public void postProcess() {
+        beanFactory = new DefaultListableBeanFactory();
+        BeanDefinition def = new RootBeanDefinition(MyDeprecatedBean.class);
+        String beanName = "deprecated";
+        beanFactory.registerBeanDefinition(beanName, def);
 
-		@Override
-		protected void logDeprecatedBean(String beanName, Class<?> beanType, BeanDefinition beanDefinition) {
-			DeprecatedBeanWarnerTests.this.beanName = beanName;
-			DeprecatedBeanWarnerTests.this.beanDefinition = beanDefinition;
-		}
-	}
+        warner = new MyDeprecatedBeanWarner();
+        warner.postProcessBeanFactory(beanFactory);
+        assertEquals(beanName, this.beanName);
+        assertEquals(def, this.beanDefinition);
+
+    }
+
+
+    private class MyDeprecatedBeanWarner extends DeprecatedBeanWarner {
+
+        @Override
+        protected void logDeprecatedBean(String beanName, Class<?> beanType, BeanDefinition beanDefinition) {
+            DeprecatedBeanWarnerTests.this.beanName = beanName;
+            DeprecatedBeanWarnerTests.this.beanDefinition = beanDefinition;
+        }
+    }
 
 }

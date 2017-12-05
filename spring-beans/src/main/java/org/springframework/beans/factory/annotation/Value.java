@@ -54,9 +54,9 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Value {
 
-	/**
-	 * The actual value expression: e.g. "#{systemProperties.myProp}".
-	 */
-	String value();
+    /**
+     * The actual value expression: e.g. "#{systemProperties.myProp}".
+     */
+    String value();
 
 }

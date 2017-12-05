@@ -16,19 +16,19 @@
 
 package org.springframework.beans.factory.parsing;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.tests.TestResourceUtils.qualifiedResource;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.Resource;
 import org.springframework.tests.sample.beans.TestBean;
-
-import static org.junit.Assert.*;
-import static org.springframework.tests.TestResourceUtils.*;
 
 /**
  * @author Rob Harrop
@@ -37,58 +37,58 @@ import static org.springframework.tests.TestResourceUtils.*;
  */
 public final class CustomProblemReporterTests {
 
-	private static final Resource CONTEXT = qualifiedResource(CustomProblemReporterTests.class, "context.xml");
+    private static final Resource CONTEXT = qualifiedResource(CustomProblemReporterTests.class, "context.xml");
 
-	private CollatingProblemReporter problemReporter;
+    private CollatingProblemReporter problemReporter;
 
-	private DefaultListableBeanFactory beanFactory;
+    private DefaultListableBeanFactory beanFactory;
 
-	private XmlBeanDefinitionReader reader;
-
-
-	@Before
-	public void setUp() {
-		this.problemReporter = new CollatingProblemReporter();
-		this.beanFactory = new DefaultListableBeanFactory();
-		this.reader = new XmlBeanDefinitionReader(this.beanFactory);
-		this.reader.setProblemReporter(this.problemReporter);
-	}
-
-	@Test
-	public void testErrorsAreCollated() {
-		this.reader.loadBeanDefinitions(CONTEXT);
-		assertEquals("Incorrect number of errors collated", 4, this.problemReporter.getErrors().length);
-
-		TestBean bean = (TestBean) this.beanFactory.getBean("validBean");
-		assertNotNull(bean);
-	}
+    private XmlBeanDefinitionReader reader;
 
 
-	private static class CollatingProblemReporter implements ProblemReporter {
+    @Before
+    public void setUp() {
+        this.problemReporter = new CollatingProblemReporter();
+        this.beanFactory = new DefaultListableBeanFactory();
+        this.reader = new XmlBeanDefinitionReader(this.beanFactory);
+        this.reader.setProblemReporter(this.problemReporter);
+    }
 
-		private List<Problem> errors = new ArrayList<Problem>();
+    @Test
+    public void testErrorsAreCollated() {
+        this.reader.loadBeanDefinitions(CONTEXT);
+        assertEquals("Incorrect number of errors collated", 4, this.problemReporter.getErrors().length);
 
-		private List<Problem> warnings = new ArrayList<Problem>();
+        TestBean bean = (TestBean) this.beanFactory.getBean("validBean");
+        assertNotNull(bean);
+    }
 
 
-		@Override
-		public void fatal(Problem problem) {
-			throw new BeanDefinitionParsingException(problem);
-		}
+    private static class CollatingProblemReporter implements ProblemReporter {
 
-		@Override
-		public void error(Problem problem) {
-			this.errors.add(problem);
-		}
+        private List<Problem> errors = new ArrayList<Problem>();
 
-		public Problem[] getErrors() {
-			return this.errors.toArray(new Problem[this.errors.size()]);
-		}
+        private List<Problem> warnings = new ArrayList<Problem>();
 
-		@Override
-		public void warning(Problem problem) {
-			this.warnings.add(problem);
-		}
-	}
+
+        @Override
+        public void fatal(Problem problem) {
+            throw new BeanDefinitionParsingException(problem);
+        }
+
+        @Override
+        public void error(Problem problem) {
+            this.errors.add(problem);
+        }
+
+        public Problem[] getErrors() {
+            return this.errors.toArray(new Problem[this.errors.size()]);
+        }
+
+        @Override
+        public void warning(Problem problem) {
+            this.warnings.add(problem);
+        }
+    }
 
 }

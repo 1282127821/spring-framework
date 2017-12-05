@@ -70,60 +70,60 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class YamlPropertiesFactoryBean extends YamlProcessor implements FactoryBean<Properties>, InitializingBean {
 
-	private boolean singleton = true;
+    private boolean singleton = true;
 
-	private Properties properties;
-
-
-	/**
-	 * Set if a singleton should be created, or a new object on each request
-	 * otherwise. Default is {@code true} (a singleton).
-	 */
-	public void setSingleton(boolean singleton) {
-		this.singleton = singleton;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return this.singleton;
-	}
-
-	@Override
-	public void afterPropertiesSet() {
-		if (isSingleton()) {
-			this.properties = createProperties();
-		}
-	}
-
-	@Override
-	public Properties getObject() {
-		return (this.properties != null ? this.properties : createProperties());
-	}
-
-	@Override
-	public Class<?> getObjectType() {
-		return Properties.class;
-	}
+    private Properties properties;
 
 
-	/**
-	 * Template method that subclasses may override to construct the object
-	 * returned by this factory. The default implementation returns a
-	 * properties with the content of all resources.
-	 * <p>Invoked lazily the first time {@link #getObject()} is invoked in
-	 * case of a shared singleton; else, on each {@link #getObject()} call.
-	 * @return the object returned by this factory
-	 * @see #process(MatchCallback) ()
-	 */
-	protected Properties createProperties() {
-		final Properties result = new Properties();
-		process(new MatchCallback() {
-			@Override
-			public void process(Properties properties, Map<String, Object> map) {
-				result.putAll(properties);
-			}
-		});
-		return result;
-	}
+    /**
+     * Set if a singleton should be created, or a new object on each request
+     * otherwise. Default is {@code true} (a singleton).
+     */
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return this.singleton;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        if (isSingleton()) {
+            this.properties = createProperties();
+        }
+    }
+
+    @Override
+    public Properties getObject() {
+        return (this.properties != null ? this.properties : createProperties());
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Properties.class;
+    }
+
+
+    /**
+     * Template method that subclasses may override to construct the object
+     * returned by this factory. The default implementation returns a
+     * properties with the content of all resources.
+     * <p>Invoked lazily the first time {@link #getObject()} is invoked in
+     * case of a shared singleton; else, on each {@link #getObject()} call.
+     * @return the object returned by this factory
+     * @see #process(MatchCallback) ()
+     */
+    protected Properties createProperties() {
+        final Properties result = new Properties();
+        process(new MatchCallback() {
+            @Override
+            public void process(Properties properties, Map<String, Object> map) {
+                result.putAll(properties);
+            }
+        });
+        return result;
+    }
 
 }

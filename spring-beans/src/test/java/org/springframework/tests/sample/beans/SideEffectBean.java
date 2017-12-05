@@ -23,18 +23,18 @@ package org.springframework.tests.sample.beans;
  */
 public class SideEffectBean {
 
-	private int count;
+    private int count;
 
-	public void setCount(int count) {
-		this.count = count;
-	}
+    public void setCount(int count) {
+        this.count = count;
+    }
 
-	public int getCount() {
-		return this.count;
-	}
+    public int getCount() {
+        return this.count;
+    }
 
-	public void doWork() {
-		++count;
-	}
+    public void doWork() {
+        ++count;
+    }
 
 }

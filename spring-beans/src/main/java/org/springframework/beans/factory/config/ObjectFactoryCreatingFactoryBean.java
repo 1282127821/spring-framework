@@ -96,57 +96,57 @@ import org.springframework.util.Assert;
  */
 public class ObjectFactoryCreatingFactoryBean extends AbstractFactoryBean<ObjectFactory<Object>> {
 
-	private String targetBeanName;
+    private String targetBeanName;
 
 
-	/**
-	 * Set the name of the target bean.
-	 * <p>The target does not <i>have</i> to be a non-singleton bean, but realistically
-	 * always will be (because if the target bean were a singleton, then said singleton
-	 * bean could simply be injected straight into the dependent object, thus obviating
-	 * the need for the extra level of indirection afforded by this factory approach).
-	 */
-	public void setTargetBeanName(String targetBeanName) {
-		this.targetBeanName = targetBeanName;
-	}
+    /**
+     * Set the name of the target bean.
+     * <p>The target does not <i>have</i> to be a non-singleton bean, but realistically
+     * always will be (because if the target bean were a singleton, then said singleton
+     * bean could simply be injected straight into the dependent object, thus obviating
+     * the need for the extra level of indirection afforded by this factory approach).
+     */
+    public void setTargetBeanName(String targetBeanName) {
+        this.targetBeanName = targetBeanName;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Assert.hasText(this.targetBeanName, "Property 'targetBeanName' is required");
-		super.afterPropertiesSet();
-	}
-
-
-	@Override
-	public Class<?> getObjectType() {
-		return ObjectFactory.class;
-	}
-
-	@Override
-	protected ObjectFactory<Object> createInstance() {
-		return new TargetBeanObjectFactory(getBeanFactory(), this.targetBeanName);
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.hasText(this.targetBeanName, "Property 'targetBeanName' is required");
+        super.afterPropertiesSet();
+    }
 
 
-	/**
-	 * Independent inner class - for serialization purposes.
-	 */
-	@SuppressWarnings("serial")
-	private static class TargetBeanObjectFactory implements ObjectFactory<Object>, Serializable {
+    @Override
+    public Class<?> getObjectType() {
+        return ObjectFactory.class;
+    }
 
-		private final BeanFactory beanFactory;
+    @Override
+    protected ObjectFactory<Object> createInstance() {
+        return new TargetBeanObjectFactory(getBeanFactory(), this.targetBeanName);
+    }
 
-		private final String targetBeanName;
 
-		public TargetBeanObjectFactory(BeanFactory beanFactory, String targetBeanName) {
-			this.beanFactory = beanFactory;
-			this.targetBeanName = targetBeanName;
-		}
+    /**
+     * Independent inner class - for serialization purposes.
+     */
+    @SuppressWarnings("serial")
+    private static class TargetBeanObjectFactory implements ObjectFactory<Object>, Serializable {
 
-		@Override
-		public Object getObject() throws BeansException {
-			return this.beanFactory.getBean(this.targetBeanName);
-		}
-	}
+        private final BeanFactory beanFactory;
+
+        private final String targetBeanName;
+
+        public TargetBeanObjectFactory(BeanFactory beanFactory, String targetBeanName) {
+            this.beanFactory = beanFactory;
+            this.targetBeanName = targetBeanName;
+        }
+
+        @Override
+        public Object getObject() throws BeansException {
+            return this.beanFactory.getBean(this.targetBeanName);
+        }
+    }
 
 }

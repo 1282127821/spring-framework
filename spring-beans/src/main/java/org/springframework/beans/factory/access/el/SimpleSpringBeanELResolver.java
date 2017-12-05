@@ -30,21 +30,21 @@ import org.springframework.util.Assert;
  */
 public class SimpleSpringBeanELResolver extends SpringBeanELResolver {
 
-	private final BeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
 
-	/**
-	 * Create a new SimpleSpringBeanELResolver for the given BeanFactory.
-	 * @param beanFactory the Spring BeanFactory to delegate to
-	 */
-	public SimpleSpringBeanELResolver(BeanFactory beanFactory) {
-		Assert.notNull(beanFactory, "BeanFactory must not be null");
-		this.beanFactory = beanFactory;
-	}
+    /**
+     * Create a new SimpleSpringBeanELResolver for the given BeanFactory.
+     * @param beanFactory the Spring BeanFactory to delegate to
+     */
+    public SimpleSpringBeanELResolver(BeanFactory beanFactory) {
+        Assert.notNull(beanFactory, "BeanFactory must not be null");
+        this.beanFactory = beanFactory;
+    }
 
-	@Override
-	protected BeanFactory getBeanFactory(ELContext elContext) {
-		return this.beanFactory;
-	}
+    @Override
+    protected BeanFactory getBeanFactory(ELContext elContext) {
+        return this.beanFactory;
+    }
 
 }

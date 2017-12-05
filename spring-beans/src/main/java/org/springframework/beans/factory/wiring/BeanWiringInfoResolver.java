@@ -34,11 +34,11 @@ package org.springframework.beans.factory.wiring;
  */
 public interface BeanWiringInfoResolver {
 
-	/**
-	 * Resolve the BeanWiringInfo for the given bean instance.
-	 * @param beanInstance the bean instance to resolve info for
-	 * @return the BeanWiringInfo, or {@code null} if not found
-	 */
-	BeanWiringInfo resolveWiringInfo(Object beanInstance);
+    /**
+     * Resolve the BeanWiringInfo for the given bean instance.
+     * @param beanInstance the bean instance to resolve info for
+     * @return the BeanWiringInfo, or {@code null} if not found
+     */
+    BeanWiringInfo resolveWiringInfo(Object beanInstance);
 
 }
