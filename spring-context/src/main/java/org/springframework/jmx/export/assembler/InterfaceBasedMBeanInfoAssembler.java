@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.jmx.export.assembler;
@@ -58,190 +55,190 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.jmx.export.MBeanExporter
  */
 public class InterfaceBasedMBeanInfoAssembler extends AbstractConfigurableMBeanInfoAssembler
-		implements BeanClassLoaderAware, InitializingBean {
+        implements BeanClassLoaderAware, InitializingBean {
 
-	/**
-	 * Stores the array of interfaces to use for creating the management interface.
-	 */
-	private Class<?>[] managedInterfaces;
+    /**
+     * Stores the array of interfaces to use for creating the management interface.
+     */
+    private Class<?>[] managedInterfaces;
 
-	/**
-	 * Stores the mappings of bean keys to an array of {@code Class}es.
-	 */
-	private Properties interfaceMappings;
+    /**
+     * Stores the mappings of bean keys to an array of {@code Class}es.
+     */
+    private Properties interfaceMappings;
 
-	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
+    private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
-	/**
-	 * Stores the mappings of bean keys to an array of {@code Class}es.
-	 */
-	private Map<String, Class<?>[]> resolvedInterfaceMappings;
-
-
-	/**
-	 * Set the array of interfaces to use for creating the management info.
-	 * These interfaces will be used for a bean if no entry corresponding to
-	 * that bean is found in the {@code interfaceMappings} property.
-	 * @param managedInterfaces an array of classes indicating the interfaces to use.
-	 * Each entry <strong>MUST</strong> be an interface.
-	 * @see #setInterfaceMappings
-	 */
-	public void setManagedInterfaces(Class<?>[] managedInterfaces) {
-		if (managedInterfaces != null) {
-			for (Class<?> ifc : managedInterfaces) {
-				if (!ifc.isInterface()) {
-					throw new IllegalArgumentException(
-							"Management interface [" + ifc.getName() + "] is not an interface");
-				}
-			}
-		}
-		this.managedInterfaces = managedInterfaces;
-	}
-
-	/**
-	 * Set the mappings of bean keys to a comma-separated list of interface names.
-	 * <p>The property key should match the bean key and the property value should match
-	 * the list of interface names. When searching for interfaces for a bean, Spring
-	 * will check these mappings first.
-	 * @param mappings the mappins of bean keys to interface names
-	 */
-	public void setInterfaceMappings(Properties mappings) {
-		this.interfaceMappings = mappings;
-	}
-
-	@Override
-	public void setBeanClassLoader(ClassLoader beanClassLoader) {
-		this.beanClassLoader = beanClassLoader;
-	}
+    /**
+     * Stores the mappings of bean keys to an array of {@code Class}es.
+     */
+    private Map<String, Class<?>[]> resolvedInterfaceMappings;
 
 
-	@Override
-	public void afterPropertiesSet() {
-		if (this.interfaceMappings != null) {
-			this.resolvedInterfaceMappings = resolveInterfaceMappings(this.interfaceMappings);
-		}
-	}
+    /**
+     * Set the array of interfaces to use for creating the management info.
+     * These interfaces will be used for a bean if no entry corresponding to
+     * that bean is found in the {@code interfaceMappings} property.
+     * @param managedInterfaces an array of classes indicating the interfaces to use.
+     * Each entry <strong>MUST</strong> be an interface.
+     * @see #setInterfaceMappings
+     */
+    public void setManagedInterfaces(Class<?>[] managedInterfaces) {
+        if (managedInterfaces != null) {
+            for (Class<?> ifc : managedInterfaces) {
+                if (!ifc.isInterface()) {
+                    throw new IllegalArgumentException(
+                            "Management interface [" + ifc.getName() + "] is not an interface");
+                }
+            }
+        }
+        this.managedInterfaces = managedInterfaces;
+    }
 
-	/**
-	 * Resolve the given interface mappings, turning class names into Class objects.
-	 * @param mappings the specified interface mappings
-	 * @return the resolved interface mappings (with Class objects as values)
-	 */
-	private Map<String, Class<?>[]> resolveInterfaceMappings(Properties mappings) {
-		Map<String, Class<?>[]> resolvedMappings = new HashMap<String, Class<?>[]>(mappings.size());
-		for (Enumeration<?> en = mappings.propertyNames(); en.hasMoreElements();) {
-			String beanKey = (String) en.nextElement();
-			String[] classNames = StringUtils.commaDelimitedListToStringArray(mappings.getProperty(beanKey));
-			Class<?>[] classes = resolveClassNames(classNames, beanKey);
-			resolvedMappings.put(beanKey, classes);
-		}
-		return resolvedMappings;
-	}
+    /**
+     * Set the mappings of bean keys to a comma-separated list of interface names.
+     * <p>The property key should match the bean key and the property value should match
+     * the list of interface names. When searching for interfaces for a bean, Spring
+     * will check these mappings first.
+     * @param mappings the mappins of bean keys to interface names
+     */
+    public void setInterfaceMappings(Properties mappings) {
+        this.interfaceMappings = mappings;
+    }
 
-	/**
-	 * Resolve the given class names into Class objects.
-	 * @param classNames the class names to resolve
-	 * @param beanKey the bean key that the class names are associated with
-	 * @return the resolved Class
-	 */
-	private Class<?>[] resolveClassNames(String[] classNames, String beanKey) {
-		Class<?>[] classes = new Class<?>[classNames.length];
-		for (int x = 0; x < classes.length; x++) {
-			Class<?> cls = ClassUtils.resolveClassName(classNames[x].trim(), this.beanClassLoader);
-			if (!cls.isInterface()) {
-				throw new IllegalArgumentException(
-						"Class [" + classNames[x] + "] mapped to bean key [" + beanKey + "] is no interface");
-			}
-			classes[x] = cls;
-		}
-		return classes;
-	}
+    @Override
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
+    }
 
 
-	/**
-	 * Check to see if the {@code Method} is declared in
-	 * one of the configured interfaces and that it is public.
-	 * @param method the accessor {@code Method}.
-	 * @param beanKey the key associated with the MBean in the
-	 * {@code beans} {@code Map}.
-	 * @return {@code true} if the {@code Method} is declared in one of the
-	 * configured interfaces, otherwise {@code false}.
-	 */
-	@Override
-	protected boolean includeReadAttribute(Method method, String beanKey) {
-		return isPublicInInterface(method, beanKey);
-	}
+    @Override
+    public void afterPropertiesSet() {
+        if (this.interfaceMappings != null) {
+            this.resolvedInterfaceMappings = resolveInterfaceMappings(this.interfaceMappings);
+        }
+    }
 
-	/**
-	 * Check to see if the {@code Method} is declared in
-	 * one of the configured interfaces and that it is public.
-	 * @param method the mutator {@code Method}.
-	 * @param beanKey the key associated with the MBean in the
-	 * {@code beans} {@code Map}.
-	 * @return {@code true} if the {@code Method} is declared in one of the
-	 * configured interfaces, otherwise {@code false}.
-	 */
-	@Override
-	protected boolean includeWriteAttribute(Method method, String beanKey) {
-		return isPublicInInterface(method, beanKey);
-	}
+    /**
+     * Resolve the given interface mappings, turning class names into Class objects.
+     * @param mappings the specified interface mappings
+     * @return the resolved interface mappings (with Class objects as values)
+     */
+    private Map<String, Class<?>[]> resolveInterfaceMappings(Properties mappings) {
+        Map<String, Class<?>[]> resolvedMappings = new HashMap<String, Class<?>[]>(mappings.size());
+        for (Enumeration<?> en = mappings.propertyNames(); en.hasMoreElements();) {
+            String beanKey = (String) en.nextElement();
+            String[] classNames = StringUtils.commaDelimitedListToStringArray(mappings.getProperty(beanKey));
+            Class<?>[] classes = resolveClassNames(classNames, beanKey);
+            resolvedMappings.put(beanKey, classes);
+        }
+        return resolvedMappings;
+    }
 
-	/**
-	 * Check to see if the {@code Method} is declared in
-	 * one of the configured interfaces and that it is public.
-	 * @param method the operation {@code Method}.
-	 * @param beanKey the key associated with the MBean in the
-	 * {@code beans} {@code Map}.
-	 * @return {@code true} if the {@code Method} is declared in one of the
-	 * configured interfaces, otherwise {@code false}.
-	 */
-	@Override
-	protected boolean includeOperation(Method method, String beanKey) {
-		return isPublicInInterface(method, beanKey);
-	}
+    /**
+     * Resolve the given class names into Class objects.
+     * @param classNames the class names to resolve
+     * @param beanKey the bean key that the class names are associated with
+     * @return the resolved Class
+     */
+    private Class<?>[] resolveClassNames(String[] classNames, String beanKey) {
+        Class<?>[] classes = new Class<?>[classNames.length];
+        for (int x = 0; x < classes.length; x++) {
+            Class<?> cls = ClassUtils.resolveClassName(classNames[x].trim(), this.beanClassLoader);
+            if (!cls.isInterface()) {
+                throw new IllegalArgumentException(
+                        "Class [" + classNames[x] + "] mapped to bean key [" + beanKey + "] is no interface");
+            }
+            classes[x] = cls;
+        }
+        return classes;
+    }
 
-	/**
-	 * Check to see if the {@code Method} is both public and declared in
-	 * one of the configured interfaces.
-	 * @param method the {@code Method} to check.
-	 * @param beanKey the key associated with the MBean in the beans map
-	 * @return {@code true} if the {@code Method} is declared in one of the
-	 * configured interfaces and is public, otherwise {@code false}.
-	 */
-	private boolean isPublicInInterface(Method method, String beanKey) {
-		return ((method.getModifiers() & Modifier.PUBLIC) > 0) && isDeclaredInInterface(method, beanKey);
-	}
 
-	/**
-	 * Checks to see if the given method is declared in a managed
-	 * interface for the given bean.
-	 */
-	private boolean isDeclaredInInterface(Method method, String beanKey) {
-		Class<?>[] ifaces = null;
+    /**
+     * Check to see if the {@code Method} is declared in
+     * one of the configured interfaces and that it is public.
+     * @param method the accessor {@code Method}.
+     * @param beanKey the key associated with the MBean in the
+     * {@code beans} {@code Map}.
+     * @return {@code true} if the {@code Method} is declared in one of the
+     * configured interfaces, otherwise {@code false}.
+     */
+    @Override
+    protected boolean includeReadAttribute(Method method, String beanKey) {
+        return isPublicInInterface(method, beanKey);
+    }
 
-		if (this.resolvedInterfaceMappings != null) {
-			ifaces = this.resolvedInterfaceMappings.get(beanKey);
-		}
+    /**
+     * Check to see if the {@code Method} is declared in
+     * one of the configured interfaces and that it is public.
+     * @param method the mutator {@code Method}.
+     * @param beanKey the key associated with the MBean in the
+     * {@code beans} {@code Map}.
+     * @return {@code true} if the {@code Method} is declared in one of the
+     * configured interfaces, otherwise {@code false}.
+     */
+    @Override
+    protected boolean includeWriteAttribute(Method method, String beanKey) {
+        return isPublicInInterface(method, beanKey);
+    }
 
-		if (ifaces == null) {
-			ifaces = this.managedInterfaces;
-			if (ifaces == null) {
-				ifaces = ClassUtils.getAllInterfacesForClass(method.getDeclaringClass());
-			}
-		}
+    /**
+     * Check to see if the {@code Method} is declared in
+     * one of the configured interfaces and that it is public.
+     * @param method the operation {@code Method}.
+     * @param beanKey the key associated with the MBean in the
+     * {@code beans} {@code Map}.
+     * @return {@code true} if the {@code Method} is declared in one of the
+     * configured interfaces, otherwise {@code false}.
+     */
+    @Override
+    protected boolean includeOperation(Method method, String beanKey) {
+        return isPublicInInterface(method, beanKey);
+    }
 
-		if (ifaces != null) {
-			for (Class<?> ifc : ifaces) {
-				for (Method ifcMethod : ifc.getMethods()) {
-					if (ifcMethod.getName().equals(method.getName()) &&
-							Arrays.equals(ifcMethod.getParameterTypes(), method.getParameterTypes())) {
-						return true;
-					}
-				}
-			}
-		}
+    /**
+     * Check to see if the {@code Method} is both public and declared in
+     * one of the configured interfaces.
+     * @param method the {@code Method} to check.
+     * @param beanKey the key associated with the MBean in the beans map
+     * @return {@code true} if the {@code Method} is declared in one of the
+     * configured interfaces and is public, otherwise {@code false}.
+     */
+    private boolean isPublicInInterface(Method method, String beanKey) {
+        return ((method.getModifiers() & Modifier.PUBLIC) > 0) && isDeclaredInInterface(method, beanKey);
+    }
 
-		return false;
-	}
+    /**
+     * Checks to see if the given method is declared in a managed
+     * interface for the given bean.
+     */
+    private boolean isDeclaredInInterface(Method method, String beanKey) {
+        Class<?>[] ifaces = null;
+
+        if (this.resolvedInterfaceMappings != null) {
+            ifaces = this.resolvedInterfaceMappings.get(beanKey);
+        }
+
+        if (ifaces == null) {
+            ifaces = this.managedInterfaces;
+            if (ifaces == null) {
+                ifaces = ClassUtils.getAllInterfacesForClass(method.getDeclaringClass());
+            }
+        }
+
+        if (ifaces != null) {
+            for (Class<?> ifc : ifaces) {
+                for (Method ifcMethod : ifc.getMethods()) {
+                    if (ifcMethod.getName().equals(method.getName())
+                            && Arrays.equals(ifcMethod.getParameterTypes(), method.getParameterTypes())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 
 }

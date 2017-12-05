@@ -3,34 +3,34 @@
 
 <beans>
 
-	<bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
+    <bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
 
-	<bean id="calculator" class="org.springframework.scripting.jruby.JRubyScriptFactory">
-		<constructor-arg>
-			<value>inline:
-require 'java'
+    <bean id="calculator" class="org.springframework.scripting.jruby.JRubyScriptFactory">
+        <constructor-arg>
+            <value>inline:
+                require 'java'
 
-class RubyCalculator
-	include org.springframework.scripting.Calculator
+                class RubyCalculator
+                include org.springframework.scripting.Calculator
 
-	def add(x, y)
-		x + y
-	end
-end
-			</value>
-		</constructor-arg>
-		<constructor-arg value="org.springframework.scripting.Calculator"/>
-	</bean>
+                def add(x, y)
+                x + y
+                end
+                end
+            </value>
+        </constructor-arg>
+        <constructor-arg value="org.springframework.scripting.Calculator"/>
+    </bean>
 
-	<bean id="messenger" class="org.springframework.scripting.jruby.JRubyScriptFactory">
-		<constructor-arg value="classpath:org/springframework/scripting/jruby/Messenger.rb"/>
-		<constructor-arg value="org.springframework.scripting.Messenger"/>
-		<property name="message" value="Hello World!"/>
-	</bean>
+    <bean id="messenger" class="org.springframework.scripting.jruby.JRubyScriptFactory">
+        <constructor-arg value="classpath:org/springframework/scripting/jruby/Messenger.rb"/>
+        <constructor-arg value="org.springframework.scripting.Messenger"/>
+        <property name="message" value="Hello World!"/>
+    </bean>
 
-	<bean id="printer" class="org.springframework.scripting.jruby.JRubyScriptFactory">
-		<constructor-arg value="classpath:org/springframework/scripting/jruby/Printer.rb"/>
-		<constructor-arg value="org.springframework.scripting.jruby.Printer"/>
-	</bean>
+    <bean id="printer" class="org.springframework.scripting.jruby.JRubyScriptFactory">
+        <constructor-arg value="classpath:org/springframework/scripting/jruby/Printer.rb"/>
+        <constructor-arg value="org.springframework.scripting.jruby.Printer"/>
+    </bean>
 
 </beans>

@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.annotation;
@@ -54,37 +51,37 @@ import org.springframework.core.annotation.AliasFor;
 @Documented
 public @interface ImportResource {
 
-	/**
-	 * Alias for {@link #locations}.
-	 * @see #locations
-	 * @see #reader
-	 */
-	@AliasFor("locations")
-	String[] value() default {};
+    /**
+     * Alias for {@link #locations}.
+     * @see #locations
+     * @see #reader
+     */
+    @AliasFor("locations")
+    String[] value() default {};
 
-	/**
-	 * Resource locations from which to import.
-	 * <p>Supports resource-loading prefixes such as {@code classpath:},
-	 * {@code file:}, etc.
-	 * <p>Consult the Javadoc for {@link #reader} for details on how resources
-	 * will be processed.
-	 * @since 4.2
-	 * @see #value
-	 * @see #reader
-	 */
-	@AliasFor("value")
-	String[] locations() default {};
+    /**
+     * Resource locations from which to import.
+     * <p>Supports resource-loading prefixes such as {@code classpath:},
+     * {@code file:}, etc.
+     * <p>Consult the Javadoc for {@link #reader} for details on how resources
+     * will be processed.
+     * @since 4.2
+     * @see #value
+     * @see #reader
+     */
+    @AliasFor("value")
+    String[] locations() default {};
 
-	/**
-	 * {@link BeanDefinitionReader} implementation to use when processing
-	 * resources specified via the {@link #value} attribute.
-	 * <p>By default, the reader will be adapted to the resource path specified:
-	 * {@code ".groovy"} files will be processed with a
-	 * {@link org.springframework.beans.factory.groovy.GroovyBeanDefinitionReader GroovyBeanDefinitionReader};
-	 * whereas, all other resources will be processed with an
-	 * {@link org.springframework.beans.factory.xml.XmlBeanDefinitionReader XmlBeanDefinitionReader}.
-	 * @see #value
-	 */
-	Class<? extends BeanDefinitionReader> reader() default BeanDefinitionReader.class;
+    /**
+     * {@link BeanDefinitionReader} implementation to use when processing
+     * resources specified via the {@link #value} attribute.
+     * <p>By default, the reader will be adapted to the resource path specified:
+     * {@code ".groovy"} files will be processed with a
+     * {@link org.springframework.beans.factory.groovy.GroovyBeanDefinitionReader GroovyBeanDefinitionReader};
+     * whereas, all other resources will be processed with an
+     * {@link org.springframework.beans.factory.xml.XmlBeanDefinitionReader XmlBeanDefinitionReader}.
+     * @see #value
+     */
+    Class<? extends BeanDefinitionReader> reader() default BeanDefinitionReader.class;
 
 }

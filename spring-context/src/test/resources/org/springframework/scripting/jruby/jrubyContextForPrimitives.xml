@@ -3,11 +3,11 @@
 
 <beans>
 
-	<bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
+    <bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
 
-	<bean id="adder" class="org.springframework.scripting.jruby.JRubyScriptFactory">
-		<constructor-arg>
-			<value><![CDATA[inline:
+    <bean id="adder" class="org.springframework.scripting.jruby.JRubyScriptFactory">
+        <constructor-arg>
+            <value><![CDATA[inline:
 require 'java'
 
 class RubyPrimitiveAdder
@@ -47,7 +47,7 @@ class RubyPrimitiveAdder
 
 end
 			]]></value>
-		</constructor-arg>
-		<constructor-arg value="org.springframework.scripting.jruby.PrimitiveAdder"/>
-	</bean>
+        </constructor-arg>
+        <constructor-arg value="org.springframework.scripting.jruby.PrimitiveAdder"/>
+    </bean>
 </beans>

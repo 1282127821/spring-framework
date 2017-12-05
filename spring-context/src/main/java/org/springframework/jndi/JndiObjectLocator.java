@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.jndi;
@@ -47,63 +44,63 @@ import org.springframework.util.StringUtils;
  */
 public abstract class JndiObjectLocator extends JndiLocatorSupport implements InitializingBean {
 
-	private String jndiName;
+    private String jndiName;
 
-	private Class<?> expectedType;
-
-
-	/**
-	 * Specify the JNDI name to look up. If it doesn't begin with "java:comp/env/"
-	 * this prefix is added automatically if "resourceRef" is set to "true".
-	 * @param jndiName the JNDI name to look up
-	 * @see #setResourceRef
-	 */
-	public void setJndiName(String jndiName) {
-		this.jndiName = jndiName;
-	}
-
-	/**
-	 * Return the JNDI name to look up.
-	 */
-	public String getJndiName() {
-		return this.jndiName;
-	}
-
-	/**
-	 * Specify the type that the located JNDI object is supposed
-	 * to be assignable to, if any.
-	 */
-	public void setExpectedType(Class<?> expectedType) {
-		this.expectedType = expectedType;
-	}
-
-	/**
-	 * Return the type that the located JNDI object is supposed
-	 * to be assignable to, if any.
-	 */
-	public Class<?> getExpectedType() {
-		return this.expectedType;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws IllegalArgumentException, NamingException {
-		if (!StringUtils.hasLength(getJndiName())) {
-			throw new IllegalArgumentException("Property 'jndiName' is required");
-		}
-	}
+    private Class<?> expectedType;
 
 
-	/**
-	 * Perform the actual JNDI lookup for this locator's target resource.
-	 * @return the located target object
-	 * @throws NamingException if the JNDI lookup failed or if the
-	 * located JNDI object is not assigable to the expected type
-	 * @see #setJndiName
-	 * @see #setExpectedType
-	 * @see #lookup(String, Class)
-	 */
-	protected Object lookup() throws NamingException {
-		return lookup(getJndiName(), getExpectedType());
-	}
+    /**
+     * Specify the JNDI name to look up. If it doesn't begin with "java:comp/env/"
+     * this prefix is added automatically if "resourceRef" is set to "true".
+     * @param jndiName the JNDI name to look up
+     * @see #setResourceRef
+     */
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
+    }
+
+    /**
+     * Return the JNDI name to look up.
+     */
+    public String getJndiName() {
+        return this.jndiName;
+    }
+
+    /**
+     * Specify the type that the located JNDI object is supposed
+     * to be assignable to, if any.
+     */
+    public void setExpectedType(Class<?> expectedType) {
+        this.expectedType = expectedType;
+    }
+
+    /**
+     * Return the type that the located JNDI object is supposed
+     * to be assignable to, if any.
+     */
+    public Class<?> getExpectedType() {
+        return this.expectedType;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws IllegalArgumentException, NamingException {
+        if (!StringUtils.hasLength(getJndiName())) {
+            throw new IllegalArgumentException("Property 'jndiName' is required");
+        }
+    }
+
+
+    /**
+     * Perform the actual JNDI lookup for this locator's target resource.
+     * @return the located target object
+     * @throws NamingException if the JNDI lookup failed or if the
+     * located JNDI object is not assigable to the expected type
+     * @see #setJndiName
+     * @see #setExpectedType
+     * @see #lookup(String, Class)
+     */
+    protected Object lookup() throws NamingException {
+        return lookup(getJndiName(), getExpectedType());
+    }
 
 }

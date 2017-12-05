@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.access;
@@ -36,42 +33,41 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class ContextBeanFactoryReference implements BeanFactoryReference {
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
 
-	/**
-	 * Create a new ContextBeanFactoryReference for the given context.
-	 * @param applicationContext the ApplicationContext to wrap
-	 */
-	public ContextBeanFactoryReference(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
+    /**
+     * Create a new ContextBeanFactoryReference for the given context.
+     * @param applicationContext the ApplicationContext to wrap
+     */
+    public ContextBeanFactoryReference(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
 
-	@Override
-	public BeanFactory getFactory() {
-		if (this.applicationContext == null) {
-			throw new IllegalStateException(
-					"ApplicationContext owned by this BeanFactoryReference has been released");
-		}
-		return this.applicationContext;
-	}
+    @Override
+    public BeanFactory getFactory() {
+        if (this.applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext owned by this BeanFactoryReference has been released");
+        }
+        return this.applicationContext;
+    }
 
-	@Override
-	public void release() {
-		if (this.applicationContext != null) {
-			ApplicationContext savedCtx;
+    @Override
+    public void release() {
+        if (this.applicationContext != null) {
+            ApplicationContext savedCtx;
 
-			// We don't actually guarantee thread-safety, but it's not a lot of extra work.
-			synchronized (this) {
-				savedCtx = this.applicationContext;
-				this.applicationContext = null;
-			}
+            // We don't actually guarantee thread-safety, but it's not a lot of extra work.
+            synchronized (this) {
+                savedCtx = this.applicationContext;
+                this.applicationContext = null;
+            }
 
-			if (savedCtx != null && savedCtx instanceof ConfigurableApplicationContext) {
-				((ConfigurableApplicationContext) savedCtx).close();
-			}
-		}
-	}
+            if (savedCtx != null && savedCtx instanceof ConfigurableApplicationContext) {
+                ((ConfigurableApplicationContext) savedCtx).close();
+            }
+        }
+    }
 
 }

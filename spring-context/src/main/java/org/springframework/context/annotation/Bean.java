@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.annotation;
@@ -182,51 +179,51 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 @Documented
 public @interface Bean {
 
-	/**
-	 * The name of this bean, or if plural, aliases for this bean. If left unspecified
-	 * the name of the bean is the name of the annotated method. If specified, the method
-	 * name is ignored.
-	 */
-	String[] name() default {};
+    /**
+     * The name of this bean, or if plural, aliases for this bean. If left unspecified
+     * the name of the bean is the name of the annotated method. If specified, the method
+     * name is ignored.
+     */
+    String[] name() default {};
 
-	/**
-	 * Are dependencies to be injected via convention-based autowiring by name or type?
-	 */
-	Autowire autowire() default Autowire.NO;
+    /**
+     * Are dependencies to be injected via convention-based autowiring by name or type?
+     */
+    Autowire autowire() default Autowire.NO;
 
-	/**
-	 * The optional name of a method to call on the bean instance during initialization.
-	 * Not commonly used, given that the method may be called programmatically directly
-	 * within the body of a Bean-annotated method.
-	 * <p>The default value is {@code ""}, indicating no init method to be called.
-	 */
-	String initMethod() default "";
+    /**
+     * The optional name of a method to call on the bean instance during initialization.
+     * Not commonly used, given that the method may be called programmatically directly
+     * within the body of a Bean-annotated method.
+     * <p>The default value is {@code ""}, indicating no init method to be called.
+     */
+    String initMethod() default "";
 
-	/**
-	 * The optional name of a method to call on the bean instance upon closing the
-	 * application context, for example a {@code close()} method on a JDBC
-	 * {@code DataSource} implementation, or a Hibernate {@code SessionFactory} object.
-	 * The method must have no arguments but may throw any exception.
-	 * <p>As a convenience to the user, the container will attempt to infer a destroy
-	 * method against an object returned from the {@code @Bean} method. For example, given
-	 * an {@code @Bean} method returning an Apache Commons DBCP {@code BasicDataSource},
-	 * the container will notice the {@code close()} method available on that object and
-	 * automatically register it as the {@code destroyMethod}. This 'destroy method
-	 * inference' is currently limited to detecting only public, no-arg methods named
-	 * 'close' or 'shutdown'. The method may be declared at any level of the inheritance
-	 * hierarchy and will be detected regardless of the return type of the {@code @Bean}
-	 * method (i.e., detection occurs reflectively against the bean instance itself at
-	 * creation time).
-	 * <p>To disable destroy method inference for a particular {@code @Bean}, specify an
-	 * empty string as the value, e.g. {@code @Bean(destroyMethod="")}. Note that the
-	 * {@link org.springframework.beans.factory.DisposableBean} and the
-	 * {@link java.io.Closeable}/{@link java.lang.AutoCloseable} interfaces will
-	 * nevertheless get detected and the corresponding destroy/close method invoked.
-	 * <p>Note: Only invoked on beans whose lifecycle is under the full control of the
-	 * factory, which is always the case for singletons but not guaranteed for any
-	 * other scope.
-	 * @see org.springframework.context.ConfigurableApplicationContext#close()
-	 */
-	String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
+    /**
+     * The optional name of a method to call on the bean instance upon closing the
+     * application context, for example a {@code close()} method on a JDBC
+     * {@code DataSource} implementation, or a Hibernate {@code SessionFactory} object.
+     * The method must have no arguments but may throw any exception.
+     * <p>As a convenience to the user, the container will attempt to infer a destroy
+     * method against an object returned from the {@code @Bean} method. For example, given
+     * an {@code @Bean} method returning an Apache Commons DBCP {@code BasicDataSource},
+     * the container will notice the {@code close()} method available on that object and
+     * automatically register it as the {@code destroyMethod}. This 'destroy method
+     * inference' is currently limited to detecting only public, no-arg methods named
+     * 'close' or 'shutdown'. The method may be declared at any level of the inheritance
+     * hierarchy and will be detected regardless of the return type of the {@code @Bean}
+     * method (i.e., detection occurs reflectively against the bean instance itself at
+     * creation time).
+     * <p>To disable destroy method inference for a particular {@code @Bean}, specify an
+     * empty string as the value, e.g. {@code @Bean(destroyMethod="")}. Note that the
+     * {@link org.springframework.beans.factory.DisposableBean} and the
+     * {@link java.io.Closeable}/{@link java.lang.AutoCloseable} interfaces will
+     * nevertheless get detected and the corresponding destroy/close method invoked.
+     * <p>Note: Only invoked on beans whose lifecycle is under the full control of the
+     * factory, which is always the case for singletons but not guaranteed for any
+     * other scope.
+     * @see org.springframework.context.ConfigurableApplicationContext#close()
+     */
+    String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
 
 }

@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.jndi;
@@ -52,46 +49,45 @@ import org.springframework.core.env.PropertySource;
  */
 public class JndiPropertySource extends PropertySource<JndiLocatorDelegate> {
 
-	/**
-	 * Create a new {@code JndiPropertySource} with the given name
-	 * and a {@link JndiLocatorDelegate} configured to prefix any names with
-	 * "java:comp/env/".
-	 */
-	public JndiPropertySource(String name) {
-		this(name, JndiLocatorDelegate.createDefaultResourceRefLocator());
-	}
+    /**
+     * Create a new {@code JndiPropertySource} with the given name
+     * and a {@link JndiLocatorDelegate} configured to prefix any names with
+     * "java:comp/env/".
+     */
+    public JndiPropertySource(String name) {
+        this(name, JndiLocatorDelegate.createDefaultResourceRefLocator());
+    }
 
-	/**
-	 * Create a new {@code JndiPropertySource} with the given name and the given
-	 * {@code JndiLocatorDelegate}.
-	 */
-	public JndiPropertySource(String name, JndiLocatorDelegate jndiLocator) {
-		super(name, jndiLocator);
-	}
+    /**
+     * Create a new {@code JndiPropertySource} with the given name and the given
+     * {@code JndiLocatorDelegate}.
+     */
+    public JndiPropertySource(String name, JndiLocatorDelegate jndiLocator) {
+        super(name, jndiLocator);
+    }
 
 
-	/**
-	 * This implementation looks up and returns the value associated with the given
-	 * name from the underlying {@link JndiLocatorDelegate}. If a {@link NamingException}
-	 * is thrown during the call to {@link JndiLocatorDelegate#lookup(String)}, returns
-	 * {@code null} and issues a DEBUG-level log statement with the exception message.
-	 */
-	@Override
-	public Object getProperty(String name) {
-		try {
-			Object value = this.source.lookup(name);
-			if (logger.isDebugEnabled()) {
-				logger.debug("JNDI lookup for name [" + name + "] returned: [" + value + "]");
-			}
-			return value;
-		}
-		catch (NamingException ex) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("JNDI lookup for name [" + name + "] threw NamingException " +
-						"with message: " + ex.getMessage() + ". Returning null.");
-			}
-			return null;
-		}
-	}
+    /**
+     * This implementation looks up and returns the value associated with the given
+     * name from the underlying {@link JndiLocatorDelegate}. If a {@link NamingException}
+     * is thrown during the call to {@link JndiLocatorDelegate#lookup(String)}, returns
+     * {@code null} and issues a DEBUG-level log statement with the exception message.
+     */
+    @Override
+    public Object getProperty(String name) {
+        try {
+            Object value = this.source.lookup(name);
+            if (logger.isDebugEnabled()) {
+                logger.debug("JNDI lookup for name [" + name + "] returned: [" + value + "]");
+            }
+            return value;
+        } catch (NamingException ex) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("JNDI lookup for name [" + name + "] threw NamingException " + "with message: "
+                        + ex.getMessage() + ". Returning null.");
+            }
+            return null;
+        }
+    }
 
 }

@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.validation;
@@ -41,37 +38,37 @@ import org.springframework.beans.PropertyAccessException;
  */
 public interface BindingErrorProcessor {
 
-	/**
-	 * Apply the missing field error to the given BindException.
-	 * <p>Usually, a field error is created for a missing required field.
-	 * @param missingField the field that was missing during binding
-	 * @param bindingResult the errors object to add the error(s) to.
-	 * You can add more than just one error or maybe even ignore it.
-	 * The {@code BindingResult} object features convenience utils such as
-	 * a {@code resolveMessageCodes} method to resolve an error code.
-	 * @see BeanPropertyBindingResult#addError
-	 * @see BeanPropertyBindingResult#resolveMessageCodes
-	 */
-	void processMissingFieldError(String missingField, BindingResult bindingResult);
+    /**
+     * Apply the missing field error to the given BindException.
+     * <p>Usually, a field error is created for a missing required field.
+     * @param missingField the field that was missing during binding
+     * @param bindingResult the errors object to add the error(s) to.
+     * You can add more than just one error or maybe even ignore it.
+     * The {@code BindingResult} object features convenience utils such as
+     * a {@code resolveMessageCodes} method to resolve an error code.
+     * @see BeanPropertyBindingResult#addError
+     * @see BeanPropertyBindingResult#resolveMessageCodes
+     */
+    void processMissingFieldError(String missingField, BindingResult bindingResult);
 
-	/**
-	 * Translate the given {@code PropertyAccessException} to an appropriate
-	 * error registered on the given {@code Errors} instance.
-	 * <p>Note that two error types are available: {@code FieldError} and
-	 * {@code ObjectError}. Usually, field errors are created, but in certain
-	 * situations one might want to create a global {@code ObjectError} instead.
-	 * @param ex the {@code PropertyAccessException} to translate
-	 * @param bindingResult the errors object to add the error(s) to.
-	 * You can add more than just one error or maybe even ignore it.
-	 * The {@code BindingResult} object features convenience utils such as
-	 * a {@code resolveMessageCodes} method to resolve an error code.
-	 * @see Errors
-	 * @see FieldError
-	 * @see ObjectError
-	 * @see MessageCodesResolver
-	 * @see BeanPropertyBindingResult#addError
-	 * @see BeanPropertyBindingResult#resolveMessageCodes
-	 */
-	void processPropertyAccessException(PropertyAccessException ex, BindingResult bindingResult);
+    /**
+     * Translate the given {@code PropertyAccessException} to an appropriate
+     * error registered on the given {@code Errors} instance.
+     * <p>Note that two error types are available: {@code FieldError} and
+     * {@code ObjectError}. Usually, field errors are created, but in certain
+     * situations one might want to create a global {@code ObjectError} instead.
+     * @param ex the {@code PropertyAccessException} to translate
+     * @param bindingResult the errors object to add the error(s) to.
+     * You can add more than just one error or maybe even ignore it.
+     * The {@code BindingResult} object features convenience utils such as
+     * a {@code resolveMessageCodes} method to resolve an error code.
+     * @see Errors
+     * @see FieldError
+     * @see ObjectError
+     * @see MessageCodesResolver
+     * @see BeanPropertyBindingResult#addError
+     * @see BeanPropertyBindingResult#resolveMessageCodes
+     */
+    void processPropertyAccessException(PropertyAccessException ex, BindingResult bindingResult);
 
 }

@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context;
@@ -58,19 +55,19 @@ import org.springframework.beans.factory.Aware;
  */
 public interface ApplicationContextAware extends Aware {
 
-	/**
-	 * Set the ApplicationContext that this object runs in.
-	 * Normally this call will be used to initialize the object.
-	 * <p>Invoked after population of normal bean properties but before an init callback such
-	 * as {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()}
-	 * or a custom init-method. Invoked after {@link ResourceLoaderAware#setResourceLoader},
-	 * {@link ApplicationEventPublisherAware#setApplicationEventPublisher} and
-	 * {@link MessageSourceAware}, if applicable.
-	 * @param applicationContext the ApplicationContext object to be used by this object
-	 * @throws ApplicationContextException in case of context initialization errors
-	 * @throws BeansException if thrown by application context methods
-	 * @see org.springframework.beans.factory.BeanInitializationException
-	 */
-	void setApplicationContext(ApplicationContext applicationContext) throws BeansException;
+    /**
+     * Set the ApplicationContext that this object runs in.
+     * Normally this call will be used to initialize the object.
+     * <p>Invoked after population of normal bean properties but before an init callback such
+     * as {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()}
+     * or a custom init-method. Invoked after {@link ResourceLoaderAware#setResourceLoader},
+     * {@link ApplicationEventPublisherAware#setApplicationEventPublisher} and
+     * {@link MessageSourceAware}, if applicable.
+     * @param applicationContext the ApplicationContext object to be used by this object
+     * @throws ApplicationContextException in case of context initialization errors
+     * @throws BeansException if thrown by application context methods
+     * @see org.springframework.beans.factory.BeanInitializationException
+     */
+    void setApplicationContext(ApplicationContext applicationContext) throws BeansException;
 
 }

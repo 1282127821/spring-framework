@@ -3,11 +3,15 @@
 
 <beans>
 
-	<bean id="a" class="org.springframework.tests.sample.beans.DependenciesBean"
-		dependency-check="simple">
-		<property name="age"><value>33</value></property>
-		<property name="name"><value>Rod</value></property>
-	</bean>
+    <bean id="a" class="org.springframework.tests.sample.beans.DependenciesBean"
+          dependency-check="simple">
+        <property name="age">
+            <value>33</value>
+        </property>
+        <property name="name">
+            <value>Rod</value>
+        </property>
+    </bean>
 
 
 </beans>

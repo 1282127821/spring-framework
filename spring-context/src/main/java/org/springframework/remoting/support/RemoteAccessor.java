@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.remoting.support;
@@ -36,27 +33,27 @@ package org.springframework.remoting.support;
  */
 public abstract class RemoteAccessor extends RemotingSupport {
 
-	private Class<?> serviceInterface;
+    private Class<?> serviceInterface;
 
 
-	/**
-	 * Set the interface of the service to access.
-	 * The interface must be suitable for the particular service and remoting strategy.
-	 * <p>Typically required to be able to create a suitable service proxy,
-	 * but can also be optional if the lookup returns a typed proxy.
-	 */
-	public void setServiceInterface(Class<?> serviceInterface) {
-		if (serviceInterface != null && !serviceInterface.isInterface()) {
-			throw new IllegalArgumentException("'serviceInterface' must be an interface");
-		}
-		this.serviceInterface = serviceInterface;
-	}
+    /**
+     * Set the interface of the service to access.
+     * The interface must be suitable for the particular service and remoting strategy.
+     * <p>Typically required to be able to create a suitable service proxy,
+     * but can also be optional if the lookup returns a typed proxy.
+     */
+    public void setServiceInterface(Class<?> serviceInterface) {
+        if (serviceInterface != null && !serviceInterface.isInterface()) {
+            throw new IllegalArgumentException("'serviceInterface' must be an interface");
+        }
+        this.serviceInterface = serviceInterface;
+    }
 
-	/**
-	 * Return the interface of the service to access.
-	 */
-	public Class<?> getServiceInterface() {
-		return this.serviceInterface;
-	}
+    /**
+     * Return the interface of the service to access.
+     */
+    public Class<?> getServiceInterface() {
+        return this.serviceInterface;
+    }
 
 }

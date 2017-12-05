@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.instrument.classloading.weblogic;
@@ -35,62 +32,55 @@ import java.util.Hashtable;
  */
 class WebLogicClassPreProcessorAdapter implements InvocationHandler {
 
-	private final ClassFileTransformer transformer;
+    private final ClassFileTransformer transformer;
 
-	private final ClassLoader loader;
-
-
-	/**
-	 * Creates a new {@link WebLogicClassPreProcessorAdapter}.
-	 * @param transformer the {@link ClassFileTransformer} to be adapted
-	 * (must not be {@code null})
-	 */
-	public WebLogicClassPreProcessorAdapter(ClassFileTransformer transformer, ClassLoader loader) {
-		this.transformer = transformer;
-		this.loader = loader;
-	}
+    private final ClassLoader loader;
 
 
-	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		String name = method.getName();
-		if ("equals".equals(name)) {
-			return (proxy == args[0]);
-		}
-		else if ("hashCode".equals(name)) {
-			return hashCode();
-		}
-		else if ("toString".equals(name)) {
-			return toString();
-		}
-		else if ("initialize".equals(name)) {
-			initialize((Hashtable<?, ?>) args[0]);
-			return null;
-		}
-		else if ("preProcess".equals(name)) {
-			return preProcess((String) args[0], (byte[]) args[1]);
-		}
-		else {
-			throw new IllegalArgumentException("Unknown method: " + method);
-		}
-	}
+    /**
+     * Creates a new {@link WebLogicClassPreProcessorAdapter}.
+     * @param transformer the {@link ClassFileTransformer} to be adapted
+     * (must not be {@code null})
+     */
+    public WebLogicClassPreProcessorAdapter(ClassFileTransformer transformer, ClassLoader loader) {
+        this.transformer = transformer;
+        this.loader = loader;
+    }
 
-	public void initialize(Hashtable<?, ?> params) {
-	}
 
-	public byte[] preProcess(String className, byte[] classBytes) {
-		try {
-			byte[] result = this.transformer.transform(this.loader, className, null, null, classBytes);
-			return (result != null ? result : classBytes);
-		}
-		catch (IllegalClassFormatException ex) {
-			throw new IllegalStateException("Cannot transform due to illegal class format", ex);
-		}
-	}
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        String name = method.getName();
+        if ("equals".equals(name)) {
+            return (proxy == args[0]);
+        } else if ("hashCode".equals(name)) {
+            return hashCode();
+        } else if ("toString".equals(name)) {
+            return toString();
+        } else if ("initialize".equals(name)) {
+            initialize((Hashtable<?, ?>) args[0]);
+            return null;
+        } else if ("preProcess".equals(name)) {
+            return preProcess((String) args[0], (byte[]) args[1]);
+        } else {
+            throw new IllegalArgumentException("Unknown method: " + method);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getName() + " for transformer: " + this.transformer;
-	}
+    public void initialize(Hashtable<?, ?> params) {}
+
+    public byte[] preProcess(String className, byte[] classBytes) {
+        try {
+            byte[] result = this.transformer.transform(this.loader, className, null, null, classBytes);
+            return (result != null ? result : classBytes);
+        } catch (IllegalClassFormatException ex) {
+            throw new IllegalStateException("Cannot transform due to illegal class format", ex);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + " for transformer: " + this.transformer;
+    }
 
 }

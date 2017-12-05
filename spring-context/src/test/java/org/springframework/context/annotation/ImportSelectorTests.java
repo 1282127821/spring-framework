@@ -1,20 +1,26 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.annotation;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -42,10 +48,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 /**
  * Tests for {@link ImportSelector} and {@link DeferredImportSelector}.
  *
@@ -54,206 +56,207 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("resource")
 public class ImportSelectorTests {
 
-	static Map<Class<?>, String> importFrom = new HashMap<Class<?>, String>();
+    static Map<Class<?>, String> importFrom = new HashMap<Class<?>, String>();
 
 
-	@BeforeClass
-	public static void clearImportFrom() {
-		ImportSelectorTests.importFrom.clear();
-	}
+    @BeforeClass
+    public static void clearImportFrom() {
+        ImportSelectorTests.importFrom.clear();
+    }
 
 
-	@Test
-	public void importSelectors() {
-		DefaultListableBeanFactory beanFactory = spy(new DefaultListableBeanFactory());
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(beanFactory);
-		context.register(Config.class);
-		context.refresh();
-		context.getBean(Config.class);
-		InOrder ordered = inOrder(beanFactory);
-		ordered.verify(beanFactory).registerBeanDefinition(eq("a"), (BeanDefinition) anyObject());
-		ordered.verify(beanFactory).registerBeanDefinition(eq("b"), (BeanDefinition) anyObject());
-		ordered.verify(beanFactory).registerBeanDefinition(eq("d"), (BeanDefinition) anyObject());
-		ordered.verify(beanFactory).registerBeanDefinition(eq("c"), (BeanDefinition) anyObject());
-	}
+    @Test
+    public void importSelectors() {
+        DefaultListableBeanFactory beanFactory = spy(new DefaultListableBeanFactory());
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(beanFactory);
+        context.register(Config.class);
+        context.refresh();
+        context.getBean(Config.class);
+        InOrder ordered = inOrder(beanFactory);
+        ordered.verify(beanFactory).registerBeanDefinition(eq("a"), (BeanDefinition) anyObject());
+        ordered.verify(beanFactory).registerBeanDefinition(eq("b"), (BeanDefinition) anyObject());
+        ordered.verify(beanFactory).registerBeanDefinition(eq("d"), (BeanDefinition) anyObject());
+        ordered.verify(beanFactory).registerBeanDefinition(eq("c"), (BeanDefinition) anyObject());
+    }
 
-	@Test
-	public void invokeAwareMethodsInImportSelector() {
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AwareConfig.class);
-		assertThat(SampleRegistrar.beanFactory, is((BeanFactory) context.getBeanFactory()));
-		assertThat(SampleRegistrar.classLoader, is(context.getBeanFactory().getBeanClassLoader()));
-		assertThat(SampleRegistrar.resourceLoader, is(notNullValue()));
-		assertThat(SampleRegistrar.environment, is((Environment) context.getEnvironment()));
-	}
+    @Test
+    public void invokeAwareMethodsInImportSelector() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AwareConfig.class);
+        assertThat(SampleRegistrar.beanFactory, is((BeanFactory) context.getBeanFactory()));
+        assertThat(SampleRegistrar.classLoader, is(context.getBeanFactory().getBeanClassLoader()));
+        assertThat(SampleRegistrar.resourceLoader, is(notNullValue()));
+        assertThat(SampleRegistrar.environment, is((Environment) context.getEnvironment()));
+    }
 
-	@Test
-	public void correctMetaDataOnIndirectImports() throws Exception {
-		new AnnotationConfigApplicationContext(IndirectConfig.class);
-		Matcher<String> isFromIndirect = equalTo(IndirectImport.class.getName());
-		assertThat(importFrom.get(ImportSelector1.class), isFromIndirect);
-		assertThat(importFrom.get(ImportSelector2.class), isFromIndirect);
-		assertThat(importFrom.get(DeferredImportSelector1.class), isFromIndirect);
-		assertThat(importFrom.get(DeferredImportSelector2.class), isFromIndirect);
-	}
-
-
-	@Configuration
-	@Import(SampleImportSelector.class)
-	static class AwareConfig {
-	}
+    @Test
+    public void correctMetaDataOnIndirectImports() throws Exception {
+        new AnnotationConfigApplicationContext(IndirectConfig.class);
+        Matcher<String> isFromIndirect = equalTo(IndirectImport.class.getName());
+        assertThat(importFrom.get(ImportSelector1.class), isFromIndirect);
+        assertThat(importFrom.get(ImportSelector2.class), isFromIndirect);
+        assertThat(importFrom.get(DeferredImportSelector1.class), isFromIndirect);
+        assertThat(importFrom.get(DeferredImportSelector2.class), isFromIndirect);
+    }
 
 
-	static class SampleImportSelector implements ImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-			BeanFactoryAware, EnvironmentAware {
-
-		static ClassLoader classLoader;
-		static ResourceLoader resourceLoader;
-		static BeanFactory beanFactory;
-		static Environment environment;
-
-		@Override
-		public void setBeanClassLoader(ClassLoader classLoader) {
-			SampleRegistrar.classLoader = classLoader;
-		}
-
-		@Override
-		public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-			SampleRegistrar.beanFactory = beanFactory;
-		}
-
-		@Override
-		public void setResourceLoader(ResourceLoader resourceLoader) {
-			SampleRegistrar.resourceLoader = resourceLoader;
-		}
-
-		@Override
-		public void setEnvironment(Environment environment) {
-			SampleRegistrar.environment = environment;
-		}
-
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			return new String[] {};
-		}
-	}
+    @Configuration
+    @Import(SampleImportSelector.class)
+    static class AwareConfig {
+    }
 
 
-	@Sample
-	@Configuration
-	static class Config {
-	}
+    static class SampleImportSelector
+            implements ImportSelector, BeanClassLoaderAware, ResourceLoaderAware, BeanFactoryAware, EnvironmentAware {
+
+        static ClassLoader classLoader;
+        static ResourceLoader resourceLoader;
+        static BeanFactory beanFactory;
+        static Environment environment;
+
+        @Override
+        public void setBeanClassLoader(ClassLoader classLoader) {
+            SampleRegistrar.classLoader = classLoader;
+        }
+
+        @Override
+        public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+            SampleRegistrar.beanFactory = beanFactory;
+        }
+
+        @Override
+        public void setResourceLoader(ResourceLoader resourceLoader) {
+            SampleRegistrar.resourceLoader = resourceLoader;
+        }
+
+        @Override
+        public void setEnvironment(Environment environment) {
+            SampleRegistrar.environment = environment;
+        }
+
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            return new String[] {};
+        }
+    }
 
 
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Import({DeferredImportSelector1.class, DeferredImportSelector2.class, ImportSelector1.class, ImportSelector2.class})
-	public static @interface Sample {
-	}
+    @Sample
+    @Configuration
+    static class Config {
+    }
 
 
-	public static class ImportSelector1 implements ImportSelector {
-
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
-			return new String[] { ImportedSelector1.class.getName() };
-		}
-	}
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Import({DeferredImportSelector1.class, DeferredImportSelector2.class, ImportSelector1.class,
+            ImportSelector2.class})
+    public static @interface Sample {
+    }
 
 
-	public static class ImportSelector2 implements ImportSelector {
+    public static class ImportSelector1 implements ImportSelector {
 
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
-			return new String[] { ImportedSelector2.class.getName() };
-		}
-	}
-
-
-	public static class DeferredImportSelector1 implements DeferredImportSelector, Ordered {
-
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
-			return new String[] { DeferredImportedSelector1.class.getName() };
-		}
-
-		@Override
-		public int getOrder() {
-			return Ordered.LOWEST_PRECEDENCE;
-		}
-	}
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
+            return new String[] {ImportedSelector1.class.getName()};
+        }
+    }
 
 
-	@Order(Ordered.HIGHEST_PRECEDENCE)
-	public static class DeferredImportSelector2 implements DeferredImportSelector {
+    public static class ImportSelector2 implements ImportSelector {
 
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
-			return new String[] { DeferredImportedSelector2.class.getName() };
-		}
-	}
-
-
-	@Configuration
-	public static class ImportedSelector1 {
-
-		@Bean
-		public String a() {
-			return "a";
-		}
-	}
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
+            return new String[] {ImportedSelector2.class.getName()};
+        }
+    }
 
 
-	@Configuration
-	public static class ImportedSelector2 {
+    public static class DeferredImportSelector1 implements DeferredImportSelector, Ordered {
 
-		@Bean
-		public String b() {
-			return "b";
-		}
-	}
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
+            return new String[] {DeferredImportedSelector1.class.getName()};
+        }
 
-
-	@Configuration
-	public static class DeferredImportedSelector1 {
-
-		@Bean
-		public String c() {
-			return "c";
-		}
-	}
+        @Override
+        public int getOrder() {
+            return Ordered.LOWEST_PRECEDENCE;
+        }
+    }
 
 
-	@Configuration
-	public static class DeferredImportedSelector2 {
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public static class DeferredImportSelector2 implements DeferredImportSelector {
 
-		@Bean
-		public String d() {
-			return "d";
-		}
-	}
-
-
-	@Configuration
-	@Import(IndirectImportSelector.class)
-	public static class IndirectConfig {
-	}
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            ImportSelectorTests.importFrom.put(getClass(), importingClassMetadata.getClassName());
+            return new String[] {DeferredImportedSelector2.class.getName()};
+        }
+    }
 
 
-	public static class IndirectImportSelector implements ImportSelector {
+    @Configuration
+    public static class ImportedSelector1 {
 
-		@Override
-		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			return new String[] {IndirectImport.class.getName()};
-		}
-	}
+        @Bean
+        public String a() {
+            return "a";
+        }
+    }
 
 
-	@Sample
-	public static class IndirectImport {
-	}
+    @Configuration
+    public static class ImportedSelector2 {
+
+        @Bean
+        public String b() {
+            return "b";
+        }
+    }
+
+
+    @Configuration
+    public static class DeferredImportedSelector1 {
+
+        @Bean
+        public String c() {
+            return "c";
+        }
+    }
+
+
+    @Configuration
+    public static class DeferredImportedSelector2 {
+
+        @Bean
+        public String d() {
+            return "d";
+        }
+    }
+
+
+    @Configuration
+    @Import(IndirectImportSelector.class)
+    public static class IndirectConfig {
+    }
+
+
+    public static class IndirectImportSelector implements ImportSelector {
+
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            return new String[] {IndirectImport.class.getName()};
+        }
+    }
+
+
+    @Sample
+    public static class IndirectImport {
+    }
 
 }

@@ -3,19 +3,19 @@
 
 <beans>
 
-	<bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
+    <bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
 
-	<bean id="messengerTarget" class="org.springframework.scripting.jruby.JRubyScriptFactory">
-		<constructor-arg value="classpath:org/springframework/scripting/jruby/Messenger.rb"/>
-		<constructor-arg value="org.springframework.scripting.Messenger"/>
-		<property name="message" value="Hello World!"/>
-	</bean>
+    <bean id="messengerTarget" class="org.springframework.scripting.jruby.JRubyScriptFactory">
+        <constructor-arg value="classpath:org/springframework/scripting/jruby/Messenger.rb"/>
+        <constructor-arg value="org.springframework.scripting.Messenger"/>
+        <property name="message" value="Hello World!"/>
+    </bean>
 
-	<bean id="messenger" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="target" ref="messengerTarget"/>
-		<property name="interceptorNames" value="advice"/>
-	</bean>
+    <bean id="messenger" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="messengerTarget"/>
+        <property name="interceptorNames" value="advice"/>
+    </bean>
 
-	<bean id="advice" class="org.springframework.tests.aop.advice.CountingBeforeAdvice"/>
+    <bean id="advice" class="org.springframework.tests.aop.advice.CountingBeforeAdvice"/>
 
 </beans>

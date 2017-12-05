@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.aop.aspectj.autoproxy;
@@ -35,7 +32,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
  *
  * @author Chris Beams
  */
-final class _TestTypes { }
+final class _TestTypes {
+}
 
 
 /**
@@ -44,13 +42,13 @@ final class _TestTypes { }
  */
 interface AnnotatedTestBean {
 
-	String doThis();
+    String doThis();
 
-	String doThat();
+    String doThat();
 
-	String doTheOther();
+    String doTheOther();
 
-	String[] doArray();
+    String[] doArray();
 
 }
 
@@ -61,7 +59,7 @@ interface AnnotatedTestBean {
  */
 @Retention(RetentionPolicy.RUNTIME)
 @interface TestAnnotation {
-	String value() ;
+    String value();
 }
 
 
@@ -71,29 +69,29 @@ interface AnnotatedTestBean {
  */
 class AnnotatedTestBeanImpl implements AnnotatedTestBean {
 
-	@Override
-	@TestAnnotation("this value")
-	public String doThis() {
-		return "doThis";
-	}
+    @Override
+    @TestAnnotation("this value")
+    public String doThis() {
+        return "doThis";
+    }
 
-	@Override
-	@TestAnnotation("that value")
-	public String doThat() {
-		return "doThat";
-	}
+    @Override
+    @TestAnnotation("that value")
+    public String doThat() {
+        return "doThat";
+    }
 
-	@Override
-	@TestAnnotation("array value")
-	public String[] doArray() {
-		return new String[] {"doThis", "doThat"};
-	}
+    @Override
+    @TestAnnotation("array value")
+    public String[] doArray() {
+        return new String[] {"doThis", "doThat"};
+    }
 
-	// not annotated
-	@Override
-	public String doTheOther() {
-		return "doTheOther";
-	}
+    // not annotated
+    @Override
+    public String doTheOther() {
+        return "doTheOther";
+    }
 
 }
 
@@ -103,8 +101,8 @@ class AnnotatedTestBeanImpl implements AnnotatedTestBean {
  */
 class AnnotationBindingTestAspect {
 
-	public String doWithAnnotation(ProceedingJoinPoint pjp, TestAnnotation testAnnotation) throws Throwable {
-		return testAnnotation.value();
-	}
+    public String doWithAnnotation(ProceedingJoinPoint pjp, TestAnnotation testAnnotation) throws Throwable {
+        return testAnnotation.value();
+    }
 
 }

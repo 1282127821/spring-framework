@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context;
@@ -60,33 +57,33 @@ package org.springframework.context;
  */
 public interface SmartLifecycle extends Lifecycle, Phased {
 
-	/**
-	 * Returns {@code true} if this {@code Lifecycle} component should get
-	 * started automatically by the container at the time that the containing
-	 * {@link ApplicationContext} gets refreshed.
-	 * <p>A value of {@code false} indicates that the component is intended to
-	 * be started through an explicit {@link #start()} call instead, analogous
-	 * to a plain {@link Lifecycle} implementation.
-	 * @see #start()
-	 * @see #getPhase()
-	 * @see LifecycleProcessor#onRefresh()
-	 * @see ConfigurableApplicationContext#refresh()
-	 */
-	boolean isAutoStartup();
+    /**
+     * Returns {@code true} if this {@code Lifecycle} component should get
+     * started automatically by the container at the time that the containing
+     * {@link ApplicationContext} gets refreshed.
+     * <p>A value of {@code false} indicates that the component is intended to
+     * be started through an explicit {@link #start()} call instead, analogous
+     * to a plain {@link Lifecycle} implementation.
+     * @see #start()
+     * @see #getPhase()
+     * @see LifecycleProcessor#onRefresh()
+     * @see ConfigurableApplicationContext#refresh()
+     */
+    boolean isAutoStartup();
 
-	/**
-	 * Indicates that a Lifecycle component must stop if it is currently running.
-	 * <p>The provided callback is used by the {@link LifecycleProcessor} to support
-	 * an ordered, and potentially concurrent, shutdown of all components having a
-	 * common shutdown order value. The callback <b>must</b> be executed after
-	 * the {@code SmartLifecycle} component does indeed stop.
-	 * <p>The {@link LifecycleProcessor} will call <i>only</i> this variant of the
-	 * {@code stop} method; i.e. {@link Lifecycle#stop()} will not be called for
-	 * {@code SmartLifecycle} implementations unless explicitly delegated to within
-	 * the implementation of this method.
-	 * @see #stop()
-	 * @see #getPhase()
-	 */
-	void stop(Runnable callback);
+    /**
+     * Indicates that a Lifecycle component must stop if it is currently running.
+     * <p>The provided callback is used by the {@link LifecycleProcessor} to support
+     * an ordered, and potentially concurrent, shutdown of all components having a
+     * common shutdown order value. The callback <b>must</b> be executed after
+     * the {@code SmartLifecycle} component does indeed stop.
+     * <p>The {@link LifecycleProcessor} will call <i>only</i> this variant of the
+     * {@code stop} method; i.e. {@link Lifecycle#stop()} will not be called for
+     * {@code SmartLifecycle} implementations unless explicitly delegated to within
+     * the implementation of this method.
+     * @see #stop()
+     * @see #getPhase()
+     */
+    void stop(Runnable callback);
 
 }

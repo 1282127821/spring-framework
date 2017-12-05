@@ -1,30 +1,26 @@
 /*
  * Copyright 2002-2011 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.annotation;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import javax.annotation.Resource;
 
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
 
 /**
  * Tests changes introduced for SPR-8874, allowing beans of primitive types to be looked
@@ -43,63 +39,65 @@ import static org.junit.Assert.*;
  */
 public class PrimitiveBeanLookupAndAutowiringTests {
 
-	@Test
-	public void primitiveLookupByName() {
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class);
-		boolean b = ctx.getBean("b", boolean.class);
-		assertThat(b, equalTo(true));
-		int i = ctx.getBean("i", int.class);
-		assertThat(i, equalTo(42));
-	}
+    @Test
+    public void primitiveLookupByName() {
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class);
+        boolean b = ctx.getBean("b", boolean.class);
+        assertThat(b, equalTo(true));
+        int i = ctx.getBean("i", int.class);
+        assertThat(i, equalTo(42));
+    }
 
-	@Test
-	public void primitiveLookupByType() {
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class);
-		boolean b = ctx.getBean(boolean.class);
-		assertThat(b, equalTo(true));
-		int i = ctx.getBean(int.class);
-		assertThat(i, equalTo(42));
-	}
+    @Test
+    public void primitiveLookupByType() {
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class);
+        boolean b = ctx.getBean(boolean.class);
+        assertThat(b, equalTo(true));
+        int i = ctx.getBean(int.class);
+        assertThat(i, equalTo(42));
+    }
 
-	@Test
-	public void primitiveAutowiredInjection() {
-		ApplicationContext ctx =
-				new AnnotationConfigApplicationContext(Config.class, AutowiredComponent.class);
-		assertThat(ctx.getBean(AutowiredComponent.class).b, equalTo(true));
-		assertThat(ctx.getBean(AutowiredComponent.class).i, equalTo(42));
-	}
+    @Test
+    public void primitiveAutowiredInjection() {
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class, AutowiredComponent.class);
+        assertThat(ctx.getBean(AutowiredComponent.class).b, equalTo(true));
+        assertThat(ctx.getBean(AutowiredComponent.class).i, equalTo(42));
+    }
 
-	@Test
-	public void primitiveResourceInjection() {
-		ApplicationContext ctx =
-				new AnnotationConfigApplicationContext(Config.class, ResourceComponent.class);
-		assertThat(ctx.getBean(ResourceComponent.class).b, equalTo(true));
-		assertThat(ctx.getBean(ResourceComponent.class).i, equalTo(42));
-	}
+    @Test
+    public void primitiveResourceInjection() {
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(Config.class, ResourceComponent.class);
+        assertThat(ctx.getBean(ResourceComponent.class).b, equalTo(true));
+        assertThat(ctx.getBean(ResourceComponent.class).i, equalTo(42));
+    }
 
 
-	@Configuration
-	static class Config {
-		@Bean
-		public boolean b() {
-			return true;
-		}
+    @Configuration
+    static class Config {
+        @Bean
+        public boolean b() {
+            return true;
+        }
 
-		@Bean
-		public int i() {
-			return 42;
-		}
-	}
-
-
-	static class AutowiredComponent {
-		@Autowired boolean b;
-		@Autowired int i;
-	}
+        @Bean
+        public int i() {
+            return 42;
+        }
+    }
 
 
-	static class ResourceComponent {
-		@Resource boolean b;
-		@Autowired int i;
-	}
+    static class AutowiredComponent {
+        @Autowired
+        boolean b;
+        @Autowired
+        int i;
+    }
+
+
+    static class ResourceComponent {
+        @Resource
+        boolean b;
+        @Autowired
+        int i;
+    }
 }

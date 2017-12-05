@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.jndi;
@@ -60,91 +57,85 @@ import org.springframework.aop.TargetSource;
  */
 public class JndiObjectTargetSource extends JndiObjectLocator implements TargetSource {
 
-	private boolean lookupOnStartup = true;
+    private boolean lookupOnStartup = true;
 
-	private boolean cache = true;
+    private boolean cache = true;
 
-	private Object cachedObject;
+    private Object cachedObject;
 
-	private Class<?> targetClass;
-
-
-	/**
-	 * Set whether to look up the JNDI object on startup. Default is "true".
-	 * <p>Can be turned off to allow for late availability of the JNDI object.
-	 * In this case, the JNDI object will be fetched on first access.
-	 * @see #setCache
-	 */
-	public void setLookupOnStartup(boolean lookupOnStartup) {
-		this.lookupOnStartup = lookupOnStartup;
-	}
-
-	/**
-	 * Set whether to cache the JNDI object once it has been located.
-	 * Default is "true".
-	 * <p>Can be turned off to allow for hot redeployment of JNDI objects.
-	 * In this case, the JNDI object will be fetched for each invocation.
-	 * @see #setLookupOnStartup
-	 */
-	public void setCache(boolean cache) {
-		this.cache = cache;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws NamingException {
-		super.afterPropertiesSet();
-		if (this.lookupOnStartup) {
-			Object object = lookup();
-			if (this.cache) {
-				this.cachedObject = object;
-			}
-			else {
-				this.targetClass = object.getClass();
-			}
-		}
-	}
+    private Class<?> targetClass;
 
 
-	@Override
-	public Class<?> getTargetClass() {
-		if (this.cachedObject != null) {
-			return this.cachedObject.getClass();
-		}
-		else if (this.targetClass != null) {
-			return this.targetClass;
-		}
-		else {
-			return getExpectedType();
-		}
-	}
+    /**
+     * Set whether to look up the JNDI object on startup. Default is "true".
+     * <p>Can be turned off to allow for late availability of the JNDI object.
+     * In this case, the JNDI object will be fetched on first access.
+     * @see #setCache
+     */
+    public void setLookupOnStartup(boolean lookupOnStartup) {
+        this.lookupOnStartup = lookupOnStartup;
+    }
 
-	@Override
-	public boolean isStatic() {
-		return (this.cachedObject != null);
-	}
+    /**
+     * Set whether to cache the JNDI object once it has been located.
+     * Default is "true".
+     * <p>Can be turned off to allow for hot redeployment of JNDI objects.
+     * In this case, the JNDI object will be fetched for each invocation.
+     * @see #setLookupOnStartup
+     */
+    public void setCache(boolean cache) {
+        this.cache = cache;
+    }
 
-	@Override
-	public Object getTarget() {
-		try {
-			if (this.lookupOnStartup || !this.cache) {
-				return (this.cachedObject != null ? this.cachedObject : lookup());
-			}
-			else {
-				synchronized (this) {
-					if (this.cachedObject == null) {
-						this.cachedObject = lookup();
-					}
-					return this.cachedObject;
-				}
-			}
-		}
-		catch (NamingException ex) {
-			throw new JndiLookupFailureException("JndiObjectTargetSource failed to obtain new target object", ex);
-		}
-	}
+    @Override
+    public void afterPropertiesSet() throws NamingException {
+        super.afterPropertiesSet();
+        if (this.lookupOnStartup) {
+            Object object = lookup();
+            if (this.cache) {
+                this.cachedObject = object;
+            } else {
+                this.targetClass = object.getClass();
+            }
+        }
+    }
 
-	@Override
-	public void releaseTarget(Object target) {
-	}
+
+    @Override
+    public Class<?> getTargetClass() {
+        if (this.cachedObject != null) {
+            return this.cachedObject.getClass();
+        } else if (this.targetClass != null) {
+            return this.targetClass;
+        } else {
+            return getExpectedType();
+        }
+    }
+
+    @Override
+    public boolean isStatic() {
+        return (this.cachedObject != null);
+    }
+
+    @Override
+    public Object getTarget() {
+        try {
+            if (this.lookupOnStartup || !this.cache) {
+                return (this.cachedObject != null ? this.cachedObject : lookup());
+            } else {
+                synchronized (this) {
+                    if (this.cachedObject == null) {
+                        this.cachedObject = lookup();
+                    }
+                    return this.cachedObject;
+                }
+            }
+        } catch (NamingException ex) {
+            throw new JndiLookupFailureException("JndiObjectTargetSource failed to obtain new target object", ex);
+        }
+    }
+
+    @Override
+    public void releaseTarget(Object target) {}
 
 }

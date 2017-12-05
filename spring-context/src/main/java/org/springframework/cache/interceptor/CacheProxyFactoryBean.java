@@ -1,17 +1,14 @@
 /*
  * Copyright 2010-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.cache.interceptor;
@@ -42,37 +39,37 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 @SuppressWarnings("serial")
 public class CacheProxyFactoryBean extends AbstractSingletonProxyFactoryBean {
 
-	private final CacheInterceptor cachingInterceptor = new CacheInterceptor();
+    private final CacheInterceptor cachingInterceptor = new CacheInterceptor();
 
-	private Pointcut pointcut;
+    private Pointcut pointcut;
 
 
-	/**
-	 * Set a pointcut, i.e a bean that can cause conditional invocation
-	 * of the CacheInterceptor depending on method and attributes passed.
-	 * Note: Additional interceptors are always invoked.
-	 * @see #setPreInterceptors
-	 * @see #setPostInterceptors
-	 */
-	public void setPointcut(Pointcut pointcut) {
-		this.pointcut = pointcut;
-	}
+    /**
+     * Set a pointcut, i.e a bean that can cause conditional invocation
+     * of the CacheInterceptor depending on method and attributes passed.
+     * Note: Additional interceptors are always invoked.
+     * @see #setPreInterceptors
+     * @see #setPostInterceptors
+     */
+    public void setPointcut(Pointcut pointcut) {
+        this.pointcut = pointcut;
+    }
 
-	@Override
-	protected Object createMainInterceptor() {
-		this.cachingInterceptor.afterPropertiesSet();
-		if (this.pointcut == null) {
-			// Rely on default pointcut.
-			throw new UnsupportedOperationException();
-		}
-		return new DefaultPointcutAdvisor(this.pointcut, this.cachingInterceptor);
-	}
+    @Override
+    protected Object createMainInterceptor() {
+        this.cachingInterceptor.afterPropertiesSet();
+        if (this.pointcut == null) {
+            // Rely on default pointcut.
+            throw new UnsupportedOperationException();
+        }
+        return new DefaultPointcutAdvisor(this.pointcut, this.cachingInterceptor);
+    }
 
-	/**
-	 * Set the sources used to find cache operations.
-	 */
-	public void setCacheOperationSources(CacheOperationSource... cacheOperationSources) {
-		this.cachingInterceptor.setCacheOperationSources(cacheOperationSources);
-	}
+    /**
+     * Set the sources used to find cache operations.
+     */
+    public void setCacheOperationSources(CacheOperationSource... cacheOperationSources) {
+        this.cachingInterceptor.setCacheOperationSources(cacheOperationSources);
+    }
 
 }

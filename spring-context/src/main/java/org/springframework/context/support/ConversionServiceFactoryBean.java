@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.support;
@@ -49,53 +46,53 @@ import org.springframework.core.convert.support.GenericConversionService;
  */
 public class ConversionServiceFactoryBean implements FactoryBean<ConversionService>, InitializingBean {
 
-	private Set<?> converters;
+    private Set<?> converters;
 
-	private GenericConversionService conversionService;
-
-
-	/**
-	 * Configure the set of custom converter objects that should be added:
-	 * implementing {@link org.springframework.core.convert.converter.Converter},
-	 * {@link org.springframework.core.convert.converter.ConverterFactory},
-	 * or {@link org.springframework.core.convert.converter.GenericConverter}.
-	 */
-	public void setConverters(Set<?> converters) {
-		this.converters = converters;
-	}
-
-	@Override
-	public void afterPropertiesSet() {
-		this.conversionService = createConversionService();
-		ConversionServiceFactory.registerConverters(this.converters, this.conversionService);
-	}
-
-	/**
-	 * Create the ConversionService instance returned by this factory bean.
-	 * <p>Creates a simple {@link GenericConversionService} instance by default.
-	 * Subclasses may override to customize the ConversionService instance that
-	 * gets created.
-	 */
-	protected GenericConversionService createConversionService() {
-		return new DefaultConversionService();
-	}
+    private GenericConversionService conversionService;
 
 
-	// implementing FactoryBean
+    /**
+     * Configure the set of custom converter objects that should be added:
+     * implementing {@link org.springframework.core.convert.converter.Converter},
+     * {@link org.springframework.core.convert.converter.ConverterFactory},
+     * or {@link org.springframework.core.convert.converter.GenericConverter}.
+     */
+    public void setConverters(Set<?> converters) {
+        this.converters = converters;
+    }
 
-	@Override
-	public ConversionService getObject() {
-		return this.conversionService;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        this.conversionService = createConversionService();
+        ConversionServiceFactory.registerConverters(this.converters, this.conversionService);
+    }
 
-	@Override
-	public Class<? extends ConversionService> getObjectType() {
-		return GenericConversionService.class;
-	}
+    /**
+     * Create the ConversionService instance returned by this factory bean.
+     * <p>Creates a simple {@link GenericConversionService} instance by default.
+     * Subclasses may override to customize the ConversionService instance that
+     * gets created.
+     */
+    protected GenericConversionService createConversionService() {
+        return new DefaultConversionService();
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    // implementing FactoryBean
+
+    @Override
+    public ConversionService getObject() {
+        return this.conversionService;
+    }
+
+    @Override
+    public Class<? extends ConversionService> getObjectType() {
+        return GenericConversionService.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

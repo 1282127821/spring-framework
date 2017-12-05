@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.annotation;
@@ -147,36 +144,36 @@ import java.lang.annotation.Target;
 @Repeatable(PropertySources.class)
 public @interface PropertySource {
 
-	/**
-	 * Indicate the name of this property source. If omitted, a name
-	 * will be generated based on the description of the underlying
-	 * resource.
-	 * @see org.springframework.core.env.PropertySource#getName()
-	 * @see org.springframework.core.io.Resource#getDescription()
-	 */
-	String name() default "";
+    /**
+     * Indicate the name of this property source. If omitted, a name
+     * will be generated based on the description of the underlying
+     * resource.
+     * @see org.springframework.core.env.PropertySource#getName()
+     * @see org.springframework.core.io.Resource#getDescription()
+     */
+    String name() default "";
 
-	/**
-	 * Indicate the resource location(s) of the properties file to be loaded.
-	 * For example, {@code "classpath:/com/myco/app.properties"} or
-	 * {@code "file:/path/to/file"}.
-	 * <p>Resource location wildcards (e.g. *&#42;/*.properties) are not permitted;
-	 * each location must evaluate to exactly one {@code .properties} resource.
-	 * <p>${...} placeholders will be resolved against any/all property sources already
-	 * registered with the {@code Environment}. See {@linkplain PropertySource above}
-	 * for examples.
-	 * <p>Each location will be added to the enclosing {@code Environment} as its own
-	 * property source, and in the order declared.
-	 */
-	String[] value();
+    /**
+     * Indicate the resource location(s) of the properties file to be loaded.
+     * For example, {@code "classpath:/com/myco/app.properties"} or
+     * {@code "file:/path/to/file"}.
+     * <p>Resource location wildcards (e.g. *&#42;/*.properties) are not permitted;
+     * each location must evaluate to exactly one {@code .properties} resource.
+     * <p>${...} placeholders will be resolved against any/all property sources already
+     * registered with the {@code Environment}. See {@linkplain PropertySource above}
+     * for examples.
+     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * property source, and in the order declared.
+     */
+    String[] value();
 
-	/**
-	 * Indicate if failure to find the a {@link #value() property resource} should be
-	 * ignored.
-	 * <p>{@code true} is appropriate if the properties file is completely optional.
-	 * Default is {@code false}.
-	 * @since 4.0
-	 */
-	boolean ignoreResourceNotFound() default false;
+    /**
+     * Indicate if failure to find the a {@link #value() property resource} should be
+     * ignored.
+     * <p>{@code true} is appropriate if the properties file is completely optional.
+     * Default is {@code false}.
+     * @since 4.0
+     */
+    boolean ignoreResourceNotFound() default false;
 
 }

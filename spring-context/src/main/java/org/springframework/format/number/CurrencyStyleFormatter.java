@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.format.number;
@@ -39,78 +36,77 @@ import java.util.Locale;
  */
 public class CurrencyStyleFormatter extends AbstractNumberFormatter {
 
-	private int fractionDigits = 2;
+    private int fractionDigits = 2;
 
-	private RoundingMode roundingMode;
+    private RoundingMode roundingMode;
 
-	private Currency currency;
+    private Currency currency;
 
-	private String pattern;
-
-
-	/**
-	 * Specify the desired number of fraction digits.
-	 * Default is 2.
-	 */
-	public void setFractionDigits(int fractionDigits) {
-		this.fractionDigits = fractionDigits;
-	}
-
-	/**
-	 * Specify the rounding mode to use for decimal parsing.
-	 * Default is {@link java.math.RoundingMode#UNNECESSARY}.
-	 */
-	public void setRoundingMode(RoundingMode roundingMode) {
-		this.roundingMode = roundingMode;
-	}
-
-	/**
-	 * Specify the currency, if known.
-	 */
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
-	/**
-	 * Sets the pattern to use to format number values.
-	 * If not specified, the default DecimalFormat pattern is used.
-	 * @see java.text.DecimalFormat#applyPattern(String)
-	 */
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-	}
+    private String pattern;
 
 
-	@Override
-	public BigDecimal parse(String text, Locale locale) throws ParseException {
-		BigDecimal decimal = (BigDecimal) super.parse(text, locale);
-		if (decimal != null) {
-			if (this.roundingMode != null) {
-				decimal = decimal.setScale(this.fractionDigits, this.roundingMode);
-			}
-			else {
-				decimal = decimal.setScale(this.fractionDigits);
-			}
-		}
-		return decimal;
-	}
+    /**
+     * Specify the desired number of fraction digits.
+     * Default is 2.
+     */
+    public void setFractionDigits(int fractionDigits) {
+        this.fractionDigits = fractionDigits;
+    }
 
-	@Override
-	protected NumberFormat getNumberFormat(Locale locale) {
-		DecimalFormat format = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
-		format.setParseBigDecimal(true);
-		format.setMaximumFractionDigits(this.fractionDigits);
-		format.setMinimumFractionDigits(this.fractionDigits);
-		if (this.roundingMode != null) {
-			format.setRoundingMode(this.roundingMode);
-		}
-		if (this.currency != null) {
-			format.setCurrency(this.currency);
-		}
-		if (this.pattern != null) {
-			format.applyPattern(this.pattern);
-		}
-		return format;
-	}
+    /**
+     * Specify the rounding mode to use for decimal parsing.
+     * Default is {@link java.math.RoundingMode#UNNECESSARY}.
+     */
+    public void setRoundingMode(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    /**
+     * Specify the currency, if known.
+     */
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    /**
+     * Sets the pattern to use to format number values.
+     * If not specified, the default DecimalFormat pattern is used.
+     * @see java.text.DecimalFormat#applyPattern(String)
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+
+    @Override
+    public BigDecimal parse(String text, Locale locale) throws ParseException {
+        BigDecimal decimal = (BigDecimal) super.parse(text, locale);
+        if (decimal != null) {
+            if (this.roundingMode != null) {
+                decimal = decimal.setScale(this.fractionDigits, this.roundingMode);
+            } else {
+                decimal = decimal.setScale(this.fractionDigits);
+            }
+        }
+        return decimal;
+    }
+
+    @Override
+    protected NumberFormat getNumberFormat(Locale locale) {
+        DecimalFormat format = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
+        format.setParseBigDecimal(true);
+        format.setMaximumFractionDigits(this.fractionDigits);
+        format.setMinimumFractionDigits(this.fractionDigits);
+        if (this.roundingMode != null) {
+            format.setRoundingMode(this.roundingMode);
+        }
+        if (this.currency != null) {
+            format.setCurrency(this.currency);
+        }
+        if (this.pattern != null) {
+            format.applyPattern(this.pattern);
+        }
+        return format;
+    }
 
 }

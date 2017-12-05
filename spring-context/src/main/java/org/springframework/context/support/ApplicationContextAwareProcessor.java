@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.context.support;
@@ -59,86 +56,85 @@ import org.springframework.util.StringValueResolver;
  */
 class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
-	private final ConfigurableApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
 
 
-	/**
-	 * Create a new ApplicationContextAwareProcessor for the given context.
-	 */
-	public ApplicationContextAwareProcessor(ConfigurableApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
+    /**
+     * Create a new ApplicationContextAwareProcessor for the given context.
+     */
+    public ApplicationContextAwareProcessor(ConfigurableApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
 
-	@Override
-	public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
-		AccessControlContext acc = null;
+    @Override
+    public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
+        AccessControlContext acc = null;
 
-		if (System.getSecurityManager() != null &&
-				(bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
-						bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
-						bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)) {
-			acc = this.applicationContext.getBeanFactory().getAccessControlContext();
-		}
+        if (System.getSecurityManager() != null
+                && (bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware
+                        || bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware
+                        || bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)) {
+            acc = this.applicationContext.getBeanFactory().getAccessControlContext();
+        }
 
-		if (acc != null) {
-			AccessController.doPrivileged(new PrivilegedAction<Object>() {
-				@Override
-				public Object run() {
-					invokeAwareInterfaces(bean);
-					return null;
-				}
-			}, acc);
-		}
-		else {
-			invokeAwareInterfaces(bean);
-		}
+        if (acc != null) {
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    invokeAwareInterfaces(bean);
+                    return null;
+                }
+            }, acc);
+        } else {
+            invokeAwareInterfaces(bean);
+        }
 
-		return bean;
-	}
+        return bean;
+    }
 
-	private void invokeAwareInterfaces(Object bean) {
-		if (bean instanceof Aware) {
-			if (bean instanceof EnvironmentAware) {
-				((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
-			}
-			if (bean instanceof EmbeddedValueResolverAware) {
-				((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(
-						new EmbeddedValueResolver(this.applicationContext.getBeanFactory()));
-			}
-			if (bean instanceof ResourceLoaderAware) {
-				((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
-			}
-			if (bean instanceof ApplicationEventPublisherAware) {
-				((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
-			}
-			if (bean instanceof MessageSourceAware) {
-				((MessageSourceAware) bean).setMessageSource(this.applicationContext);
-			}
-			if (bean instanceof ApplicationContextAware) {
-				((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
-			}
-		}
-	}
+    private void invokeAwareInterfaces(Object bean) {
+        if (bean instanceof Aware) {
+            if (bean instanceof EnvironmentAware) {
+                ((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+            }
+            if (bean instanceof EmbeddedValueResolverAware) {
+                ((EmbeddedValueResolverAware) bean)
+                        .setEmbeddedValueResolver(new EmbeddedValueResolver(this.applicationContext.getBeanFactory()));
+            }
+            if (bean instanceof ResourceLoaderAware) {
+                ((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+            }
+            if (bean instanceof ApplicationEventPublisherAware) {
+                ((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+            }
+            if (bean instanceof MessageSourceAware) {
+                ((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+            }
+            if (bean instanceof ApplicationContextAware) {
+                ((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+            }
+        }
+    }
 
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) {
-		return bean;
-	}
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        return bean;
+    }
 
 
-	private static class EmbeddedValueResolver implements StringValueResolver {
+    private static class EmbeddedValueResolver implements StringValueResolver {
 
-		private final ConfigurableBeanFactory beanFactory;
+        private final ConfigurableBeanFactory beanFactory;
 
-		public EmbeddedValueResolver(ConfigurableBeanFactory beanFactory) {
-			this.beanFactory = beanFactory;
-		}
+        public EmbeddedValueResolver(ConfigurableBeanFactory beanFactory) {
+            this.beanFactory = beanFactory;
+        }
 
-		@Override
-		public String resolveStringValue(String strVal) {
-			return this.beanFactory.resolveEmbeddedValue(strVal);
-		}
-	}
+        @Override
+        public String resolveStringValue(String strVal) {
+            return this.beanFactory.resolveEmbeddedValue(strVal);
+        }
+    }
 
 }

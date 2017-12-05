@@ -3,15 +3,21 @@
 
 <beans>
 
-	<bean id="a" class="org.springframework.tests.sample.beans.DependenciesBean"
-		dependency-check="objects">
-		<property name="spouse"><ref local="kerry"/></property>
-		<property name="age"><value>33</value></property>
-		<property name="name"><value>Rod</value></property>
-	</bean>
+    <bean id="a" class="org.springframework.tests.sample.beans.DependenciesBean"
+          dependency-check="objects">
+        <property name="spouse">
+            <ref local="kerry"/>
+        </property>
+        <property name="age">
+            <value>33</value>
+        </property>
+        <property name="name">
+            <value>Rod</value>
+        </property>
+    </bean>
 
-	<bean id="kerry" class="org.springframework.tests.sample.beans.TestBean"
-		dependency-check="none">
-	</bean>
+    <bean id="kerry" class="org.springframework.tests.sample.beans.TestBean"
+          dependency-check="none">
+    </bean>
 
 </beans>

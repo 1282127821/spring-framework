@@ -17,11 +17,12 @@
 package org.springframework.context.groovy
 
 import org.junit.Test
-
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.support.GenericGroovyApplicationContext
 
-import static groovy.test.GroovyAssert.*
+import static groovy.test.GroovyAssert.shouldFail
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNotNull
 
 /**
  * @author Jeff Brown
@@ -29,25 +30,25 @@ import static groovy.test.GroovyAssert.*
  */
 class GroovyApplicationContextDynamicBeanPropertyTests {
 
-	@Test
-	void testAccessDynamicBeanProperties() {
-		def ctx = new GenericGroovyApplicationContext();
-		ctx.reader.loadBeanDefinitions("org/springframework/context/groovy/applicationContext.groovy");
-		ctx.refresh()
+    @Test
+    void testAccessDynamicBeanProperties() {
+        def ctx = new GenericGroovyApplicationContext();
+        ctx.reader.loadBeanDefinitions("org/springframework/context/groovy/applicationContext.groovy");
+        ctx.refresh()
 
-		def framework = ctx.framework
-		assertNotNull 'could not find framework bean', framework
-		assertEquals 'Grails', framework
-	}
+        def framework = ctx.framework
+        assertNotNull 'could not find framework bean', framework
+        assertEquals 'Grails', framework
+    }
 
-	@Test
-	void testAccessingNonExistentBeanViaDynamicProperty() {
-		def ctx = new GenericGroovyApplicationContext();
-		ctx.reader.loadBeanDefinitions("org/springframework/context/groovy/applicationContext.groovy");
-		ctx.refresh()
+    @Test
+    void testAccessingNonExistentBeanViaDynamicProperty() {
+        def ctx = new GenericGroovyApplicationContext();
+        ctx.reader.loadBeanDefinitions("org/springframework/context/groovy/applicationContext.groovy");
+        ctx.refresh()
 
-		def err = shouldFail NoSuchBeanDefinitionException, { ctx.someNonExistentBean }
+        def err = shouldFail NoSuchBeanDefinitionException, { ctx.someNonExistentBean }
 
-		assertEquals "No bean named 'someNonExistentBean' is defined", err.message
-	}
+        assertEquals "No bean named 'someNonExistentBean' is defined", err.message
+    }
 }

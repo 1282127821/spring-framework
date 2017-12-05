@@ -14,31 +14,36 @@ package org.springframework.aop.framework;
  *
  * @author Chris Beams
  */
-final class _TestTypes { }
+final class _TestTypes {
+}
 
 
 interface IEcho {
-	int echoException(int i, Throwable t) throws Throwable;
-	int getA();
-	void setA(int a);
+    int echoException(int i, Throwable t) throws Throwable;
+
+    int getA();
+
+    void setA(int a);
 }
 
 
 class Echo implements IEcho {
-	private int a;
+    private int a;
 
-	@Override
-	public int echoException(int i, Throwable t) throws Throwable {
-		if (t != null)
-			throw t;
-		return i;
-	}
-	@Override
-	public void setA(int a) {
-		this.a = a;
-	}
-	@Override
-	public int getA() {
-		return a;
-	}
+    @Override
+    public int echoException(int i, Throwable t) throws Throwable {
+        if (t != null)
+            throw t;
+        return i;
+    }
+
+    @Override
+    public void setA(int a) {
+        this.a = a;
+    }
+
+    @Override
+    public int getA() {
+        return a;
+    }
 }

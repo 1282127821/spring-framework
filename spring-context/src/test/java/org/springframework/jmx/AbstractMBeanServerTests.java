@@ -1,20 +1,20 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.jmx;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -22,15 +22,12 @@ import javax.management.ObjectName;
 
 import org.junit.After;
 import org.junit.Before;
-
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.tests.TestGroup;
 import org.springframework.util.MBeanTestUtils;
-
-import static org.junit.Assert.*;
 
 /**
  * <strong>Note:</strong> certain tests throughout this hierarchy require the presence of
@@ -62,64 +59,61 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractMBeanServerTests {
 
-	protected MBeanServer server;
+    protected MBeanServer server;
 
 
-	@Before
-	public final void setUp() throws Exception {
-		this.server = MBeanServerFactory.createMBeanServer();
-		try {
-			onSetUp();
-		}
-		catch (Exception ex) {
-			releaseServer();
-			throw ex;
-		}
-	}
+    @Before
+    public final void setUp() throws Exception {
+        this.server = MBeanServerFactory.createMBeanServer();
+        try {
+            onSetUp();
+        } catch (Exception ex) {
+            releaseServer();
+            throw ex;
+        }
+    }
 
-	protected ConfigurableApplicationContext loadContext(String configLocation) {
-		GenericApplicationContext ctx = new GenericApplicationContext();
-		new XmlBeanDefinitionReader(ctx).loadBeanDefinitions(configLocation);
-		ctx.getDefaultListableBeanFactory().registerSingleton("server", this.server);
-		ctx.refresh();
-		return ctx;
-	}
+    protected ConfigurableApplicationContext loadContext(String configLocation) {
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        new XmlBeanDefinitionReader(ctx).loadBeanDefinitions(configLocation);
+        ctx.getDefaultListableBeanFactory().registerSingleton("server", this.server);
+        ctx.refresh();
+        return ctx;
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		releaseServer();
-		onTearDown();
-	}
+    @After
+    public void tearDown() throws Exception {
+        releaseServer();
+        onTearDown();
+    }
 
-	private void releaseServer() throws Exception {
-		MBeanServerFactory.releaseMBeanServer(getServer());
-		MBeanTestUtils.resetMBeanServers();
-	}
+    private void releaseServer() throws Exception {
+        MBeanServerFactory.releaseMBeanServer(getServer());
+        MBeanTestUtils.resetMBeanServers();
+    }
 
-	protected void onTearDown() throws Exception {
-	}
+    protected void onTearDown() throws Exception {}
 
-	protected void onSetUp() throws Exception {
-	}
+    protected void onSetUp() throws Exception {}
 
-	public MBeanServer getServer() {
-		return this.server;
-	}
+    public MBeanServer getServer() {
+        return this.server;
+    }
 
-	/**
-	 * Start the specified {@link MBeanExporter}.
-	 */
-	protected void start(MBeanExporter exporter) {
-		exporter.afterPropertiesSet();
-		exporter.afterSingletonsInstantiated();
-	}
+    /**
+     * Start the specified {@link MBeanExporter}.
+     */
+    protected void start(MBeanExporter exporter) {
+        exporter.afterPropertiesSet();
+        exporter.afterSingletonsInstantiated();
+    }
 
-	protected void assertIsRegistered(String message, ObjectName objectName) {
-		assertTrue(message, getServer().isRegistered(objectName));
-	}
+    protected void assertIsRegistered(String message, ObjectName objectName) {
+        assertTrue(message, getServer().isRegistered(objectName));
+    }
 
-	protected void assertIsNotRegistered(String message, ObjectName objectName) {
-		assertFalse(message, getServer().isRegistered(objectName));
-	}
+    protected void assertIsNotRegistered(String message, ObjectName objectName) {
+        assertFalse(message, getServer().isRegistered(objectName));
+    }
 
 }
