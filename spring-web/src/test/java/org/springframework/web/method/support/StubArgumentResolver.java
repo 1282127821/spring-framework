@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.method.support;
@@ -31,30 +28,30 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class StubArgumentResolver implements HandlerMethodArgumentResolver {
 
-	private final Class<?> parameterType;
+    private final Class<?> parameterType;
 
-	private final Object stubValue;
+    private final Object stubValue;
 
-	private List<MethodParameter> resolvedParameters = new ArrayList<MethodParameter>();
+    private List<MethodParameter> resolvedParameters = new ArrayList<MethodParameter>();
 
-	public StubArgumentResolver(Class<?> supportedParameterType, Object stubValue) {
-		this.parameterType = supportedParameterType;
-		this.stubValue = stubValue;
-	}
+    public StubArgumentResolver(Class<?> supportedParameterType, Object stubValue) {
+        this.parameterType = supportedParameterType;
+        this.stubValue = stubValue;
+    }
 
-	public List<MethodParameter> getResolvedParameters() {
-		return resolvedParameters;
-	}
+    public List<MethodParameter> getResolvedParameters() {
+        return resolvedParameters;
+    }
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.getParameterType().equals(this.parameterType);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.getParameterType().equals(this.parameterType);
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		this.resolvedParameters.add(parameter);
-		return this.stubValue;
-	}
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        this.resolvedParameters.add(parameter);
+        return this.stubValue;
+    }
 }

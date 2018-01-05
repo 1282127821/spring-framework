@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.context.support;
@@ -38,43 +35,43 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ServletContextParameterFactoryBean implements FactoryBean<String>, ServletContextAware {
 
-	private String initParamName;
+    private String initParamName;
 
-	private String paramValue;
-
-
-	/**
-	 * Set the name of the ServletContext init parameter to expose.
-	 */
-	public void setInitParamName(String initParamName) {
-		this.initParamName = initParamName;
-	}
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		if (this.initParamName == null) {
-			throw new IllegalArgumentException("initParamName is required");
-		}
-		this.paramValue = servletContext.getInitParameter(this.initParamName);
-		if (this.paramValue == null) {
-			throw new IllegalStateException("No ServletContext init parameter '" + this.initParamName + "' found");
-		}
-	}
+    private String paramValue;
 
 
-	@Override
-	public String getObject() {
-		return this.paramValue;
-	}
+    /**
+     * Set the name of the ServletContext init parameter to expose.
+     */
+    public void setInitParamName(String initParamName) {
+        this.initParamName = initParamName;
+    }
 
-	@Override
-	public Class<String> getObjectType() {
-		return String.class;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        if (this.initParamName == null) {
+            throw new IllegalArgumentException("initParamName is required");
+        }
+        this.paramValue = servletContext.getInitParameter(this.initParamName);
+        if (this.paramValue == null) {
+            throw new IllegalStateException("No ServletContext init parameter '" + this.initParamName + "' found");
+        }
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public String getObject() {
+        return this.paramValue;
+    }
+
+    @Override
+    public Class<String> getObjectType() {
+        return String.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

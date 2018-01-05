@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.http.client;
@@ -39,59 +36,58 @@ import org.springframework.util.concurrent.ListenableFuture;
  */
 final class SimpleBufferingAsyncClientHttpRequest extends AbstractBufferingAsyncClientHttpRequest {
 
-	private final HttpURLConnection connection;
+    private final HttpURLConnection connection;
 
-	private final boolean outputStreaming;
+    private final boolean outputStreaming;
 
-	private final AsyncListenableTaskExecutor taskExecutor;
-
-
-	SimpleBufferingAsyncClientHttpRequest(HttpURLConnection connection,
-			boolean outputStreaming, AsyncListenableTaskExecutor taskExecutor) {
-
-		this.connection = connection;
-		this.outputStreaming = outputStreaming;
-		this.taskExecutor = taskExecutor;
-	}
+    private final AsyncListenableTaskExecutor taskExecutor;
 
 
-	@Override
-	public HttpMethod getMethod() {
-		return HttpMethod.resolve(this.connection.getRequestMethod());
-	}
+    SimpleBufferingAsyncClientHttpRequest(HttpURLConnection connection, boolean outputStreaming,
+            AsyncListenableTaskExecutor taskExecutor) {
 
-	@Override
-	public URI getURI() {
-		try {
-			return this.connection.getURL().toURI();
-		}
-		catch (URISyntaxException ex) {
-			throw new IllegalStateException("Could not get HttpURLConnection URI: " + ex.getMessage(), ex);
-		}
-	}
+        this.connection = connection;
+        this.outputStreaming = outputStreaming;
+        this.taskExecutor = taskExecutor;
+    }
 
-	@Override
-	protected ListenableFuture<ClientHttpResponse> executeInternal(
-			final HttpHeaders headers, final byte[] bufferedOutput) throws IOException {
 
-		return this.taskExecutor.submitListenable(new Callable<ClientHttpResponse>() {
-			@Override
-			public ClientHttpResponse call() throws Exception {
-				SimpleBufferingClientHttpRequest.addHeaders(connection, headers);
-				// JDK <1.8 doesn't support getOutputStream with HTTP DELETE
-				if (HttpMethod.DELETE == getMethod() && bufferedOutput.length == 0) {
-					connection.setDoOutput(false);
-				}
-				if (connection.getDoOutput() && outputStreaming) {
-					connection.setFixedLengthStreamingMode(bufferedOutput.length);
-				}
-				connection.connect();
-				if (connection.getDoOutput()) {
-					FileCopyUtils.copy(bufferedOutput, connection.getOutputStream());
-				}
-				return new SimpleClientHttpResponse(connection);
-			}
-		});
-	}
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.resolve(this.connection.getRequestMethod());
+    }
+
+    @Override
+    public URI getURI() {
+        try {
+            return this.connection.getURL().toURI();
+        } catch (URISyntaxException ex) {
+            throw new IllegalStateException("Could not get HttpURLConnection URI: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    protected ListenableFuture<ClientHttpResponse> executeInternal(final HttpHeaders headers,
+            final byte[] bufferedOutput) throws IOException {
+
+        return this.taskExecutor.submitListenable(new Callable<ClientHttpResponse>() {
+            @Override
+            public ClientHttpResponse call() throws Exception {
+                SimpleBufferingClientHttpRequest.addHeaders(connection, headers);
+                // JDK <1.8 doesn't support getOutputStream with HTTP DELETE
+                if (HttpMethod.DELETE == getMethod() && bufferedOutput.length == 0) {
+                    connection.setDoOutput(false);
+                }
+                if (connection.getDoOutput() && outputStreaming) {
+                    connection.setFixedLengthStreamingMode(bufferedOutput.length);
+                }
+                connection.connect();
+                if (connection.getDoOutput()) {
+                    FileCopyUtils.copy(bufferedOutput, connection.getOutputStream());
+                }
+                return new SimpleClientHttpResponse(connection);
+            }
+        });
+    }
 
 }

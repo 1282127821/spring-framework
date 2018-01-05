@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.jsf;
@@ -72,97 +69,95 @@ import org.springframework.web.context.WebApplicationContext;
  */
 public class DelegatingNavigationHandlerProxy extends NavigationHandler {
 
-	/**
-	 * Default name of the target bean in the Spring application context:
-	 * "jsfNavigationHandler"
-	 */
-	public final static String DEFAULT_TARGET_BEAN_NAME = "jsfNavigationHandler";
+    /**
+     * Default name of the target bean in the Spring application context:
+     * "jsfNavigationHandler"
+     */
+    public final static String DEFAULT_TARGET_BEAN_NAME = "jsfNavigationHandler";
 
-	private NavigationHandler originalNavigationHandler;
-
-
-	/**
-	 * Create a new DelegatingNavigationHandlerProxy.
-	 */
-	public DelegatingNavigationHandlerProxy() {
-	}
-
-	/**
-	 * Create a new DelegatingNavigationHandlerProxy.
-	 * @param originalNavigationHandler the original NavigationHandler
-	 */
-	public DelegatingNavigationHandlerProxy(NavigationHandler originalNavigationHandler) {
-		this.originalNavigationHandler = originalNavigationHandler;
-	}
+    private NavigationHandler originalNavigationHandler;
 
 
-	/**
-	 * Handle the navigation request implied by the specified parameters,
-	 * through delegating to the target bean in the Spring application context.
-	 * <p>The target bean needs to extend the JSF NavigationHandler class.
-	 * If it extends Spring's DecoratingNavigationHandler, the overloaded
-	 * {@code handleNavigation} method with the original NavigationHandler
-	 * as argument will be used. Else, the standard {@code handleNavigation}
-	 * method will be called.
-	 */
-	@Override
-	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
-		NavigationHandler handler = getDelegate(facesContext);
-		if (handler instanceof DecoratingNavigationHandler) {
-			((DecoratingNavigationHandler) handler).handleNavigation(
-					facesContext, fromAction, outcome, this.originalNavigationHandler);
-		}
-		else {
-			handler.handleNavigation(facesContext, fromAction, outcome);
-		}
-	}
+    /**
+     * Create a new DelegatingNavigationHandlerProxy.
+     */
+    public DelegatingNavigationHandlerProxy() {}
 
-	/**
-	 * Return the target NavigationHandler to delegate to.
-	 * <p>By default, a bean with the name "jsfNavigationHandler" is obtained
-	 * from the Spring root WebApplicationContext, for every invocation.
-	 * @param facesContext the current JSF context
-	 * @return the target NavigationHandler to delegate to
-	 * @see #getTargetBeanName
-	 * @see #getBeanFactory
-	 */
-	protected NavigationHandler getDelegate(FacesContext facesContext) {
-		String targetBeanName = getTargetBeanName(facesContext);
-		return getBeanFactory(facesContext).getBean(targetBeanName, NavigationHandler.class);
-	}
+    /**
+     * Create a new DelegatingNavigationHandlerProxy.
+     * @param originalNavigationHandler the original NavigationHandler
+     */
+    public DelegatingNavigationHandlerProxy(NavigationHandler originalNavigationHandler) {
+        this.originalNavigationHandler = originalNavigationHandler;
+    }
 
-	/**
-	 * Return the name of the target NavigationHandler bean in the BeanFactory.
-	 * Default is "jsfNavigationHandler".
-	 * @param facesContext the current JSF context
-	 * @return the name of the target bean
-	 */
-	protected String getTargetBeanName(FacesContext facesContext) {
-		return DEFAULT_TARGET_BEAN_NAME;
-	}
 
-	/**
-	 * Retrieve the Spring BeanFactory to delegate bean name resolution to.
-	 * <p>Default implementation delegates to {@code getWebApplicationContext}.
-	 * Can be overridden to provide an arbitrary BeanFactory reference to resolve
-	 * against; usually, this will be a full Spring ApplicationContext.
-	 * @param facesContext the current JSF context
-	 * @return the Spring BeanFactory (never {@code null})
-	 * @see #getWebApplicationContext
-	 */
-	protected BeanFactory getBeanFactory(FacesContext facesContext) {
-		return getWebApplicationContext(facesContext);
-	}
+    /**
+     * Handle the navigation request implied by the specified parameters,
+     * through delegating to the target bean in the Spring application context.
+     * <p>The target bean needs to extend the JSF NavigationHandler class.
+     * If it extends Spring's DecoratingNavigationHandler, the overloaded
+     * {@code handleNavigation} method with the original NavigationHandler
+     * as argument will be used. Else, the standard {@code handleNavigation}
+     * method will be called.
+     */
+    @Override
+    public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
+        NavigationHandler handler = getDelegate(facesContext);
+        if (handler instanceof DecoratingNavigationHandler) {
+            ((DecoratingNavigationHandler) handler).handleNavigation(facesContext, fromAction, outcome,
+                    this.originalNavigationHandler);
+        } else {
+            handler.handleNavigation(facesContext, fromAction, outcome);
+        }
+    }
 
-	/**
-	 * Retrieve the web application context to delegate bean name resolution to.
-	 * <p>Default implementation delegates to FacesContextUtils.
-	 * @param facesContext the current JSF context
-	 * @return the Spring web application context (never {@code null})
-	 * @see FacesContextUtils#getRequiredWebApplicationContext
-	 */
-	protected WebApplicationContext getWebApplicationContext(FacesContext facesContext) {
-		return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
-	}
+    /**
+     * Return the target NavigationHandler to delegate to.
+     * <p>By default, a bean with the name "jsfNavigationHandler" is obtained
+     * from the Spring root WebApplicationContext, for every invocation.
+     * @param facesContext the current JSF context
+     * @return the target NavigationHandler to delegate to
+     * @see #getTargetBeanName
+     * @see #getBeanFactory
+     */
+    protected NavigationHandler getDelegate(FacesContext facesContext) {
+        String targetBeanName = getTargetBeanName(facesContext);
+        return getBeanFactory(facesContext).getBean(targetBeanName, NavigationHandler.class);
+    }
+
+    /**
+     * Return the name of the target NavigationHandler bean in the BeanFactory.
+     * Default is "jsfNavigationHandler".
+     * @param facesContext the current JSF context
+     * @return the name of the target bean
+     */
+    protected String getTargetBeanName(FacesContext facesContext) {
+        return DEFAULT_TARGET_BEAN_NAME;
+    }
+
+    /**
+     * Retrieve the Spring BeanFactory to delegate bean name resolution to.
+     * <p>Default implementation delegates to {@code getWebApplicationContext}.
+     * Can be overridden to provide an arbitrary BeanFactory reference to resolve
+     * against; usually, this will be a full Spring ApplicationContext.
+     * @param facesContext the current JSF context
+     * @return the Spring BeanFactory (never {@code null})
+     * @see #getWebApplicationContext
+     */
+    protected BeanFactory getBeanFactory(FacesContext facesContext) {
+        return getWebApplicationContext(facesContext);
+    }
+
+    /**
+     * Retrieve the web application context to delegate bean name resolution to.
+     * <p>Default implementation delegates to FacesContextUtils.
+     * @param facesContext the current JSF context
+     * @return the Spring web application context (never {@code null})
+     * @see FacesContextUtils#getRequiredWebApplicationContext
+     */
+    protected WebApplicationContext getWebApplicationContext(FacesContext facesContext) {
+        return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
+    }
 
 }

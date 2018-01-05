@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.mock.web.test;
@@ -21,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.http.HttpHeaders;
@@ -49,110 +47,107 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  */
 public class MockMultipartHttpServletRequest extends MockHttpServletRequest implements MultipartHttpServletRequest {
 
-	private final MultiValueMap<String, MultipartFile> multipartFiles =
-			new LinkedMultiValueMap<String, MultipartFile>();
+    private final MultiValueMap<String, MultipartFile> multipartFiles =
+            new LinkedMultiValueMap<String, MultipartFile>();
 
 
-	/**
-	 * Create a new {@code MockMultipartHttpServletRequest} with a default
-	 * {@link MockServletContext}.
-	 * @see #MockMultipartHttpServletRequest(ServletContext)
-	 */
-	public MockMultipartHttpServletRequest() {
-		this(null);
-	}
+    /**
+     * Create a new {@code MockMultipartHttpServletRequest} with a default
+     * {@link MockServletContext}.
+     * @see #MockMultipartHttpServletRequest(ServletContext)
+     */
+    public MockMultipartHttpServletRequest() {
+        this(null);
+    }
 
-	/**
-	 * Create a new {@code MockMultipartHttpServletRequest} with the supplied {@link ServletContext}.
-	 * @param servletContext the ServletContext that the request runs in
-	 * (may be {@code null} to use a default {@link MockServletContext})
-	 */
-	public MockMultipartHttpServletRequest(ServletContext servletContext) {
-		super(servletContext);
-		setMethod("POST");
-		setContentType("multipart/form-data");
-	}
+    /**
+     * Create a new {@code MockMultipartHttpServletRequest} with the supplied {@link ServletContext}.
+     * @param servletContext the ServletContext that the request runs in
+     * (may be {@code null} to use a default {@link MockServletContext})
+     */
+    public MockMultipartHttpServletRequest(ServletContext servletContext) {
+        super(servletContext);
+        setMethod("POST");
+        setContentType("multipart/form-data");
+    }
 
 
-	/**
-	 * Add a file to this request. The parameter name from the multipart
-	 * form is taken from the {@link MultipartFile#getName()}.
-	 * @param file multipart file to be added
-	 */
-	public void addFile(MultipartFile file) {
-		Assert.notNull(file, "MultipartFile must not be null");
-		this.multipartFiles.add(file.getName(), file);
-	}
+    /**
+     * Add a file to this request. The parameter name from the multipart
+     * form is taken from the {@link MultipartFile#getName()}.
+     * @param file multipart file to be added
+     */
+    public void addFile(MultipartFile file) {
+        Assert.notNull(file, "MultipartFile must not be null");
+        this.multipartFiles.add(file.getName(), file);
+    }
 
-	@Override
-	public Iterator<String> getFileNames() {
-		return this.multipartFiles.keySet().iterator();
-	}
+    @Override
+    public Iterator<String> getFileNames() {
+        return this.multipartFiles.keySet().iterator();
+    }
 
-	@Override
-	public MultipartFile getFile(String name) {
-		return this.multipartFiles.getFirst(name);
-	}
+    @Override
+    public MultipartFile getFile(String name) {
+        return this.multipartFiles.getFirst(name);
+    }
 
-	@Override
-	public List<MultipartFile> getFiles(String name) {
-		List<MultipartFile> multipartFiles = this.multipartFiles.get(name);
-		if (multipartFiles != null) {
-			return multipartFiles;
-		}
-		else {
-			return Collections.emptyList();
-		}
-	}
+    @Override
+    public List<MultipartFile> getFiles(String name) {
+        List<MultipartFile> multipartFiles = this.multipartFiles.get(name);
+        if (multipartFiles != null) {
+            return multipartFiles;
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
-	@Override
-	public Map<String, MultipartFile> getFileMap() {
-		return this.multipartFiles.toSingleValueMap();
-	}
+    @Override
+    public Map<String, MultipartFile> getFileMap() {
+        return this.multipartFiles.toSingleValueMap();
+    }
 
-	@Override
-	public MultiValueMap<String, MultipartFile> getMultiFileMap() {
-		return new LinkedMultiValueMap<String, MultipartFile>(this.multipartFiles);
-	}
+    @Override
+    public MultiValueMap<String, MultipartFile> getMultiFileMap() {
+        return new LinkedMultiValueMap<String, MultipartFile>(this.multipartFiles);
+    }
 
-	@Override
-	public String getMultipartContentType(String paramOrFileName) {
-		MultipartFile file = getFile(paramOrFileName);
-		if (file != null) {
-			return file.getContentType();
-		}
-		else {
-			return null;
-		}
-	}
+    @Override
+    public String getMultipartContentType(String paramOrFileName) {
+        MultipartFile file = getFile(paramOrFileName);
+        if (file != null) {
+            return file.getContentType();
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public HttpMethod getRequestMethod() {
-		return HttpMethod.resolve(getMethod());
-	}
+    @Override
+    public HttpMethod getRequestMethod() {
+        return HttpMethod.resolve(getMethod());
+    }
 
-	@Override
-	public HttpHeaders getRequestHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		Enumeration<String> headerNames = getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			headers.put(headerName, Collections.list(getHeaders(headerName)));
-		}
-		return headers;
-	}
+    @Override
+    public HttpHeaders getRequestHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        Enumeration<String> headerNames = getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            headers.put(headerName, Collections.list(getHeaders(headerName)));
+        }
+        return headers;
+    }
 
-	@Override
-	public HttpHeaders getMultipartHeaders(String paramOrFileName) {
-		String contentType = getMultipartContentType(paramOrFileName);
-		if (contentType != null) {
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Type", contentType);
-			return headers;
-		}
-		else {
-			return null;
-		}
-	}
+    @Override
+    public HttpHeaders getMultipartHeaders(String paramOrFileName) {
+        String contentType = getMultipartContentType(paramOrFileName);
+        if (contentType != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", contentType);
+            return headers;
+        } else {
+            return null;
+        }
+    }
 
 }

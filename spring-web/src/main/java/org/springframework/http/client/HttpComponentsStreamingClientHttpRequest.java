@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.http.client;
@@ -29,7 +26,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -45,119 +41,121 @@ import org.springframework.http.StreamingHttpOutputMessage;
  * @since 4.0
  * @see HttpComponentsClientHttpRequestFactory#createRequest(java.net.URI, org.springframework.http.HttpMethod)
  */
-final class HttpComponentsStreamingClientHttpRequest extends AbstractClientHttpRequest implements StreamingHttpOutputMessage {
+final class HttpComponentsStreamingClientHttpRequest extends AbstractClientHttpRequest
+        implements StreamingHttpOutputMessage {
 
-	private final HttpClient httpClient;
+    private final HttpClient httpClient;
 
-	private final HttpUriRequest httpRequest;
+    private final HttpUriRequest httpRequest;
 
-	private final HttpContext httpContext;
+    private final HttpContext httpContext;
 
-	private Body body;
-
-
-	HttpComponentsStreamingClientHttpRequest(HttpClient httpClient, HttpUriRequest httpRequest, HttpContext httpContext) {
-		this.httpClient = httpClient;
-		this.httpRequest = httpRequest;
-		this.httpContext = httpContext;
-	}
+    private Body body;
 
 
-	@Override
-	public HttpMethod getMethod() {
-		return HttpMethod.resolve(this.httpRequest.getMethod());
-	}
-
-	@Override
-	public URI getURI() {
-		return this.httpRequest.getURI();
-	}
-
-	@Override
-	public void setBody(Body body) {
-		assertNotExecuted();
-		this.body = body;
-	}
-
-	@Override
-	protected OutputStream getBodyInternal(HttpHeaders headers) throws IOException {
-		throw new UnsupportedOperationException("getBody not supported");
-	}
-
-	@Override
-	protected ClientHttpResponse executeInternal(HttpHeaders headers) throws IOException {
-		HttpComponentsClientHttpRequest.addHeaders(this.httpRequest, headers);
-
-		if (this.httpRequest instanceof HttpEntityEnclosingRequest && body != null) {
-			HttpEntityEnclosingRequest entityEnclosingRequest = (HttpEntityEnclosingRequest) this.httpRequest;
-			HttpEntity requestEntity = new StreamingHttpEntity(getHeaders(), body);
-			entityEnclosingRequest.setEntity(requestEntity);
-		}
-
-		HttpResponse httpResponse = this.httpClient.execute(this.httpRequest, this.httpContext);
-		return new HttpComponentsClientHttpResponse(httpResponse);
-	}
+    HttpComponentsStreamingClientHttpRequest(HttpClient httpClient, HttpUriRequest httpRequest,
+            HttpContext httpContext) {
+        this.httpClient = httpClient;
+        this.httpRequest = httpRequest;
+        this.httpContext = httpContext;
+    }
 
 
-	private static class StreamingHttpEntity implements HttpEntity {
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.resolve(this.httpRequest.getMethod());
+    }
 
-		private final HttpHeaders headers;
+    @Override
+    public URI getURI() {
+        return this.httpRequest.getURI();
+    }
 
-		private final StreamingHttpOutputMessage.Body body;
+    @Override
+    public void setBody(Body body) {
+        assertNotExecuted();
+        this.body = body;
+    }
 
-		public StreamingHttpEntity(HttpHeaders headers, StreamingHttpOutputMessage.Body body) {
-			this.headers = headers;
-			this.body = body;
-		}
+    @Override
+    protected OutputStream getBodyInternal(HttpHeaders headers) throws IOException {
+        throw new UnsupportedOperationException("getBody not supported");
+    }
 
-		@Override
-		public boolean isRepeatable() {
-			return false;
-		}
+    @Override
+    protected ClientHttpResponse executeInternal(HttpHeaders headers) throws IOException {
+        HttpComponentsClientHttpRequest.addHeaders(this.httpRequest, headers);
 
-		@Override
-		public boolean isChunked() {
-			return false;
-		}
+        if (this.httpRequest instanceof HttpEntityEnclosingRequest && body != null) {
+            HttpEntityEnclosingRequest entityEnclosingRequest = (HttpEntityEnclosingRequest) this.httpRequest;
+            HttpEntity requestEntity = new StreamingHttpEntity(getHeaders(), body);
+            entityEnclosingRequest.setEntity(requestEntity);
+        }
 
-		@Override
-		public long getContentLength() {
-			return this.headers.getContentLength();
-		}
+        HttpResponse httpResponse = this.httpClient.execute(this.httpRequest, this.httpContext);
+        return new HttpComponentsClientHttpResponse(httpResponse);
+    }
 
-		@Override
-		public Header getContentType() {
-			MediaType contentType = this.headers.getContentType();
-			return (contentType != null ? new BasicHeader("Content-Type", contentType.toString()) : null);
-		}
 
-		@Override
-		public Header getContentEncoding() {
-			String contentEncoding = this.headers.getFirst("Content-Encoding");
-			return (contentEncoding != null ? new BasicHeader("Content-Encoding", contentEncoding) : null);
+    private static class StreamingHttpEntity implements HttpEntity {
 
-		}
+        private final HttpHeaders headers;
 
-		@Override
-		public InputStream getContent() throws IOException, IllegalStateException {
-			throw new IllegalStateException("No content available");
-		}
+        private final StreamingHttpOutputMessage.Body body;
 
-		@Override
-		public void writeTo(OutputStream outputStream) throws IOException {
-			this.body.writeTo(outputStream);
-		}
+        public StreamingHttpEntity(HttpHeaders headers, StreamingHttpOutputMessage.Body body) {
+            this.headers = headers;
+            this.body = body;
+        }
 
-		@Override
-		public boolean isStreaming() {
-			return true;
-		}
+        @Override
+        public boolean isRepeatable() {
+            return false;
+        }
 
-		@Override
-		@Deprecated
-		public void consumeContent() throws IOException {
-			throw new UnsupportedOperationException();
-		}
-	}
+        @Override
+        public boolean isChunked() {
+            return false;
+        }
+
+        @Override
+        public long getContentLength() {
+            return this.headers.getContentLength();
+        }
+
+        @Override
+        public Header getContentType() {
+            MediaType contentType = this.headers.getContentType();
+            return (contentType != null ? new BasicHeader("Content-Type", contentType.toString()) : null);
+        }
+
+        @Override
+        public Header getContentEncoding() {
+            String contentEncoding = this.headers.getFirst("Content-Encoding");
+            return (contentEncoding != null ? new BasicHeader("Content-Encoding", contentEncoding) : null);
+
+        }
+
+        @Override
+        public InputStream getContent() throws IOException, IllegalStateException {
+            throw new IllegalStateException("No content available");
+        }
+
+        @Override
+        public void writeTo(OutputStream outputStream) throws IOException {
+            this.body.writeTo(outputStream);
+        }
+
+        @Override
+        public boolean isStreaming() {
+            return true;
+        }
+
+        @Override
+        @Deprecated
+        public void consumeContent() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+    }
 
 }

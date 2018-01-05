@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.context.support;
@@ -43,43 +40,43 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ServletContextAttributeFactoryBean implements FactoryBean<Object>, ServletContextAware {
 
-	private String attributeName;
+    private String attributeName;
 
-	private Object attribute;
-
-
-	/**
-	 * Set the name of the ServletContext attribute to expose.
-	 */
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
-	}
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		if (this.attributeName == null) {
-			throw new IllegalArgumentException("Property 'attributeName' is required");
-		}
-		this.attribute = servletContext.getAttribute(this.attributeName);
-		if (this.attribute == null) {
-			throw new IllegalStateException("No ServletContext attribute '" + this.attributeName + "' found");
-		}
-	}
+    private Object attribute;
 
 
-	@Override
-	public Object getObject() throws Exception {
-		return this.attribute;
-	}
+    /**
+     * Set the name of the ServletContext attribute to expose.
+     */
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return (this.attribute != null ? this.attribute.getClass() : null);
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        if (this.attributeName == null) {
+            throw new IllegalArgumentException("Property 'attributeName' is required");
+        }
+        this.attribute = servletContext.getAttribute(this.attributeName);
+        if (this.attribute == null) {
+            throw new IllegalStateException("No ServletContext attribute '" + this.attributeName + "' found");
+        }
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public Object getObject() throws Exception {
+        return this.attribute;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return (this.attribute != null ? this.attribute.getClass() : null);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

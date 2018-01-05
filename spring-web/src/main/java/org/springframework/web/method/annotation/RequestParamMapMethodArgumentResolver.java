@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.method.annotation;
@@ -47,41 +44,40 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class RequestParamMapMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		RequestParam requestParam = parameter.getParameterAnnotation(RequestParam.class);
-		if (requestParam != null) {
-			if (Map.class.isAssignableFrom(parameter.getParameterType())) {
-				return !StringUtils.hasText(requestParam.name());
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        RequestParam requestParam = parameter.getParameterAnnotation(RequestParam.class);
+        if (requestParam != null) {
+            if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+                return !StringUtils.hasText(requestParam.name());
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		Class<?> paramType = parameter.getParameterType();
+        Class<?> paramType = parameter.getParameterType();
 
-		Map<String, String[]> parameterMap = webRequest.getParameterMap();
-		if (MultiValueMap.class.isAssignableFrom(paramType)) {
-			MultiValueMap<String, String> result = new LinkedMultiValueMap<String, String>(parameterMap.size());
-			for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-				for (String value : entry.getValue()) {
-					result.add(entry.getKey(), value);
-				}
-			}
-			return result;
-		}
-		else {
-			Map<String, String> result = new LinkedHashMap<String, String>(parameterMap.size());
-			for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-				if (entry.getValue().length > 0) {
-					result.put(entry.getKey(), entry.getValue()[0]);
-				}
-			}
-			return result;
-		}
-	}
+        Map<String, String[]> parameterMap = webRequest.getParameterMap();
+        if (MultiValueMap.class.isAssignableFrom(paramType)) {
+            MultiValueMap<String, String> result = new LinkedMultiValueMap<String, String>(parameterMap.size());
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                for (String value : entry.getValue()) {
+                    result.add(entry.getKey(), value);
+                }
+            }
+            return result;
+        } else {
+            Map<String, String> result = new LinkedHashMap<String, String>(parameterMap.size());
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                if (entry.getValue().length > 0) {
+                    result.put(entry.getKey(), entry.getValue()[0]);
+                }
+            }
+            return result;
+        }
+    }
 }

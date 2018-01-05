@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2013 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.jsf.el;
@@ -66,28 +63,28 @@ import org.springframework.web.jsf.FacesContextUtils;
  */
 public class SpringBeanFacesELResolver extends SpringBeanELResolver {
 
-	/**
-	 * This implementation delegates to {@link #getWebApplicationContext}.
-	 * Can be overridden to provide an arbitrary BeanFactory reference to resolve
-	 * against; usually, this will be a full Spring ApplicationContext.
-	 * @param elContext the current JSF ELContext
-	 * @return the Spring BeanFactory (never {@code null})
-	 */
-	@Override
-	protected BeanFactory getBeanFactory(ELContext elContext) {
-		return getWebApplicationContext(elContext);
-	}
+    /**
+     * This implementation delegates to {@link #getWebApplicationContext}.
+     * Can be overridden to provide an arbitrary BeanFactory reference to resolve
+     * against; usually, this will be a full Spring ApplicationContext.
+     * @param elContext the current JSF ELContext
+     * @return the Spring BeanFactory (never {@code null})
+     */
+    @Override
+    protected BeanFactory getBeanFactory(ELContext elContext) {
+        return getWebApplicationContext(elContext);
+    }
 
-	/**
-	 * Retrieve the web application context to delegate bean name resolution to.
-	 * <p>The default implementation delegates to FacesContextUtils.
-	 * @param elContext the current JSF ELContext
-	 * @return the Spring web application context (never {@code null})
-	 * @see org.springframework.web.jsf.FacesContextUtils#getRequiredWebApplicationContext
-	 */
-	protected WebApplicationContext getWebApplicationContext(ELContext elContext) {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
-	}
+    /**
+     * Retrieve the web application context to delegate bean name resolution to.
+     * <p>The default implementation delegates to FacesContextUtils.
+     * @param elContext the current JSF ELContext
+     * @return the Spring web application context (never {@code null})
+     * @see org.springframework.web.jsf.FacesContextUtils#getRequiredWebApplicationContext
+     */
+    protected WebApplicationContext getWebApplicationContext(ELContext elContext) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
+    }
 
 }
