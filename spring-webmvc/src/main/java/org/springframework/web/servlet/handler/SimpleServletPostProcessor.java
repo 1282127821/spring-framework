@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.handler;
@@ -19,6 +16,7 @@ package org.springframework.web.servlet.handler;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -64,103 +62,102 @@ import org.springframework.web.context.ServletContextAware;
  * @see javax.servlet.Servlet#destroy()
  * @see SimpleServletHandlerAdapter
  */
-public class SimpleServletPostProcessor implements
-		DestructionAwareBeanPostProcessor, ServletContextAware, ServletConfigAware {
+public class SimpleServletPostProcessor
+        implements DestructionAwareBeanPostProcessor, ServletContextAware, ServletConfigAware {
 
-	private boolean useSharedServletConfig = true;
+    private boolean useSharedServletConfig = true;
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
-	private ServletConfig servletConfig;
-
-
-	/**
-	 * Set whether to use the shared ServletConfig object passed in
-	 * through {@code setServletConfig}, if available.
-	 * <p>Default is "true". Turn this setting to "false" to pass in
-	 * a mock ServletConfig object with the bean name as servlet name,
-	 * holding the current ServletContext.
-	 * @see #setServletConfig
-	 */
-	public void setUseSharedServletConfig(boolean useSharedServletConfig) {
-		this.useSharedServletConfig = useSharedServletConfig;
-	}
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
-
-	@Override
-	public void setServletConfig(ServletConfig servletConfig) {
-		this.servletConfig = servletConfig;
-	}
+    private ServletConfig servletConfig;
 
 
-	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
+    /**
+     * Set whether to use the shared ServletConfig object passed in
+     * through {@code setServletConfig}, if available.
+     * <p>Default is "true". Turn this setting to "false" to pass in
+     * a mock ServletConfig object with the bean name as servlet name,
+     * holding the current ServletContext.
+     * @see #setServletConfig
+     */
+    public void setUseSharedServletConfig(boolean useSharedServletConfig) {
+        this.useSharedServletConfig = useSharedServletConfig;
+    }
 
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof Servlet) {
-			ServletConfig config = this.servletConfig;
-			if (config == null || !this.useSharedServletConfig) {
-				config = new DelegatingServletConfig(beanName, this.servletContext);
-			}
-			try {
-				((Servlet) bean).init(config);
-			}
-			catch (ServletException ex) {
-				throw new BeanInitializationException("Servlet.init threw exception", ex);
-			}
-		}
-		return bean;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	@Override
-	public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
-		if (bean instanceof Servlet) {
-			((Servlet) bean).destroy();
-		}
-	}
+    @Override
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
+    }
 
 
-	/**
-	 * Internal implementation of the {@link ServletConfig} interface,
-	 * to be passed to the wrapped servlet.
-	 */
-	private static class DelegatingServletConfig implements ServletConfig {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
 
-		private final String servletName;
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof Servlet) {
+            ServletConfig config = this.servletConfig;
+            if (config == null || !this.useSharedServletConfig) {
+                config = new DelegatingServletConfig(beanName, this.servletContext);
+            }
+            try {
+                ((Servlet) bean).init(config);
+            } catch (ServletException ex) {
+                throw new BeanInitializationException("Servlet.init threw exception", ex);
+            }
+        }
+        return bean;
+    }
 
-		private final ServletContext servletContext;
+    @Override
+    public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
+        if (bean instanceof Servlet) {
+            ((Servlet) bean).destroy();
+        }
+    }
 
-		public DelegatingServletConfig(String servletName, ServletContext servletContext) {
-			this.servletName = servletName;
-			this.servletContext = servletContext;
-		}
 
-		@Override
-		public String getServletName() {
-			return this.servletName;
-		}
+    /**
+     * Internal implementation of the {@link ServletConfig} interface,
+     * to be passed to the wrapped servlet.
+     */
+    private static class DelegatingServletConfig implements ServletConfig {
 
-		@Override
-		public ServletContext getServletContext() {
-			return this.servletContext;
-		}
+        private final String servletName;
 
-		@Override
-		public String getInitParameter(String paramName) {
-			return null;
-		}
+        private final ServletContext servletContext;
 
-		@Override
-		public Enumeration<String> getInitParameterNames() {
-			return Collections.enumeration(new HashSet<String>());
-		}
-	}
+        public DelegatingServletConfig(String servletName, ServletContext servletContext) {
+            this.servletName = servletName;
+            this.servletContext = servletContext;
+        }
+
+        @Override
+        public String getServletName() {
+            return this.servletName;
+        }
+
+        @Override
+        public ServletContext getServletContext() {
+            return this.servletContext;
+        }
+
+        @Override
+        public String getInitParameter(String paramName) {
+            return null;
+        }
+
+        @Override
+        public Enumeration<String> getInitParameterNames() {
+            return Collections.enumeration(new HashSet<String>());
+        }
+    }
 
 }

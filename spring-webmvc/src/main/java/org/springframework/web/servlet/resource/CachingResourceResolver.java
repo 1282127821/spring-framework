@@ -1,22 +1,20 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.resource;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cache.Cache;
@@ -35,92 +33,92 @@ import org.springframework.util.Assert;
  */
 public class CachingResourceResolver extends AbstractResourceResolver {
 
-	public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX = "resolvedResource:";
+    public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX = "resolvedResource:";
 
-	public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX = "resolvedUrlPath:";
-
-
-	private final Cache cache;
+    public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX = "resolvedUrlPath:";
 
 
-	public CachingResourceResolver(CacheManager cacheManager, String cacheName) {
-		this(cacheManager.getCache(cacheName));
-	}
-
-	public CachingResourceResolver(Cache cache) {
-		Assert.notNull(cache, "Cache is required");
-		this.cache = cache;
-	}
+    private final Cache cache;
 
 
-	/**
-	 * Return the configured {@code Cache}.
-	 */
-	public Cache getCache() {
-		return this.cache;
-	}
+    public CachingResourceResolver(CacheManager cacheManager, String cacheName) {
+        this(cacheManager.getCache(cacheName));
+    }
+
+    public CachingResourceResolver(Cache cache) {
+        Assert.notNull(cache, "Cache is required");
+        this.cache = cache;
+    }
 
 
-	@Override
-	protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-			List<? extends Resource> locations, ResourceResolverChain chain) {
+    /**
+     * Return the configured {@code Cache}.
+     */
+    public Cache getCache() {
+        return this.cache;
+    }
 
-		String key = computeKey(request, requestPath);
-		Resource resource = this.cache.get(key, Resource.class);
 
-		if (resource != null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Found match: " + resource);
-			}
-			return resource;
-		}
+    @Override
+    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
+            List<? extends Resource> locations, ResourceResolverChain chain) {
 
-		resource = chain.resolveResource(request, requestPath, locations);
-		if (resource != null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Putting resolved resource in cache: " + resource);
-			}
-			this.cache.put(key, resource);
-		}
+        String key = computeKey(request, requestPath);
+        Resource resource = this.cache.get(key, Resource.class);
 
-		return resource;
-	}
+        if (resource != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Found match: " + resource);
+            }
+            return resource;
+        }
 
-	protected String computeKey(HttpServletRequest request, String requestPath) {
-		StringBuilder key = new StringBuilder(RESOLVED_RESOURCE_CACHE_KEY_PREFIX);
-		key.append(requestPath);
-		if (request != null) {
-			String encoding = request.getHeader("Accept-Encoding");
-			if (encoding != null && encoding.contains("gzip")) {
-				key.append("+encoding=gzip");
-			}
-		}
-		return key.toString();
-	}
+        resource = chain.resolveResource(request, requestPath, locations);
+        if (resource != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Putting resolved resource in cache: " + resource);
+            }
+            this.cache.put(key, resource);
+        }
 
-	@Override
-	protected String resolveUrlPathInternal(String resourceUrlPath,
-			List<? extends Resource> locations, ResourceResolverChain chain) {
+        return resource;
+    }
 
-		String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath;
-		String resolvedUrlPath = this.cache.get(key, String.class);
+    protected String computeKey(HttpServletRequest request, String requestPath) {
+        StringBuilder key = new StringBuilder(RESOLVED_RESOURCE_CACHE_KEY_PREFIX);
+        key.append(requestPath);
+        if (request != null) {
+            String encoding = request.getHeader("Accept-Encoding");
+            if (encoding != null && encoding.contains("gzip")) {
+                key.append("+encoding=gzip");
+            }
+        }
+        return key.toString();
+    }
 
-		if (resolvedUrlPath != null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Found match: \"" + resolvedUrlPath + "\"");
-			}
-			return resolvedUrlPath;
-		}
+    @Override
+    protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
+            ResourceResolverChain chain) {
 
-		resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
-		if (resolvedUrlPath != null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Putting resolved resource URL path in cache: \"" + resolvedUrlPath + "\"");
-			}
-			this.cache.put(key, resolvedUrlPath);
-		}
+        String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath;
+        String resolvedUrlPath = this.cache.get(key, String.class);
 
-		return resolvedUrlPath;
-	}
+        if (resolvedUrlPath != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Found match: \"" + resolvedUrlPath + "\"");
+            }
+            return resolvedUrlPath;
+        }
+
+        resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
+        if (resolvedUrlPath != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Putting resolved resource URL path in cache: \"" + resolvedUrlPath + "\"");
+            }
+            this.cache.put(key, resolvedUrlPath);
+        }
+
+        return resolvedUrlPath;
+    }
 
 }

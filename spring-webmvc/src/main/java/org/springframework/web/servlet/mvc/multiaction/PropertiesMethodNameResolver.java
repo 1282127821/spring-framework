@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.mvc.multiaction;
@@ -46,54 +43,53 @@ import org.springframework.util.PathMatcher;
  * @see java.util.Properties
  * @see org.springframework.util.AntPathMatcher
  */
-public class PropertiesMethodNameResolver extends AbstractUrlMethodNameResolver
-		implements InitializingBean {
+public class PropertiesMethodNameResolver extends AbstractUrlMethodNameResolver implements InitializingBean {
 
-	private Properties mappings;
+    private Properties mappings;
 
-	private PathMatcher pathMatcher = new AntPathMatcher();
-
-
-	/**
-	 * Set explicit URL to method name mappings through a Properties object.
-	 * @param mappings Properties with URL as key and method name as value
-	 */
-	public void setMappings(Properties mappings) {
-		this.mappings = mappings;
-	}
-
-	/**
-	 * Set the PathMatcher implementation to use for matching URL paths
-	 * against registered URL patterns. Default is AntPathMatcher.
-	 * @see org.springframework.util.AntPathMatcher
-	 */
-	public void setPathMatcher(PathMatcher pathMatcher) {
-		Assert.notNull(pathMatcher, "PathMatcher must not be null");
-		this.pathMatcher = pathMatcher;
-	}
-
-	@Override
-	public void afterPropertiesSet() {
-		if (this.mappings == null || this.mappings.isEmpty()) {
-			throw new IllegalArgumentException("'mappings' property is required");
-		}
-	}
+    private PathMatcher pathMatcher = new AntPathMatcher();
 
 
-	@Override
-	protected String getHandlerMethodNameForUrlPath(String urlPath) {
-		String methodName = this.mappings.getProperty(urlPath);
-		if (methodName != null) {
-			return methodName;
-		}
-		Enumeration<?> propNames = this.mappings.propertyNames();
-		while (propNames.hasMoreElements()) {
-			String registeredPath = (String) propNames.nextElement();
-			if (this.pathMatcher.match(registeredPath, urlPath)) {
-				return (String) this.mappings.get(registeredPath);
-			}
-		}
-		return null;
-	}
+    /**
+     * Set explicit URL to method name mappings through a Properties object.
+     * @param mappings Properties with URL as key and method name as value
+     */
+    public void setMappings(Properties mappings) {
+        this.mappings = mappings;
+    }
+
+    /**
+     * Set the PathMatcher implementation to use for matching URL paths
+     * against registered URL patterns. Default is AntPathMatcher.
+     * @see org.springframework.util.AntPathMatcher
+     */
+    public void setPathMatcher(PathMatcher pathMatcher) {
+        Assert.notNull(pathMatcher, "PathMatcher must not be null");
+        this.pathMatcher = pathMatcher;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        if (this.mappings == null || this.mappings.isEmpty()) {
+            throw new IllegalArgumentException("'mappings' property is required");
+        }
+    }
+
+
+    @Override
+    protected String getHandlerMethodNameForUrlPath(String urlPath) {
+        String methodName = this.mappings.getProperty(urlPath);
+        if (methodName != null) {
+            return methodName;
+        }
+        Enumeration<?> propNames = this.mappings.propertyNames();
+        while (propNames.hasMoreElements()) {
+            String registeredPath = (String) propNames.nextElement();
+            if (this.pathMatcher.match(registeredPath, urlPath)) {
+                return (String) this.mappings.get(registeredPath);
+            }
+        }
+        return null;
+    }
 
 }

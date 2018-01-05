@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet;
@@ -60,22 +57,21 @@ import org.springframework.web.method.HandlerMethod;
  */
 public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 
-	/**
-	 * Called instead of {@code postHandle} and {@code afterCompletion}, when
-	 * the a handler is being executed concurrently.
-	 * <p>Implementations may use the provided request and response but should
-	 * avoid modifying them in ways that would conflict with the concurrent
-	 * execution of the handler. A typical use of this method would be to
-	 * clean up thread-local variables.
-	 *
-	 * @param request the current request
-	 * @param response the current response
-	 * @param handler the handler (or {@link HandlerMethod}) that started async
-	 * execution, for type and/or instance examination
-	 * @throws Exception in case of errors
-	 */
-	void afterConcurrentHandlingStarted(
-			HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception;
+    /**
+     * Called instead of {@code postHandle} and {@code afterCompletion}, when
+     * the a handler is being executed concurrently.
+     * <p>Implementations may use the provided request and response but should
+     * avoid modifying them in ways that would conflict with the concurrent
+     * execution of the handler. A typical use of this method would be to
+     * clean up thread-local variables.
+     *
+     * @param request the current request
+     * @param response the current response
+     * @param handler the handler (or {@link HandlerMethod}) that started async
+     * execution, for type and/or instance examination
+     * @throws Exception in case of errors
+     */
+    void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception;
 
 }

@@ -1,23 +1,21 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.mvc;
 
 import java.util.Enumeration;
 import java.util.Properties;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -82,121 +80,121 @@ import org.springframework.web.servlet.ModelAndView;
  * @see org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
  */
 public class ServletWrappingController extends AbstractController
-		implements BeanNameAware, InitializingBean, DisposableBean {
+        implements BeanNameAware, InitializingBean, DisposableBean {
 
-	private Class<?> servletClass;
+    private Class<?> servletClass;
 
-	private String servletName;
+    private String servletName;
 
-	private Properties initParameters = new Properties();
+    private Properties initParameters = new Properties();
 
-	private String beanName;
+    private String beanName;
 
-	private Servlet servletInstance;
-
-
-	/**
-	 * Set the class of the servlet to wrap.
-	 * Needs to implement {@code javax.servlet.Servlet}.
-	 * @see javax.servlet.Servlet
-	 */
-	public void setServletClass(Class<?> servletClass) {
-		this.servletClass = servletClass;
-	}
-
-	/**
-	 * Set the name of the servlet to wrap.
-	 * Default is the bean name of this controller.
-	 */
-	public void setServletName(String servletName) {
-		this.servletName = servletName;
-	}
-
-	/**
-	 * Specify init parameters for the servlet to wrap,
-	 * as name-value pairs.
-	 */
-	public void setInitParameters(Properties initParameters) {
-		this.initParameters = initParameters;
-	}
-
-	@Override
-	public void setBeanName(String name) {
-		this.beanName = name;
-	}
+    private Servlet servletInstance;
 
 
-	/**
-	 * Initialize the wrapped Servlet instance.
-	 * @see javax.servlet.Servlet#init(javax.servlet.ServletConfig)
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if (this.servletClass == null) {
-			throw new IllegalArgumentException("servletClass is required");
-		}
-		if (!Servlet.class.isAssignableFrom(this.servletClass)) {
-			throw new IllegalArgumentException("servletClass [" + this.servletClass.getName() +
-				"] needs to implement interface [javax.servlet.Servlet]");
-		}
-		if (this.servletName == null) {
-			this.servletName = this.beanName;
-		}
-		this.servletInstance = (Servlet) this.servletClass.newInstance();
-		this.servletInstance.init(new DelegatingServletConfig());
-	}
+    /**
+     * Set the class of the servlet to wrap.
+     * Needs to implement {@code javax.servlet.Servlet}.
+     * @see javax.servlet.Servlet
+     */
+    public void setServletClass(Class<?> servletClass) {
+        this.servletClass = servletClass;
+    }
+
+    /**
+     * Set the name of the servlet to wrap.
+     * Default is the bean name of this controller.
+     */
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
+    }
+
+    /**
+     * Specify init parameters for the servlet to wrap,
+     * as name-value pairs.
+     */
+    public void setInitParameters(Properties initParameters) {
+        this.initParameters = initParameters;
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
 
 
-	/**
-	 * Invoke the the wrapped Servlet instance.
-	 * @see javax.servlet.Servlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
-	 */
-	@Override
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-		throws Exception {
-
-		this.servletInstance.service(request, response);
-		return null;
-	}
-
-
-	/**
-	 * Destroy the wrapped Servlet instance.
-	 * @see javax.servlet.Servlet#destroy()
-	 */
-	@Override
-	public void destroy() {
-		this.servletInstance.destroy();
-	}
+    /**
+     * Initialize the wrapped Servlet instance.
+     * @see javax.servlet.Servlet#init(javax.servlet.ServletConfig)
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (this.servletClass == null) {
+            throw new IllegalArgumentException("servletClass is required");
+        }
+        if (!Servlet.class.isAssignableFrom(this.servletClass)) {
+            throw new IllegalArgumentException("servletClass [" + this.servletClass.getName()
+                    + "] needs to implement interface [javax.servlet.Servlet]");
+        }
+        if (this.servletName == null) {
+            this.servletName = this.beanName;
+        }
+        this.servletInstance = (Servlet) this.servletClass.newInstance();
+        this.servletInstance.init(new DelegatingServletConfig());
+    }
 
 
-	/**
-	 * Internal implementation of the ServletConfig interface, to be passed
-	 * to the wrapped servlet. Delegates to ServletWrappingController fields
-	 * and methods to provide init parameters and other environment info.
-	 */
-	private class DelegatingServletConfig implements ServletConfig {
+    /**
+     * Invoke the the wrapped Servlet instance.
+     * @see javax.servlet.Servlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     */
+    @Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
-		@Override
-		public String getServletName() {
-			return servletName;
-		}
+        this.servletInstance.service(request, response);
+        return null;
+    }
 
-		@Override
-		public ServletContext getServletContext() {
-			return ServletWrappingController.this.getServletContext();
-		}
 
-		@Override
-		public String getInitParameter(String paramName) {
-			return initParameters.getProperty(paramName);
-		}
+    /**
+     * Destroy the wrapped Servlet instance.
+     * @see javax.servlet.Servlet#destroy()
+     */
+    @Override
+    public void destroy() {
+        this.servletInstance.destroy();
+    }
 
-		@Override
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public Enumeration<String> getInitParameterNames() {
-			return (Enumeration) initParameters.keys();
-		}
-	}
+
+    /**
+     * Internal implementation of the ServletConfig interface, to be passed
+     * to the wrapped servlet. Delegates to ServletWrappingController fields
+     * and methods to provide init parameters and other environment info.
+     */
+    private class DelegatingServletConfig implements ServletConfig {
+
+        @Override
+        public String getServletName() {
+            return servletName;
+        }
+
+        @Override
+        public ServletContext getServletContext() {
+            return ServletWrappingController.this.getServletContext();
+        }
+
+        @Override
+        public String getInitParameter(String paramName) {
+            return initParameters.getProperty(paramName);
+        }
+
+        @Override
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public Enumeration<String> getInitParameterNames() {
+            return (Enumeration) initParameters.keys();
+        }
+    }
 
 }

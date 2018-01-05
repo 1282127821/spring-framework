@@ -1,23 +1,21 @@
 /*
  * Copyright 2002-2009 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.view;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.servlet.support.BindStatus;
@@ -34,127 +32,127 @@ import org.springframework.web.util.UriTemplate;
  */
 public class DummyMacroRequestContext {
 
-	private HttpServletRequest request;
+    private HttpServletRequest request;
 
-	private Map messageMap;
+    private Map messageMap;
 
-	private Map themeMessageMap;
+    private Map themeMessageMap;
 
-	private String contextPath;
-
-
-	public DummyMacroRequestContext(HttpServletRequest request) {
-		this.request = request;
-	}
+    private String contextPath;
 
 
-	public void setMessageMap(Map messageMap) {
-		this.messageMap = messageMap;
-	}
-
-	public void setThemeMessageMap(Map themeMessageMap) {
-		this.themeMessageMap = themeMessageMap;
-	}
+    public DummyMacroRequestContext(HttpServletRequest request) {
+        this.request = request;
+    }
 
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getMessage(String)
-	 */
-	public String getMessage(String code) {
-		return (String) this.messageMap.get(code);
-	}
+    public void setMessageMap(Map messageMap) {
+        this.messageMap = messageMap;
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, String)
-	 */
-	public String getMessage(String code, String defaultMsg) {
-		String msg = (String) this.messageMap.get(code);
-		return (msg != null ? msg : defaultMsg);
-	}
+    public void setThemeMessageMap(Map themeMessageMap) {
+        this.themeMessageMap = themeMessageMap;
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, List)
-	 */
-	public String getMessage(String code, List args) {
-		return ((String) this.messageMap.get(code)) + args.toString();
-	}
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, List, String)
-	 */
-	public String getMessage(String code, List args, String defaultMsg) {
-		String msg = (String) this.messageMap.get(code);
-		return (msg != null ? msg  + args.toString(): defaultMsg);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getMessage(String)
+     */
+    public String getMessage(String code) {
+        return (String) this.messageMap.get(code);
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String)
-	 */
-	public String getThemeMessage(String code) {
-		return (String) this.themeMessageMap.get(code);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, String)
+     */
+    public String getMessage(String code, String defaultMsg) {
+        String msg = (String) this.messageMap.get(code);
+        return (msg != null ? msg : defaultMsg);
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, String)
-	 */
-	public String getThemeMessage(String code, String defaultMsg) {
-		String msg = (String) this.themeMessageMap.get(code);
-		return (msg != null ? msg : defaultMsg);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, List)
+     */
+    public String getMessage(String code, List args) {
+        return ((String) this.messageMap.get(code)) + args.toString();
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, List)
-	 */
-	public String getThemeMessage(String code, List args) {
-		return ((String) this.themeMessageMap.get(code)) + args.toString();
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getMessage(String, List, String)
+     */
+    public String getMessage(String code, List args, String defaultMsg) {
+        String msg = (String) this.messageMap.get(code);
+        return (msg != null ? msg + args.toString() : defaultMsg);
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, List, String)
-	 */
-	public String getThemeMessage(String code, List args, String defaultMsg) {
-		String msg = (String) this.themeMessageMap.get(code);
-		return (msg != null ? msg  + args.toString(): defaultMsg);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String)
+     */
+    public String getThemeMessage(String code) {
+        return (String) this.themeMessageMap.get(code);
+    }
 
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, String)
+     */
+    public String getThemeMessage(String code, String defaultMsg) {
+        String msg = (String) this.themeMessageMap.get(code);
+        return (msg != null ? msg : defaultMsg);
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getContextPath()
-	 */
-	public String getContextPath() {
-		return this.contextPath;
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, List)
+     */
+    public String getThemeMessage(String code, List args) {
+        return ((String) this.themeMessageMap.get(code)) + args.toString();
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getContextUrl(String)
-	 */
-	public String getContextUrl(String relativeUrl) {
-		return getContextPath() + relativeUrl;
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getThemeMessage(String, List, String)
+     */
+    public String getThemeMessage(String code, List args, String defaultMsg) {
+        String msg = (String) this.themeMessageMap.get(code);
+        return (msg != null ? msg + args.toString() : defaultMsg);
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getContextUrl(String, Map)
-	 */
-	public String getContextUrl(String relativeUrl, Map<String,String> params) {
-		UriTemplate template = new UriTemplate(relativeUrl);
-		return getContextPath() + template.expand(params).toASCIIString();
-	}
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getBindStatus(String)
-	 */
-	public BindStatus getBindStatus(String path) throws IllegalStateException {
-		return new BindStatus(new RequestContext(this.request), path, false);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getContextPath()
+     */
+    public String getContextPath() {
+        return this.contextPath;
+    }
 
-	/**
-	 * @see org.springframework.web.servlet.support.RequestContext#getBindStatus(String, boolean)
-	 */
-	public BindStatus getBindStatus(String path, boolean htmlEscape) throws IllegalStateException {
-		return new BindStatus(new RequestContext(this.request), path, true);
-	}
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getContextUrl(String)
+     */
+    public String getContextUrl(String relativeUrl) {
+        return getContextPath() + relativeUrl;
+    }
+
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getContextUrl(String, Map)
+     */
+    public String getContextUrl(String relativeUrl, Map<String, String> params) {
+        UriTemplate template = new UriTemplate(relativeUrl);
+        return getContextPath() + template.expand(params).toASCIIString();
+    }
+
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getBindStatus(String)
+     */
+    public BindStatus getBindStatus(String path) throws IllegalStateException {
+        return new BindStatus(new RequestContext(this.request), path, false);
+    }
+
+    /**
+     * @see org.springframework.web.servlet.support.RequestContext#getBindStatus(String, boolean)
+     */
+    public BindStatus getBindStatus(String path, boolean htmlEscape) throws IllegalStateException {
+        return new BindStatus(new RequestContext(this.request), path, true);
+    }
 
 }

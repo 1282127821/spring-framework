@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.mvc;
@@ -91,68 +88,67 @@ import org.springframework.web.util.WebUtils;
  */
 public abstract class AbstractController extends WebContentGenerator implements Controller {
 
-	private boolean synchronizeOnSession = false;
+    private boolean synchronizeOnSession = false;
 
 
-	/**
-	 * Set if controller execution should be synchronized on the session,
-	 * to serialize parallel invocations from the same client.
-	 * <p>More specifically, the execution of the {@code handleRequestInternal}
-	 * method will get synchronized if this flag is "true". The best available
-	 * session mutex will be used for the synchronization; ideally, this will
-	 * be a mutex exposed by HttpSessionMutexListener.
-	 * <p>The session mutex is guaranteed to be the same object during
-	 * the entire lifetime of the session, available under the key defined
-	 * by the {@code SESSION_MUTEX_ATTRIBUTE} constant. It serves as a
-	 * safe reference to synchronize on for locking on the current session.
-	 * <p>In many cases, the HttpSession reference itself is a safe mutex
-	 * as well, since it will always be the same object reference for the
-	 * same active logical session. However, this is not guaranteed across
-	 * different servlet containers; the only 100% safe way is a session mutex.
-	 * @see AbstractController#handleRequestInternal
-	 * @see org.springframework.web.util.HttpSessionMutexListener
-	 * @see org.springframework.web.util.WebUtils#getSessionMutex(javax.servlet.http.HttpSession)
-	 */
-	public final void setSynchronizeOnSession(boolean synchronizeOnSession) {
-		this.synchronizeOnSession = synchronizeOnSession;
-	}
+    /**
+     * Set if controller execution should be synchronized on the session,
+     * to serialize parallel invocations from the same client.
+     * <p>More specifically, the execution of the {@code handleRequestInternal}
+     * method will get synchronized if this flag is "true". The best available
+     * session mutex will be used for the synchronization; ideally, this will
+     * be a mutex exposed by HttpSessionMutexListener.
+     * <p>The session mutex is guaranteed to be the same object during
+     * the entire lifetime of the session, available under the key defined
+     * by the {@code SESSION_MUTEX_ATTRIBUTE} constant. It serves as a
+     * safe reference to synchronize on for locking on the current session.
+     * <p>In many cases, the HttpSession reference itself is a safe mutex
+     * as well, since it will always be the same object reference for the
+     * same active logical session. However, this is not guaranteed across
+     * different servlet containers; the only 100% safe way is a session mutex.
+     * @see AbstractController#handleRequestInternal
+     * @see org.springframework.web.util.HttpSessionMutexListener
+     * @see org.springframework.web.util.WebUtils#getSessionMutex(javax.servlet.http.HttpSession)
+     */
+    public final void setSynchronizeOnSession(boolean synchronizeOnSession) {
+        this.synchronizeOnSession = synchronizeOnSession;
+    }
 
-	/**
-	 * Return whether controller execution should be synchronized on the session.
-	 */
-	public final boolean isSynchronizeOnSession() {
-		return this.synchronizeOnSession;
-	}
+    /**
+     * Return whether controller execution should be synchronized on the session.
+     */
+    public final boolean isSynchronizeOnSession() {
+        return this.synchronizeOnSession;
+    }
 
 
-	@Override
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		// Delegate to WebContentGenerator for checking and preparing.
-		checkRequest(request);
-		prepareResponse(response);
+        // Delegate to WebContentGenerator for checking and preparing.
+        checkRequest(request);
+        prepareResponse(response);
 
-		// Execute handleRequestInternal in synchronized block if required.
-		if (this.synchronizeOnSession) {
-			HttpSession session = request.getSession(false);
-			if (session != null) {
-				Object mutex = WebUtils.getSessionMutex(session);
-				synchronized (mutex) {
-					return handleRequestInternal(request, response);
-				}
-			}
-		}
+        // Execute handleRequestInternal in synchronized block if required.
+        if (this.synchronizeOnSession) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Object mutex = WebUtils.getSessionMutex(session);
+                synchronized (mutex) {
+                    return handleRequestInternal(request, response);
+                }
+            }
+        }
 
-		return handleRequestInternal(request, response);
-	}
+        return handleRequestInternal(request, response);
+    }
 
-	/**
-	 * Template method. Subclasses must implement this.
-	 * The contract is the same as for {@code handleRequest}.
-	 * @see #handleRequest
-	 */
-	protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-			throws Exception;
+    /**
+     * Template method. Subclasses must implement this.
+     * The contract is the same as for {@code handleRequest}.
+     * @see #handleRequest
+     */
+    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+            throws Exception;
 
 }

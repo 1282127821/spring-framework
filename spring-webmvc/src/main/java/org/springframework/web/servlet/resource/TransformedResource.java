@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.resource;
@@ -32,32 +29,31 @@ import org.springframework.core.io.Resource;
  */
 public class TransformedResource extends ByteArrayResource {
 
-	private final String filename;
+    private final String filename;
 
-	private final long lastModified;
-
-
-	public TransformedResource(Resource original, byte[] transformedContent) {
-		super(transformedContent);
-		this.filename = original.getFilename();
-		try {
-			this.lastModified = original.lastModified();
-		}
-		catch (IOException ex) {
-			// should never happen
-			throw new IllegalArgumentException(ex);
-		}
-	}
+    private final long lastModified;
 
 
-	@Override
-	public String getFilename() {
-		return this.filename;
-	}
+    public TransformedResource(Resource original, byte[] transformedContent) {
+        super(transformedContent);
+        this.filename = original.getFilename();
+        try {
+            this.lastModified = original.lastModified();
+        } catch (IOException ex) {
+            // should never happen
+            throw new IllegalArgumentException(ex);
+        }
+    }
 
-	@Override
-	public long lastModified() throws IOException {
-		return this.lastModified;
-	}
+
+    @Override
+    public String getFilename() {
+        return this.filename;
+    }
+
+    @Override
+    public long lastModified() throws IOException {
+        return this.lastModified;
+    }
 
 }

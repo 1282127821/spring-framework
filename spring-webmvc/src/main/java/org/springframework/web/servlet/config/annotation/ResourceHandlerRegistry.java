@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.config.annotation;
@@ -21,6 +18,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.BeanInitializationException;
@@ -51,82 +49,81 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
  */
 public class ResourceHandlerRegistry {
 
-	private final ServletContext servletContext;
+    private final ServletContext servletContext;
 
-	private final ApplicationContext appContext;
+    private final ApplicationContext appContext;
 
-	private final List<ResourceHandlerRegistration> registrations = new ArrayList<ResourceHandlerRegistration>();
+    private final List<ResourceHandlerRegistration> registrations = new ArrayList<ResourceHandlerRegistration>();
 
-	private int order = Integer.MAX_VALUE -1;
-
-
-	public ResourceHandlerRegistry(ApplicationContext applicationContext, ServletContext servletContext) {
-		Assert.notNull(applicationContext, "ApplicationContext is required");
-		this.appContext = applicationContext;
-		this.servletContext = servletContext;
-	}
+    private int order = Integer.MAX_VALUE - 1;
 
 
-	/**
-	 * Add a resource handler for serving static resources based on the specified URL path patterns.
-	 * The handler will be invoked for every incoming request that matches to one of the specified path patterns.
-	 * @return A {@link ResourceHandlerRegistration} to use to further configure the registered resource handler.
-	 */
-	public ResourceHandlerRegistration addResourceHandler(String... pathPatterns) {
-		ResourceHandlerRegistration registration = new ResourceHandlerRegistration(this.appContext, pathPatterns);
-		this.registrations.add(registration);
-		return registration;
-	}
+    public ResourceHandlerRegistry(ApplicationContext applicationContext, ServletContext servletContext) {
+        Assert.notNull(applicationContext, "ApplicationContext is required");
+        this.appContext = applicationContext;
+        this.servletContext = servletContext;
+    }
 
-	/**
-	 * Whether a resource handler has already been registered for the given pathPattern.
-	 */
-	public boolean hasMappingForPattern(String pathPattern) {
-		for (ResourceHandlerRegistration registration : this.registrations) {
-			if (Arrays.asList(registration.getPathPatterns()).contains(pathPattern)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
-	/**
-	 * Specify the order to use for resource handling relative to other {@link HandlerMapping}s configured in
-	 * the Spring MVC application context. The default value used is {@code Integer.MAX_VALUE-1}.
-	 */
-	public ResourceHandlerRegistry setOrder(int order) {
-		this.order = order;
-		return this;
-	}
+    /**
+     * Add a resource handler for serving static resources based on the specified URL path patterns.
+     * The handler will be invoked for every incoming request that matches to one of the specified path patterns.
+     * @return A {@link ResourceHandlerRegistration} to use to further configure the registered resource handler.
+     */
+    public ResourceHandlerRegistration addResourceHandler(String... pathPatterns) {
+        ResourceHandlerRegistration registration = new ResourceHandlerRegistration(this.appContext, pathPatterns);
+        this.registrations.add(registration);
+        return registration;
+    }
 
-	/**
-	 * Return a handler mapping with the mapped resource handlers; or {@code null} in case of no registrations.
-	 */
-	protected AbstractHandlerMapping getHandlerMapping() {
-		if (registrations.isEmpty()) {
-			return null;
-		}
+    /**
+     * Whether a resource handler has already been registered for the given pathPattern.
+     */
+    public boolean hasMappingForPattern(String pathPattern) {
+        for (ResourceHandlerRegistration registration : this.registrations) {
+            if (Arrays.asList(registration.getPathPatterns()).contains(pathPattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		Map<String, HttpRequestHandler> urlMap = new LinkedHashMap<String, HttpRequestHandler>();
-		for (ResourceHandlerRegistration registration : this.registrations) {
-			for (String pathPattern : registration.getPathPatterns()) {
-				ResourceHttpRequestHandler handler = registration.getRequestHandler();
-				handler.setServletContext(this.servletContext);
-				handler.setApplicationContext(this.appContext);
-				try {
-					handler.afterPropertiesSet();
-				}
-				catch (Exception e) {
-					throw new BeanInitializationException("Failed to init ResourceHttpRequestHandler", e);
-				}
-				urlMap.put(pathPattern, handler);
-			}
-		}
+    /**
+     * Specify the order to use for resource handling relative to other {@link HandlerMapping}s configured in
+     * the Spring MVC application context. The default value used is {@code Integer.MAX_VALUE-1}.
+     */
+    public ResourceHandlerRegistry setOrder(int order) {
+        this.order = order;
+        return this;
+    }
 
-		SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
-		handlerMapping.setOrder(order);
-		handlerMapping.setUrlMap(urlMap);
-		return handlerMapping;
-	}
+    /**
+     * Return a handler mapping with the mapped resource handlers; or {@code null} in case of no registrations.
+     */
+    protected AbstractHandlerMapping getHandlerMapping() {
+        if (registrations.isEmpty()) {
+            return null;
+        }
+
+        Map<String, HttpRequestHandler> urlMap = new LinkedHashMap<String, HttpRequestHandler>();
+        for (ResourceHandlerRegistration registration : this.registrations) {
+            for (String pathPattern : registration.getPathPatterns()) {
+                ResourceHttpRequestHandler handler = registration.getRequestHandler();
+                handler.setServletContext(this.servletContext);
+                handler.setApplicationContext(this.appContext);
+                try {
+                    handler.afterPropertiesSet();
+                } catch (Exception e) {
+                    throw new BeanInitializationException("Failed to init ResourceHttpRequestHandler", e);
+                }
+                urlMap.put(pathPattern, handler);
+            }
+        }
+
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(order);
+        handlerMapping.setUrlMap(urlMap);
+        return handlerMapping;
+    }
 
 }

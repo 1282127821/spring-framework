@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.mvc.method.annotation;
@@ -32,36 +29,36 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class AsyncTaskMethodReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	private final BeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
 
-	public AsyncTaskMethodReturnValueHandler(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
+    public AsyncTaskMethodReturnValueHandler(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
 
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return WebAsyncTask.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return WebAsyncTask.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		return (returnValue != null && returnValue instanceof WebAsyncTask);
-	}
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        return (returnValue != null && returnValue instanceof WebAsyncTask);
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		WebAsyncTask<?> webAsyncTask = (WebAsyncTask<?>) returnValue;
-		webAsyncTask.setBeanFactory(this.beanFactory);
-		WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(webAsyncTask, mavContainer);
-	}
+        WebAsyncTask<?> webAsyncTask = (WebAsyncTask<?>) returnValue;
+        webAsyncTask.setBeanFactory(this.beanFactory);
+        WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(webAsyncTask, mavContainer);
+    }
 
 }

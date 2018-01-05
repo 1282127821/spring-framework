@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2013 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.theme;
@@ -38,28 +35,28 @@ import org.springframework.web.util.WebUtils;
  */
 public class SessionThemeResolver extends AbstractThemeResolver {
 
-	/**
-	 * Name of the session attribute that holds the theme name.
-	 * Only used internally by this implementation.
-	 * Use {@code RequestContext(Utils).getTheme()}
-	 * to retrieve the current theme in controllers or views.
-	 * @see org.springframework.web.servlet.support.RequestContext#getTheme
-	 * @see org.springframework.web.servlet.support.RequestContextUtils#getTheme
-	 */
-	public static final String THEME_SESSION_ATTRIBUTE_NAME = SessionThemeResolver.class.getName() + ".THEME";
+    /**
+     * Name of the session attribute that holds the theme name.
+     * Only used internally by this implementation.
+     * Use {@code RequestContext(Utils).getTheme()}
+     * to retrieve the current theme in controllers or views.
+     * @see org.springframework.web.servlet.support.RequestContext#getTheme
+     * @see org.springframework.web.servlet.support.RequestContextUtils#getTheme
+     */
+    public static final String THEME_SESSION_ATTRIBUTE_NAME = SessionThemeResolver.class.getName() + ".THEME";
 
 
-	@Override
-	public String resolveThemeName(HttpServletRequest request) {
-		String themeName = (String) WebUtils.getSessionAttribute(request, THEME_SESSION_ATTRIBUTE_NAME);
-		// A specific theme indicated, or do we need to fallback to the default?
-		return (themeName != null ? themeName : getDefaultThemeName());
-	}
+    @Override
+    public String resolveThemeName(HttpServletRequest request) {
+        String themeName = (String) WebUtils.getSessionAttribute(request, THEME_SESSION_ATTRIBUTE_NAME);
+        // A specific theme indicated, or do we need to fallback to the default?
+        return (themeName != null ? themeName : getDefaultThemeName());
+    }
 
-	@Override
-	public void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName) {
-		WebUtils.setSessionAttribute(request, THEME_SESSION_ATTRIBUTE_NAME,
-				(StringUtils.hasText(themeName) ? themeName : null));
-	}
+    @Override
+    public void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName) {
+        WebUtils.setSessionAttribute(request, THEME_SESSION_ATTRIBUTE_NAME,
+                (StringUtils.hasText(themeName) ? themeName : null));
+    }
 
 }

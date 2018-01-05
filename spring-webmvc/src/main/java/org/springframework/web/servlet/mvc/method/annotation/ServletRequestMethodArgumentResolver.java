@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.mvc.method.annotation;
@@ -22,6 +19,7 @@ import java.security.Principal;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -61,83 +59,69 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 public class ServletRequestMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		Class<?> paramType = parameter.getParameterType();
-		return (WebRequest.class.isAssignableFrom(paramType) ||
-				ServletRequest.class.isAssignableFrom(paramType) ||
-				MultipartRequest.class.isAssignableFrom(paramType) ||
-				HttpSession.class.isAssignableFrom(paramType) ||
-				Principal.class.isAssignableFrom(paramType) ||
-				Locale.class == paramType ||
-				TimeZone.class == paramType ||
-				"java.time.ZoneId".equals(paramType.getName()) ||
-				InputStream.class.isAssignableFrom(paramType) ||
-				Reader.class.isAssignableFrom(paramType) ||
-				HttpMethod.class == paramType);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        Class<?> paramType = parameter.getParameterType();
+        return (WebRequest.class.isAssignableFrom(paramType) || ServletRequest.class.isAssignableFrom(paramType)
+                || MultipartRequest.class.isAssignableFrom(paramType) || HttpSession.class.isAssignableFrom(paramType)
+                || Principal.class.isAssignableFrom(paramType) || Locale.class == paramType
+                || TimeZone.class == paramType || "java.time.ZoneId".equals(paramType.getName())
+                || InputStream.class.isAssignableFrom(paramType) || Reader.class.isAssignableFrom(paramType)
+                || HttpMethod.class == paramType);
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		Class<?> paramType = parameter.getParameterType();
-		if (WebRequest.class.isAssignableFrom(paramType)) {
-			return webRequest;
-		}
+        Class<?> paramType = parameter.getParameterType();
+        if (WebRequest.class.isAssignableFrom(paramType)) {
+            return webRequest;
+        }
 
-		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-		if (ServletRequest.class.isAssignableFrom(paramType) || MultipartRequest.class.isAssignableFrom(paramType)) {
-			Object nativeRequest = webRequest.getNativeRequest(paramType);
-			if (nativeRequest == null) {
-				throw new IllegalStateException(
-						"Current request is not of type [" + paramType.getName() + "]: " + request);
-			}
-			return nativeRequest;
-		}
-		else if (HttpSession.class.isAssignableFrom(paramType)) {
-			return request.getSession();
-		}
-		else if (HttpMethod.class == paramType) {
-			return ((ServletWebRequest) webRequest).getHttpMethod();
-		}
-		else if (Principal.class.isAssignableFrom(paramType)) {
-			return request.getUserPrincipal();
-		}
-		else if (Locale.class == paramType) {
-			return RequestContextUtils.getLocale(request);
-		}
-		else if (TimeZone.class == paramType) {
-			TimeZone timeZone = RequestContextUtils.getTimeZone(request);
-			return (timeZone != null ? timeZone : TimeZone.getDefault());
-		}
-		else if ("java.time.ZoneId".equals(paramType.getName())) {
-			return ZoneIdResolver.resolveZoneId(request);
-		}
-		else if (InputStream.class.isAssignableFrom(paramType)) {
-			return request.getInputStream();
-		}
-		else if (Reader.class.isAssignableFrom(paramType)) {
-			return request.getReader();
-		}
-		else {
-			// should never happen...
-			throw new UnsupportedOperationException(
-					"Unknown parameter type: " + paramType + " in method: " + parameter.getMethod());
-		}
-	}
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (ServletRequest.class.isAssignableFrom(paramType) || MultipartRequest.class.isAssignableFrom(paramType)) {
+            Object nativeRequest = webRequest.getNativeRequest(paramType);
+            if (nativeRequest == null) {
+                throw new IllegalStateException(
+                        "Current request is not of type [" + paramType.getName() + "]: " + request);
+            }
+            return nativeRequest;
+        } else if (HttpSession.class.isAssignableFrom(paramType)) {
+            return request.getSession();
+        } else if (HttpMethod.class == paramType) {
+            return ((ServletWebRequest) webRequest).getHttpMethod();
+        } else if (Principal.class.isAssignableFrom(paramType)) {
+            return request.getUserPrincipal();
+        } else if (Locale.class == paramType) {
+            return RequestContextUtils.getLocale(request);
+        } else if (TimeZone.class == paramType) {
+            TimeZone timeZone = RequestContextUtils.getTimeZone(request);
+            return (timeZone != null ? timeZone : TimeZone.getDefault());
+        } else if ("java.time.ZoneId".equals(paramType.getName())) {
+            return ZoneIdResolver.resolveZoneId(request);
+        } else if (InputStream.class.isAssignableFrom(paramType)) {
+            return request.getInputStream();
+        } else if (Reader.class.isAssignableFrom(paramType)) {
+            return request.getReader();
+        } else {
+            // should never happen...
+            throw new UnsupportedOperationException(
+                    "Unknown parameter type: " + paramType + " in method: " + parameter.getMethod());
+        }
+    }
 
 
-	/**
-	 * Inner class to avoid a hard-coded dependency on Java 8's {@link java.time.ZoneId}.
-	 */
-	@UsesJava8
-	private static class ZoneIdResolver {
+    /**
+     * Inner class to avoid a hard-coded dependency on Java 8's {@link java.time.ZoneId}.
+     */
+    @UsesJava8
+    private static class ZoneIdResolver {
 
-		public static Object resolveZoneId(HttpServletRequest request) {
-			TimeZone timeZone = RequestContextUtils.getTimeZone(request);
-			return (timeZone != null ? timeZone.toZoneId() : ZoneId.systemDefault());
-		}
-	}
+        public static Object resolveZoneId(HttpServletRequest request) {
+            TimeZone timeZone = RequestContextUtils.getTimeZone(request);
+            return (timeZone != null ? timeZone.toZoneId() : ZoneId.systemDefault());
+        }
+    }
 
 }

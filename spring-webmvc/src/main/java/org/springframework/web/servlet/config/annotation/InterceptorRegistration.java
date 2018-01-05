@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.config.annotation;
@@ -35,72 +32,72 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
  */
 public class InterceptorRegistration {
 
-	private final HandlerInterceptor interceptor;
+    private final HandlerInterceptor interceptor;
 
-	private final List<String> includePatterns = new ArrayList<String>();
+    private final List<String> includePatterns = new ArrayList<String>();
 
-	private final List<String> excludePatterns = new ArrayList<String>();
+    private final List<String> excludePatterns = new ArrayList<String>();
 
-	private PathMatcher pathMatcher;
+    private PathMatcher pathMatcher;
 
 
-	/**
-	 * Creates an {@link InterceptorRegistration} instance.
-	 */
-	public InterceptorRegistration(HandlerInterceptor interceptor) {
-		Assert.notNull(interceptor, "Interceptor is required");
-		this.interceptor = interceptor;
-	}
+    /**
+     * Creates an {@link InterceptorRegistration} instance.
+     */
+    public InterceptorRegistration(HandlerInterceptor interceptor) {
+        Assert.notNull(interceptor, "Interceptor is required");
+        this.interceptor = interceptor;
+    }
 
-	/**
-	 * Add URL patterns to which the registered interceptor should apply to.
-	 */
-	public InterceptorRegistration addPathPatterns(String... patterns) {
-		this.includePatterns.addAll(Arrays.asList(patterns));
-		return this;
-	}
+    /**
+     * Add URL patterns to which the registered interceptor should apply to.
+     */
+    public InterceptorRegistration addPathPatterns(String... patterns) {
+        this.includePatterns.addAll(Arrays.asList(patterns));
+        return this;
+    }
 
-	/**
-	 * Add URL patterns to which the registered interceptor should not apply to.
-	 */
-	public InterceptorRegistration excludePathPatterns(String... patterns) {
-		this.excludePatterns.addAll(Arrays.asList(patterns));
-		return this;
-	}
+    /**
+     * Add URL patterns to which the registered interceptor should not apply to.
+     */
+    public InterceptorRegistration excludePathPatterns(String... patterns) {
+        this.excludePatterns.addAll(Arrays.asList(patterns));
+        return this;
+    }
 
-	/**
-	 * A PathMatcher implementation to use with this interceptor. This is an optional,
-	 * advanced property required only if using custom PathMatcher implementations
-	 * that support mapping metadata other than the Ant path patterns supported
-	 * by default.
-	 */
-	public InterceptorRegistration pathMatcher(PathMatcher pathMatcher) {
-		this.pathMatcher = pathMatcher;
-		return this;
-	}
+    /**
+     * A PathMatcher implementation to use with this interceptor. This is an optional,
+     * advanced property required only if using custom PathMatcher implementations
+     * that support mapping metadata other than the Ant path patterns supported
+     * by default.
+     */
+    public InterceptorRegistration pathMatcher(PathMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+        return this;
+    }
 
-	/**
-	 * Returns the underlying interceptor. If URL patterns are provided the returned type is
-	 * {@link MappedInterceptor}; otherwise {@link HandlerInterceptor}.
-	 */
-	protected Object getInterceptor() {
-		if (this.includePatterns.isEmpty() && this.excludePatterns.isEmpty()) {
-			return this.interceptor;
-		}
+    /**
+     * Returns the underlying interceptor. If URL patterns are provided the returned type is
+     * {@link MappedInterceptor}; otherwise {@link HandlerInterceptor}.
+     */
+    protected Object getInterceptor() {
+        if (this.includePatterns.isEmpty() && this.excludePatterns.isEmpty()) {
+            return this.interceptor;
+        }
 
-		String[] include = toArray(this.includePatterns);
-		String[] exclude = toArray(this.excludePatterns);
-		MappedInterceptor mappedInterceptor = new MappedInterceptor(include, exclude, this.interceptor);
+        String[] include = toArray(this.includePatterns);
+        String[] exclude = toArray(this.excludePatterns);
+        MappedInterceptor mappedInterceptor = new MappedInterceptor(include, exclude, this.interceptor);
 
-		if (this.pathMatcher != null) {
-			mappedInterceptor.setPathMatcher(this.pathMatcher);
-		}
+        if (this.pathMatcher != null) {
+            mappedInterceptor.setPathMatcher(this.pathMatcher);
+        }
 
-		return mappedInterceptor;
-	}
+        return mappedInterceptor;
+    }
 
-	private static String[] toArray(List<String> list) {
-		return (CollectionUtils.isEmpty(list) ? null : list.toArray(new String[list.size()]));
-	}
+    private static String[] toArray(List<String> list) {
+        return (CollectionUtils.isEmpty(list) ? null : list.toArray(new String[list.size()]));
+    }
 
 }

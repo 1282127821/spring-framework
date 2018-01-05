@@ -1,17 +1,14 @@
 /*
  * Copyright 2002-2012 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.handler;
@@ -36,49 +33,50 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class WebRequestHandlerInterceptorAdapter implements AsyncHandlerInterceptor {
 
-	private final WebRequestInterceptor requestInterceptor;
+    private final WebRequestInterceptor requestInterceptor;
 
 
-	/**
-	 * Create a new WebRequestHandlerInterceptorAdapter for the given WebRequestInterceptor.
-	 * @param requestInterceptor the WebRequestInterceptor to wrap
-	 */
-	public WebRequestHandlerInterceptorAdapter(WebRequestInterceptor requestInterceptor) {
-		Assert.notNull(requestInterceptor, "WebRequestInterceptor must not be null");
-		this.requestInterceptor = requestInterceptor;
-	}
+    /**
+     * Create a new WebRequestHandlerInterceptorAdapter for the given WebRequestInterceptor.
+     * @param requestInterceptor the WebRequestInterceptor to wrap
+     */
+    public WebRequestHandlerInterceptorAdapter(WebRequestInterceptor requestInterceptor) {
+        Assert.notNull(requestInterceptor, "WebRequestInterceptor must not be null");
+        this.requestInterceptor = requestInterceptor;
+    }
 
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-		this.requestInterceptor.preHandle(new DispatcherServletWebRequest(request, response));
-		return true;
-	}
+        this.requestInterceptor.preHandle(new DispatcherServletWebRequest(request, response));
+        return true;
+    }
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-			throws Exception {
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
 
-		this.requestInterceptor.postHandle(new DispatcherServletWebRequest(request, response),
-				(modelAndView != null && !modelAndView.wasCleared() ? modelAndView.getModelMap() : null));
-	}
+        this.requestInterceptor.postHandle(new DispatcherServletWebRequest(request, response),
+                (modelAndView != null && !modelAndView.wasCleared() ? modelAndView.getModelMap() : null));
+    }
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
 
-		this.requestInterceptor.afterCompletion(new DispatcherServletWebRequest(request, response), ex);
-	}
+        this.requestInterceptor.afterCompletion(new DispatcherServletWebRequest(request, response), ex);
+    }
 
-	@Override
-	public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		if (this.requestInterceptor instanceof AsyncWebRequestInterceptor) {
-			AsyncWebRequestInterceptor asyncInterceptor = (AsyncWebRequestInterceptor) this.requestInterceptor;
-			DispatcherServletWebRequest webRequest = new DispatcherServletWebRequest(request, response);
-			asyncInterceptor.afterConcurrentHandlingStarted(webRequest);
-		}
-	}
+    @Override
+    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response,
+            Object handler) {
+        if (this.requestInterceptor instanceof AsyncWebRequestInterceptor) {
+            AsyncWebRequestInterceptor asyncInterceptor = (AsyncWebRequestInterceptor) this.requestInterceptor;
+            DispatcherServletWebRequest webRequest = new DispatcherServletWebRequest(request, response);
+            asyncInterceptor.afterConcurrentHandlingStarted(webRequest);
+        }
+    }
 
 }

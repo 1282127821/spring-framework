@@ -1,22 +1,20 @@
 /*
  * Copyright 2002-2013 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet;
 
 import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,22 +48,22 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface LocaleResolver {
 
-	/**
-	 * Resolve the current locale via the given request. Can return a default locale as
-	 * fallback in any case.
-	 * @param request the request to resolve the locale for
-	 * @return the current locale (never {@code null})
-	 */
-	Locale resolveLocale(HttpServletRequest request);
+    /**
+     * Resolve the current locale via the given request. Can return a default locale as
+     * fallback in any case.
+     * @param request the request to resolve the locale for
+     * @return the current locale (never {@code null})
+     */
+    Locale resolveLocale(HttpServletRequest request);
 
-	/**
-	 * Set the current locale to the given one.
-	 * @param request the request to be used for locale modification
-	 * @param response the response to be used for locale modification
-	 * @param locale the new locale, or {@code null} to clear the locale
-	 * @throws UnsupportedOperationException if the LocaleResolver implementation does not
-	 * support dynamic changing of the locale
-	 */
-	void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale);
+    /**
+     * Set the current locale to the given one.
+     * @param request the request to be used for locale modification
+     * @param response the response to be used for locale modification
+     * @param locale the new locale, or {@code null} to clear the locale
+     * @throws UnsupportedOperationException if the LocaleResolver implementation does not
+     * support dynamic changing of the locale
+     */
+    void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale);
 
 }

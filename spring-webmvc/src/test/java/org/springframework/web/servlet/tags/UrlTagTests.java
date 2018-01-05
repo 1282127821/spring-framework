@@ -1,660 +1,634 @@
 /*
  * Copyright 2002-2015 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.springframework.web.servlet.tags;
+
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.mock.web.test.MockHttpServletRequest;
 import org.springframework.mock.web.test.MockPageContext;
 import org.springframework.util.ReflectionUtils;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 /**
  * @author Scott Andrews
  */
 public class UrlTagTests extends AbstractTagTests {
 
-	private UrlTag tag;
+    private UrlTag tag;
 
-	private MockPageContext context;
+    private MockPageContext context;
 
-	@Before
-	public void setUp() throws Exception {
-		context = createPageContext();
-		tag = new UrlTag();
-		tag.setPageContext(context);
-	}
-
-	@Test
-	public void paramSupport() {
-		assertThat(tag, instanceOf(ParamAware.class));
-	}
+    @Before
+    public void setUp() throws Exception {
+        context = createPageContext();
+        tag = new UrlTag();
+        tag.setPageContext(context);
+    }
 
-	@Test
-	public void doStartTag() throws JspException {
-		int action = tag.doStartTag();
+    @Test
+    public void paramSupport() {
+        assertThat(tag, instanceOf(ParamAware.class));
+    }
 
-		assertEquals(Tag.EVAL_BODY_INCLUDE, action);
-	}
-
-	@Test
-	public void doEndTag() throws JspException {
-		tag.setValue("url/path");
+    @Test
+    public void doStartTag() throws JspException {
+        int action = tag.doStartTag();
 
-		tag.doStartTag();
-		int action = tag.doEndTag();
+        assertEquals(Tag.EVAL_BODY_INCLUDE, action);
+    }
 
-		assertEquals(Tag.EVAL_PAGE, action);
-	}
+    @Test
+    public void doEndTag() throws JspException {
+        tag.setValue("url/path");
 
-	@Test
-	public void varDefaultScope() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
+        tag.doStartTag();
+        int action = tag.doEndTag();
 
-		tag.doStartTag();
-		tag.doEndTag();
+        assertEquals(Tag.EVAL_PAGE, action);
+    }
 
-		assertEquals("url/path", context.getAttribute("var",
-				PageContext.PAGE_SCOPE));
-	}
+    @Test
+    public void varDefaultScope() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
 
-	@Test
-	public void varExplicitScope() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
-		tag.setScope("request");
+        tag.doStartTag();
+        tag.doEndTag();
 
-		tag.doStartTag();
-		tag.doEndTag();
+        assertEquals("url/path", context.getAttribute("var", PageContext.PAGE_SCOPE));
+    }
 
-		assertEquals("url/path", context.getAttribute("var",
-				PageContext.REQUEST_SCOPE));
-	}
-
-	@Test
-	public void setHtmlEscapeDefault() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
+    @Test
+    public void varExplicitScope() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
+        tag.setScope("request");
 
-		tag.doStartTag();
+        tag.doStartTag();
+        tag.doEndTag();
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		tag.addParam(param);
-
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		tag.addParam(param);
+        assertEquals("url/path", context.getAttribute("var", PageContext.REQUEST_SCOPE));
+    }
 
-		tag.doEndTag();
+    @Test
+    public void setHtmlEscapeDefault() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
 
-		assertEquals("url/path?n%20me=v%26l%3De&name=value2", context
-				.getAttribute("var"));
-	}
+        tag.doStartTag();
 
-	@Test
-	public void setHtmlEscapeFalse() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
-		tag.setHtmlEscape(false);
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        tag.addParam(param);
 
-		tag.doStartTag();
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        tag.addParam(param);
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		tag.addParam(param);
+        tag.doEndTag();
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		tag.addParam(param);
+        assertEquals("url/path?n%20me=v%26l%3De&name=value2", context.getAttribute("var"));
+    }
 
-		tag.doEndTag();
+    @Test
+    public void setHtmlEscapeFalse() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
+        tag.setHtmlEscape(false);
 
-		assertEquals("url/path?n%20me=v%26l%3De&name=value2", context
-				.getAttribute("var"));
-	}
+        tag.doStartTag();
 
-	@Test
-	public void setHtmlEscapeTrue() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
-		tag.setHtmlEscape(true);
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        tag.addParam(param);
 
-		tag.doStartTag();
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        tag.addParam(param);
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		tag.addParam(param);
+        tag.doEndTag();
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		tag.addParam(param);
+        assertEquals("url/path?n%20me=v%26l%3De&name=value2", context.getAttribute("var"));
+    }
 
-		tag.doEndTag();
+    @Test
+    public void setHtmlEscapeTrue() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
+        tag.setHtmlEscape(true);
 
-		assertEquals("url/path?n%20me=v%26l%3De&amp;name=value2", context
-				.getAttribute("var"));
-	}
+        tag.doStartTag();
 
-	@Test
-	public void setJavaScriptEscapeTrue() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
-		tag.setJavaScriptEscape(true);
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        tag.addParam(param);
 
-		tag.doStartTag();
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        tag.addParam(param);
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		tag.addParam(param);
+        tag.doEndTag();
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		tag.addParam(param);
+        assertEquals("url/path?n%20me=v%26l%3De&amp;name=value2", context.getAttribute("var"));
+    }
 
-		tag.doEndTag();
+    @Test
+    public void setJavaScriptEscapeTrue() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
+        tag.setJavaScriptEscape(true);
 
-		assertEquals("url\\/path?n%20me=v%26l%3De&name=value2", context
-				.getAttribute("var"));
-	}
+        tag.doStartTag();
 
-	@Test
-	public void setHtmlAndJavaScriptEscapeTrue() throws JspException {
-		tag.setValue("url/path");
-		tag.setVar("var");
-		tag.setHtmlEscape(true);
-		tag.setJavaScriptEscape(true);
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        tag.addParam(param);
 
-		tag.doStartTag();
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        tag.addParam(param);
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		tag.addParam(param);
+        tag.doEndTag();
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		tag.addParam(param);
+        assertEquals("url\\/path?n%20me=v%26l%3De&name=value2", context.getAttribute("var"));
+    }
 
-		tag.doEndTag();
+    @Test
+    public void setHtmlAndJavaScriptEscapeTrue() throws JspException {
+        tag.setValue("url/path");
+        tag.setVar("var");
+        tag.setHtmlEscape(true);
+        tag.setJavaScriptEscape(true);
 
-		assertEquals("url\\/path?n%20me=v%26l%3De&amp;name=value2", context
-				.getAttribute("var"));
-	}
+        tag.doStartTag();
 
-	@Test
-	public void createQueryStringNoParams() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        tag.addParam(param);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        tag.addParam(param);
 
-		assertEquals("", queryString);
-	}
+        tag.doEndTag();
 
-	@Test
-	public void createQueryStringOneParam() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        assertEquals("url\\/path?n%20me=v%26l%3De&amp;name=value2", context.getAttribute("var"));
+    }
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		params.add(param);
+    @Test
+    public void createQueryStringNoParams() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		assertEquals("?name=value", queryString);
-	}
+        assertEquals("", queryString);
+    }
 
-	@Test
-	public void createQueryStringOneParamForExsistingQueryString()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void createQueryStringOneParam() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		params.add(param);
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        params.add(param);
 
-		String queryString = tag.createQueryString(params, usedParams, false);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		assertEquals("&name=value", queryString);
-	}
+        assertEquals("?name=value", queryString);
+    }
 
-	@Test
-	public void createQueryStringOneParamEmptyValue() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void createQueryStringOneParamForExsistingQueryString() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("");
-		params.add(param);
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        params.add(param);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        String queryString = tag.createQueryString(params, usedParams, false);
 
-		assertEquals("?name=", queryString);
-	}
+        assertEquals("&name=value", queryString);
+    }
 
-	@Test
-	public void createQueryStringOneParamNullValue() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void createQueryStringOneParamEmptyValue() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue(null);
-		params.add(param);
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("");
+        params.add(param);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		assertEquals("?name", queryString);
-	}
+        assertEquals("?name=", queryString);
+    }
 
-	@Test
-	public void createQueryStringOneParamAlreadyUsed() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void createQueryStringOneParamNullValue() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		params.add(param);
+        Param param = new Param();
+        param.setName("name");
+        param.setValue(null);
+        params.add(param);
 
-		usedParams.add("name");
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        assertEquals("?name", queryString);
+    }
 
-		assertEquals("", queryString);
-	}
+    @Test
+    public void createQueryStringOneParamAlreadyUsed() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-	@Test
-	public void createQueryStringTwoParams() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        params.add(param);
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		params.add(param);
+        usedParams.add("name");
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		params.add(param);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        assertEquals("", queryString);
+    }
 
-		assertEquals("?name=value&name=value2", queryString);
-	}
+    @Test
+    public void createQueryStringTwoParams() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-	@Test
-	public void createQueryStringUrlEncoding() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        params.add(param);
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("v&l=e");
-		params.add(param);
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        params.add(param);
 
-		param = new Param();
-		param.setName("name");
-		param.setValue("value2");
-		params.add(param);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
+        assertEquals("?name=value&name=value2", queryString);
+    }
 
-		assertEquals("?n%20me=v%26l%3De&name=value2", queryString);
-	}
+    @Test
+    public void createQueryStringUrlEncoding() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-	@Test
-	public void createQueryStringParamNullName() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("v&l=e");
+        params.add(param);
 
-		Param param = new Param();
-		param.setName(null);
-		param.setValue("value");
-		params.add(param);
+        param = new Param();
+        param.setName("name");
+        param.setValue("value2");
+        params.add(param);
 
-		String queryString = tag.createQueryString(params, usedParams, true);
-
-		assertEquals("", queryString);
-	}
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-	@Test
-	public void createQueryStringParamEmptyName() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
-
-		Param param = new Param();
-		param.setName("");
-		param.setValue("value");
-		params.add(param);
-
-		String queryString = tag.createQueryString(params, usedParams, true);
+        assertEquals("?n%20me=v%26l%3De&name=value2", queryString);
+    }
 
-		assertEquals("", queryString);
-	}
+    @Test
+    public void createQueryStringParamNullName() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-	@Test
-	public void replaceUriTemplateParamsNoParams() throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        Param param = new Param();
+        param.setName(null);
+        param.setValue("value");
+        params.add(param);
 
-		String uri = tag.replaceUriTemplateParams("url/path", params,
-				usedParams);
-
-		assertEquals("url/path", uri);
-		assertEquals(0, usedParams.size());
-	}
-
-	@Test
-	public void replaceUriTemplateParamsTemplateWithoutParamMatch()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
-
-		String uri = tag.replaceUriTemplateParams("url/{path}", params,
-				usedParams);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		assertEquals("url/{path}", uri);
-		assertEquals(0, usedParams.size());
-	}
+        assertEquals("", queryString);
+    }
 
-	@Test
-	public void replaceUriTemplateParamsTemplateWithParamMatch()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void createQueryStringParamEmptyName() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		params.add(param);
+        Param param = new Param();
+        param.setName("");
+        param.setValue("value");
+        params.add(param);
 
-		String uri = tag.replaceUriTemplateParams("url/{name}", params,
-				usedParams);
+        String queryString = tag.createQueryString(params, usedParams, true);
 
-		assertEquals("url/value", uri);
-		assertEquals(1, usedParams.size());
-		assertTrue(usedParams.contains("name"));
-	}
+        assertEquals("", queryString);
+    }
 
-	@Test
-	public void replaceUriTemplateParamsTemplateWithParamMatchNamePreEncoding()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+    @Test
+    public void replaceUriTemplateParamsNoParams() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		Param param = new Param();
-		param.setName("n me");
-		param.setValue("value");
-		params.add(param);
+        String uri = tag.replaceUriTemplateParams("url/path", params, usedParams);
 
-		String uri = tag.replaceUriTemplateParams("url/{n me}", params,
-				usedParams);
+        assertEquals("url/path", uri);
+        assertEquals(0, usedParams.size());
+    }
 
-		assertEquals("url/value", uri);
-		assertEquals(1, usedParams.size());
-		assertTrue(usedParams.contains("n me"));
-	}
+    @Test
+    public void replaceUriTemplateParamsTemplateWithoutParamMatch() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-	@Test
-	public void replaceUriTemplateParamsTemplateWithParamMatchValueEncoded()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        String uri = tag.replaceUriTemplateParams("url/{path}", params, usedParams);
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("v lue");
-		params.add(param);
+        assertEquals("url/{path}", uri);
+        assertEquals(0, usedParams.size());
+    }
 
-		String uri = tag.replaceUriTemplateParams("url/{name}", params,
-				usedParams);
+    @Test
+    public void replaceUriTemplateParamsTemplateWithParamMatch() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		assertEquals("url/v%20lue", uri);
-		assertEquals(1, usedParams.size());
-		assertTrue(usedParams.contains("name"));
-	}
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        params.add(param);
 
-	// SPR-11401
+        String uri = tag.replaceUriTemplateParams("url/{name}", params, usedParams);
 
-	@Test
-	public void replaceUriTemplateParamsTemplateWithPathSegment()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        assertEquals("url/value", uri);
+        assertEquals(1, usedParams.size());
+        assertTrue(usedParams.contains("name"));
+    }
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("my/Id");
-		params.add(param);
+    @Test
+    public void replaceUriTemplateParamsTemplateWithParamMatchNamePreEncoding() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		String uri = tag.replaceUriTemplateParams("url/{/name}", params, usedParams);
+        Param param = new Param();
+        param.setName("n me");
+        param.setValue("value");
+        params.add(param);
 
-		assertEquals("url/my%2FId", uri);
-		assertEquals(1, usedParams.size());
-		assertTrue(usedParams.contains("name"));
-	}
+        String uri = tag.replaceUriTemplateParams("url/{n me}", params, usedParams);
 
-	@Test
-	public void replaceUriTemplateParamsTemplateWithPath()
-			throws JspException {
-		List<Param> params = new LinkedList<Param>();
-		Set<String> usedParams = new HashSet<String>();
+        assertEquals("url/value", uri);
+        assertEquals(1, usedParams.size());
+        assertTrue(usedParams.contains("n me"));
+    }
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("my/Id");
-		params.add(param);
+    @Test
+    public void replaceUriTemplateParamsTemplateWithParamMatchValueEncoded() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		String uri = tag.replaceUriTemplateParams("url/{name}", params, usedParams);
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("v lue");
+        params.add(param);
 
-		assertEquals("url/my/Id", uri);
-		assertEquals(1, usedParams.size());
-		assertTrue(usedParams.contains("name"));
-	}
+        String uri = tag.replaceUriTemplateParams("url/{name}", params, usedParams);
 
-	@Test
-	public void createUrlRemoteServer() throws JspException {
-		tag.setValue("http://www.springframework.org/");
+        assertEquals("url/v%20lue", uri);
+        assertEquals(1, usedParams.size());
+        assertTrue(usedParams.contains("name"));
+    }
 
-		tag.doStartTag();
+    // SPR-11401
 
-		// String uri = tag.createUrl();
-		String uri = invokeCreateUrl(tag);
+    @Test
+    public void replaceUriTemplateParamsTemplateWithPathSegment() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		assertEquals("http://www.springframework.org/", uri);
-	}
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("my/Id");
+        params.add(param);
 
-	@Test
-	public void createUrlRelative() throws JspException {
-		tag.setValue("url/path");
+        String uri = tag.replaceUriTemplateParams("url/{/name}", params, usedParams);
 
-		tag.doStartTag();
+        assertEquals("url/my%2FId", uri);
+        assertEquals(1, usedParams.size());
+        assertTrue(usedParams.contains("name"));
+    }
 
-		String uri = invokeCreateUrl(tag);
+    @Test
+    public void replaceUriTemplateParamsTemplateWithPath() throws JspException {
+        List<Param> params = new LinkedList<Param>();
+        Set<String> usedParams = new HashSet<String>();
 
-		assertEquals("url/path", uri);
-	}
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("my/Id");
+        params.add(param);
 
-	@Test
-	public void createUrlLocalContext() throws JspException {
-		((MockHttpServletRequest) context.getRequest())
-				.setContextPath("/app-context");
+        String uri = tag.replaceUriTemplateParams("url/{name}", params, usedParams);
 
-		tag.setValue("/url/path");
+        assertEquals("url/my/Id", uri);
+        assertEquals(1, usedParams.size());
+        assertTrue(usedParams.contains("name"));
+    }
 
-		tag.doStartTag();
+    @Test
+    public void createUrlRemoteServer() throws JspException {
+        tag.setValue("http://www.springframework.org/");
 
-		String uri = invokeCreateUrl(tag);
+        tag.doStartTag();
 
-		assertEquals("/app-context/url/path", uri);
-	}
+        // String uri = tag.createUrl();
+        String uri = invokeCreateUrl(tag);
 
-	@Test
-	public void createUrlRemoteContext() throws JspException {
-		((MockHttpServletRequest) context.getRequest())
-				.setContextPath("/app-context");
+        assertEquals("http://www.springframework.org/", uri);
+    }
 
-		tag.setValue("/url/path");
-		tag.setContext("some-other-context");
+    @Test
+    public void createUrlRelative() throws JspException {
+        tag.setValue("url/path");
 
-		tag.doStartTag();
+        tag.doStartTag();
 
-		String uri = invokeCreateUrl(tag);
+        String uri = invokeCreateUrl(tag);
 
-		assertEquals("/some-other-context/url/path", uri);
-	}
+        assertEquals("url/path", uri);
+    }
 
-	@Test
-	public void createUrlRemoteContextWithSlash() throws JspException {
-		((MockHttpServletRequest) context.getRequest())
-				.setContextPath("/app-context");
+    @Test
+    public void createUrlLocalContext() throws JspException {
+        ((MockHttpServletRequest) context.getRequest()).setContextPath("/app-context");
 
-		tag.setValue("/url/path");
-		tag.setContext("/some-other-context");
+        tag.setValue("/url/path");
 
-		tag.doStartTag();
+        tag.doStartTag();
 
-		String uri = invokeCreateUrl(tag);
+        String uri = invokeCreateUrl(tag);
 
-		assertEquals("/some-other-context/url/path", uri);
-	}
+        assertEquals("/app-context/url/path", uri);
+    }
 
-	@Test
-	public void createUrlRemoteContextSingleSlash() throws JspException {
-		((MockHttpServletRequest) context.getRequest())
-				.setContextPath("/app-context");
+    @Test
+    public void createUrlRemoteContext() throws JspException {
+        ((MockHttpServletRequest) context.getRequest()).setContextPath("/app-context");
 
-		tag.setValue("/url/path");
-		tag.setContext("/");
+        tag.setValue("/url/path");
+        tag.setContext("some-other-context");
 
-		tag.doStartTag();
+        tag.doStartTag();
 
-		String uri = invokeCreateUrl(tag);
+        String uri = invokeCreateUrl(tag);
 
-		assertEquals("/url/path", uri);
-	}
+        assertEquals("/some-other-context/url/path", uri);
+    }
 
-	@Test
-	public void createUrlWithParams() throws JspException {
-		tag.setValue("url/path");
+    @Test
+    public void createUrlRemoteContextWithSlash() throws JspException {
+        ((MockHttpServletRequest) context.getRequest()).setContextPath("/app-context");
 
-		tag.doStartTag();
+        tag.setValue("/url/path");
+        tag.setContext("/some-other-context");
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		tag.addParam(param);
+        tag.doStartTag();
 
-		param = new Param();
-		param.setName("n me");
-		param.setValue("v lue");
-		tag.addParam(param);
+        String uri = invokeCreateUrl(tag);
 
-		String uri = invokeCreateUrl(tag);
+        assertEquals("/some-other-context/url/path", uri);
+    }
 
-		assertEquals("url/path?name=value&n%20me=v%20lue", uri);
-	}
+    @Test
+    public void createUrlRemoteContextSingleSlash() throws JspException {
+        ((MockHttpServletRequest) context.getRequest()).setContextPath("/app-context");
 
-	@Test
-	public void createUrlWithTemplateParams() throws JspException {
-		tag.setValue("url/{name}");
+        tag.setValue("/url/path");
+        tag.setContext("/");
 
-		tag.doStartTag();
+        tag.doStartTag();
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		tag.addParam(param);
+        String uri = invokeCreateUrl(tag);
 
-		param = new Param();
-		param.setName("n me");
-		param.setValue("v lue");
-		tag.addParam(param);
+        assertEquals("/url/path", uri);
+    }
 
-		String uri = invokeCreateUrl(tag);
+    @Test
+    public void createUrlWithParams() throws JspException {
+        tag.setValue("url/path");
 
-		assertEquals("url/value?n%20me=v%20lue", uri);
-	}
+        tag.doStartTag();
 
-	@Test
-	public void createUrlWithParamAndExsistingQueryString()
-			throws JspException {
-		tag.setValue("url/path?foo=bar");
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        tag.addParam(param);
 
-		tag.doStartTag();
+        param = new Param();
+        param.setName("n me");
+        param.setValue("v lue");
+        tag.addParam(param);
 
-		Param param = new Param();
-		param.setName("name");
-		param.setValue("value");
-		tag.addParam(param);
+        String uri = invokeCreateUrl(tag);
 
-		String uri = invokeCreateUrl(tag);
+        assertEquals("url/path?name=value&n%20me=v%20lue", uri);
+    }
 
-		assertEquals("url/path?foo=bar&name=value", uri);
-	}
+    @Test
+    public void createUrlWithTemplateParams() throws JspException {
+        tag.setValue("url/{name}");
 
-	@Test
-	public void jspWriterOutput() {
-		// TODO assert that the output to the JspWriter is the expected output
-	}
+        tag.doStartTag();
 
-	@Test
-	public void servletRepsonseEncodeUrl() {
-		// TODO assert that HttpServletResponse.encodeURL(String) is invoked for
-		// non absolute urls
-	}
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        tag.addParam(param);
 
-	// support methods
+        param = new Param();
+        param.setName("n me");
+        param.setValue("v lue");
+        tag.addParam(param);
 
-	private String invokeCreateUrl(UrlTag tag) {
-		Method createUrl = ReflectionUtils.findMethod(tag.getClass(),
-				"createUrl");
-		ReflectionUtils.makeAccessible(createUrl);
-		return (String) ReflectionUtils.invokeMethod(createUrl, tag);
-	}
+        String uri = invokeCreateUrl(tag);
+
+        assertEquals("url/value?n%20me=v%20lue", uri);
+    }
+
+    @Test
+    public void createUrlWithParamAndExsistingQueryString() throws JspException {
+        tag.setValue("url/path?foo=bar");
+
+        tag.doStartTag();
+
+        Param param = new Param();
+        param.setName("name");
+        param.setValue("value");
+        tag.addParam(param);
+
+        String uri = invokeCreateUrl(tag);
+
+        assertEquals("url/path?foo=bar&name=value", uri);
+    }
+
+    @Test
+    public void jspWriterOutput() {
+        // TODO assert that the output to the JspWriter is the expected output
+    }
+
+    @Test
+    public void servletRepsonseEncodeUrl() {
+        // TODO assert that HttpServletResponse.encodeURL(String) is invoked for
+        // non absolute urls
+    }
+
+    // support methods
+
+    private String invokeCreateUrl(UrlTag tag) {
+        Method createUrl = ReflectionUtils.findMethod(tag.getClass(), "createUrl");
+        ReflectionUtils.makeAccessible(createUrl);
+        return (String) ReflectionUtils.invokeMethod(createUrl, tag);
+    }
 
 }
