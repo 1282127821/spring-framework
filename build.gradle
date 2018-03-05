@@ -349,7 +349,9 @@ project("spring-core") {
 
 		compile(files(cglibRepackJar))
 		compile(files(objenesisRepackJar))
-		compile("commons-logging:commons-logging:1.2")
+		compile("org.slf4j:jcl-over-slf4j:1.7.5")
+		compile("org.slf4j:slf4j-api:1.7.5")
+		compile("org.slf4j:slf4j-log4j12:1.7.5")
 		optional("commons-codec:commons-codec:1.10")
 		optional("org.aspectj:aspectjweaver:${aspectjVersion}")
 		optional("net.sf.jopt-simple:jopt-simple:4.9")
@@ -475,6 +477,7 @@ project("spring-context") {
 		compile(project(":spring-expression"))
 		compile(project(":spring-core"))
 		compile(files(project(":spring-core").cglibRepackJar))
+		compile("log4j:log4j:1.2.17")
 		optional(project(":spring-instrument"))
 		optional("javax.inject:javax.inject:1")
 		optional("javax.ejb:ejb-api:${ejbApiVersion}")
