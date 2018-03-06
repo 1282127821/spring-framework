@@ -13,6 +13,8 @@
 
 package org.springframework.context.support;
 
+import java.util.Arrays;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -130,6 +132,8 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
             throws BeansException {
 
         super(parent);
+        logger.debug("ClassPathXmlApplicationContext()~ configLocations: " + Arrays.asList(configLocations)
+                + ", refresh: " + refresh + ", parent: " + parent);
         setConfigLocations(configLocations);
         if (refresh) {
             refresh();

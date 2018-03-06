@@ -55,6 +55,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
      */
     public AbstractXmlApplicationContext(ApplicationContext parent) {
         super(parent);
+        logger.debug("AbstractXmlApplicationContext()~ parent: " + parent);
     }
 
 

@@ -210,6 +210,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
     public PathMatchingResourcePatternResolver(ResourceLoader resourceLoader) {
         Assert.notNull(resourceLoader, "ResourceLoader must not be null");
         this.resourceLoader = resourceLoader;
+        logger.debug("PathMatchingResourcePatternResolver()~ resourceLoader: " + resourceLoader);
     }
 
     /**

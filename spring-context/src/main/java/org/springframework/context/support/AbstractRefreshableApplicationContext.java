@@ -82,6 +82,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
      */
     public AbstractRefreshableApplicationContext(ApplicationContext parent) {
         super(parent);
+        logger.debug("AbstractRefreshableApplicationContext()~ parent: " + parent);
     }
 
 

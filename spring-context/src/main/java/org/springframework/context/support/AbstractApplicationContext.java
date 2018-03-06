@@ -207,7 +207,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      * Create a new AbstractApplicationContext with no parent.
      */
     public AbstractApplicationContext() {
+        super();
         this.resourcePatternResolver = getResourcePatternResolver();
+        logger.debug("AbstractApplicationContext()~ resourcePatternResolver: " + this.resourcePatternResolver);
     }
 
     /**
@@ -216,6 +218,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      */
     public AbstractApplicationContext(ApplicationContext parent) {
         this();
+        logger.debug("AbstractApplicationContext()~ parent: " + parent);
         setParent(parent);
     }
 
@@ -443,6 +446,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      */
     @Override
     public void setParent(ApplicationContext parent) {
+        logger.debug("set parent: " + parent);
         this.parent = parent;
         if (parent != null) {
             Environment parentEnvironment = parent.getEnvironment();

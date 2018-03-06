@@ -52,6 +52,7 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
      */
     public AbstractRefreshableConfigApplicationContext(ApplicationContext parent) {
         super(parent);
+        logger.debug("AbstractRefreshableConfigApplicationContext()~ parent: " + parent);
     }
 
 

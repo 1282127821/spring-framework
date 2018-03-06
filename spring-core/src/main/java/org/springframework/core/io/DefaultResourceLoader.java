@@ -16,6 +16,8 @@ package org.springframework.core.io;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -37,6 +39,7 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultResourceLoader implements ResourceLoader {
 
+    protected final Log logger = LogFactory.getLog(getClass());
     private ClassLoader classLoader;
 
 
@@ -48,6 +51,7 @@ public class DefaultResourceLoader implements ResourceLoader {
      */
     public DefaultResourceLoader() {
         this.classLoader = ClassUtils.getDefaultClassLoader();
+        logger.debug("DefaultResourceLoader()~ classLoader: " + this.classLoader);
     }
 
     /**
