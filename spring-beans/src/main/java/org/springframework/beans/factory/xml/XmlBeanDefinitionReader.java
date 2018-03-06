@@ -311,6 +311,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
      * @throws BeanDefinitionStoreException in case of loading or parsing errors
      */
     public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefinitionStoreException {
+        logger.debug("Load bean definitions");
         Assert.notNull(encodedResource, "EncodedResource must not be null");
         if (logger.isInfoEnabled()) {
             logger.info("Loading XML bean definitions from " + encodedResource.getResource());
@@ -383,6 +384,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
      */
     protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
             throws BeanDefinitionStoreException {
+        logger.debug("do load bean definitions");
         try {
             Document doc = doLoadDocument(inputSource, resource);
             return registerBeanDefinitions(doc, resource);

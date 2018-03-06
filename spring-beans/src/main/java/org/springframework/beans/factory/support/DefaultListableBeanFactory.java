@@ -191,6 +191,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
      */
     public DefaultListableBeanFactory(BeanFactory parentBeanFactory) {
         super(parentBeanFactory);
+        logger.debug("DefaultListableBeanFactory()~ parentBeanFactory: " + parentBeanFactory);
     }
 
 

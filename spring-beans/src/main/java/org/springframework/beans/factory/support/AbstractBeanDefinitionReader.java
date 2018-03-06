@@ -201,6 +201,7 @@ public abstract class AbstractBeanDefinitionReader implements EnvironmentCapable
      * @see #loadBeanDefinitions(org.springframework.core.io.Resource[])
      */
     public int loadBeanDefinitions(String location, Set<Resource> actualResources) throws BeanDefinitionStoreException {
+        logger.debug("location: " + location);
         ResourceLoader resourceLoader = getResourceLoader();
         if (resourceLoader == null) {
             throw new BeanDefinitionStoreException(

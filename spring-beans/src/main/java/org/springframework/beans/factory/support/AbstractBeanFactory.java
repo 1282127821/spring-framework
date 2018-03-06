@@ -173,7 +173,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     /**
      * Create a new AbstractBeanFactory.
      */
-    public AbstractBeanFactory() {}
+    public AbstractBeanFactory() {
+        logger.debug("AbstractBeanFactory()~");
+    }
 
     /**
      * Create a new AbstractBeanFactory with the given parent.

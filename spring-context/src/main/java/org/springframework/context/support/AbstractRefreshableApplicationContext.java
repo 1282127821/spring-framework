@@ -16,6 +16,7 @@ package org.springframework.context.support;
 import java.io.IOException;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -115,6 +116,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
      */
     @Override
     protected final void refreshBeanFactory() throws BeansException {
+        logger.debug("Refresh BeanFactory");
         if (hasBeanFactory()) {
             destroyBeans();
             closeBeanFactory();
@@ -193,7 +195,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
      * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
      */
     protected DefaultListableBeanFactory createBeanFactory() {
-        return new DefaultListableBeanFactory(getInternalParentBeanFactory());
+        BeanFactory internalParentBeanFactory = getInternalParentBeanFactory();
+        logger.trace("internalParentBeanFactory: " + internalParentBeanFactory);
+        return new DefaultListableBeanFactory(internalParentBeanFactory);
     }
 
     /**

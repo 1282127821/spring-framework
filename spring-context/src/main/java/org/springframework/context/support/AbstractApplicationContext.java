@@ -497,6 +497,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     @Override
     public void refresh() throws BeansException, IllegalStateException {
+        logger.debug("Start to refresh...");
         synchronized (this.startupShutdownMonitor) {
             // Prepare this context for refreshing.
             prepareRefresh();
@@ -561,6 +562,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      * active flag as well as performing any initialization of property sources.
      */
     protected void prepareRefresh() {
+        logger.debug("Prepare this context for refreshing.");
         this.startupDate = System.currentTimeMillis();
         this.closed.set(false);
         this.active.set(true);
@@ -597,6 +599,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      * @see #getBeanFactory()
      */
     protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+        logger.debug("Tell the subclass to refresh the internal bean factory.");
         refreshBeanFactory();
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
         if (logger.isDebugEnabled()) {
@@ -1194,8 +1197,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      * @see org.springframework.context.ConfigurableApplicationContext#getBeanFactory
      */
     protected BeanFactory getInternalParentBeanFactory() {
-        return (getParent() instanceof ConfigurableApplicationContext)
-                ? ((ConfigurableApplicationContext) getParent()).getBeanFactory() : getParent();
+        if (getParent() instanceof ConfigurableApplicationContext) {
+            return ((ConfigurableApplicationContext) getParent()).getBeanFactory();
+        } else {
+            return getParent();
+        }
     }
 
 

@@ -157,6 +157,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     public AbstractAutowireCapableBeanFactory() {
         super();
+        logger.debug("AbstractAutowireCapableBeanFactory()~");
         ignoreDependencyInterface(BeanNameAware.class);
         ignoreDependencyInterface(BeanFactoryAware.class);
         ignoreDependencyInterface(BeanClassLoaderAware.class);
@@ -168,6 +169,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     public AbstractAutowireCapableBeanFactory(BeanFactory parentBeanFactory) {
         this();
+        logger.debug("AbstractAutowireCapableBeanFactory()~ parentBeanFactory: " + parentBeanFactory);
         setParentBeanFactory(parentBeanFactory);
     }
 

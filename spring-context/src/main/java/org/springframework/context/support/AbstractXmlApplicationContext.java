@@ -75,6 +75,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
      */
     @Override
     protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
+        logger.debug("Load bean definitions");
         // Create a new XmlBeanDefinitionReader for the given BeanFactory.
         XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
 
@@ -115,6 +116,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
      * @see #getResourcePatternResolver
      */
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+        logger.debug("Load bean definitions");
         Resource[] configResources = getConfigResources();
         if (configResources != null) {
             reader.loadBeanDefinitions(configResources);
