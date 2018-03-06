@@ -181,6 +181,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
      * @return the registered singleton object, or {@code null} if none found
      */
     protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+        logger.trace("beanName: " + beanName + ", allowEarlyReference: " + allowEarlyReference);
         Object singletonObject = this.singletonObjects.get(beanName);
         if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
             synchronized (this.singletonObjects) {

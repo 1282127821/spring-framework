@@ -234,6 +234,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     protected <T> T doGetBean(final String name, final Class<T> requiredType, final Object[] args,
             boolean typeCheckOnly) throws BeansException {
 
+        logger.debug("name: " + name + ", requiredType: " + requiredType + ", args: " + args + ", typeCheckOnly: " + typeCheckOnly);
         final String beanName = transformedBeanName(name);
         Object bean;
 
@@ -249,9 +250,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 }
             }
             bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
-        }
-
-        else {
+        } else {
             // Fail if we're already creating this bean instance:
             // We're assumably within a circular reference.
             if (isPrototypeCurrentlyInCreation(beanName)) {
@@ -311,9 +310,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                         }
                     });
                     bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
-                }
-
-                else if (mbd.isPrototype()) {
+                } else if (mbd.isPrototype()) {
                     // It's a prototype -> create a new instance.
                     Object prototypeInstance = null;
                     try {
@@ -323,9 +320,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                         afterPrototypeCreation(beanName);
                     }
                     bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
-                }
-
-                else {
+                } else {
                     String scopeName = mbd.getScope();
                     final Scope scope = this.scopes.get(scopeName);
                     if (scope == null) {

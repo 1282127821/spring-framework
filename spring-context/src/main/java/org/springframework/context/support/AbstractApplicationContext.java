@@ -668,6 +668,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      * <p>Must be called before singleton instantiation.
      */
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+        logger.debug("Invoke factory processors registered as beans in the context.");
         PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
     }
 
