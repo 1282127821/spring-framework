@@ -34,86 +34,84 @@ import org.springframework.util.Assert;
  */
 public class AdvisorComponentDefinition extends AbstractComponentDefinition {
 
-	private final String advisorBeanName;
+    private final String advisorBeanName;
 
-	private final BeanDefinition advisorDefinition;
+    private final BeanDefinition advisorDefinition;
 
-	private String description;
+    private String description;
 
-	private BeanReference[] beanReferences;
+    private BeanReference[] beanReferences;
 
-	private BeanDefinition[] beanDefinitions;
-
-
-	public AdvisorComponentDefinition(String advisorBeanName, BeanDefinition advisorDefinition) {
-		 this(advisorBeanName, advisorDefinition, null);
-	}
-
-	public AdvisorComponentDefinition(
-			String advisorBeanName, BeanDefinition advisorDefinition, BeanDefinition pointcutDefinition) {
-
-		Assert.notNull(advisorBeanName, "'advisorBeanName' must not be null");
-		Assert.notNull(advisorDefinition, "'advisorDefinition' must not be null");
-		this.advisorBeanName = advisorBeanName;
-		this.advisorDefinition = advisorDefinition;
-		unwrapDefinitions(advisorDefinition, pointcutDefinition);
-	}
+    private BeanDefinition[] beanDefinitions;
 
 
-	private void unwrapDefinitions(BeanDefinition advisorDefinition, BeanDefinition pointcutDefinition) {
-		MutablePropertyValues pvs = advisorDefinition.getPropertyValues();
-		BeanReference adviceReference = (BeanReference) pvs.getPropertyValue("adviceBeanName").getValue();
+    public AdvisorComponentDefinition(String advisorBeanName, BeanDefinition advisorDefinition) {
+        this(advisorBeanName, advisorDefinition, null);
+    }
 
-		if (pointcutDefinition != null) {
-			this.beanReferences = new BeanReference[] {adviceReference};
-			this.beanDefinitions = new BeanDefinition[] {advisorDefinition, pointcutDefinition};
-			this.description = buildDescription(adviceReference, pointcutDefinition);
-		}
-		else {
-			BeanReference pointcutReference = (BeanReference) pvs.getPropertyValue("pointcut").getValue();
-			this.beanReferences = new BeanReference[] {adviceReference, pointcutReference};
-			this.beanDefinitions = new BeanDefinition[] {advisorDefinition};
-			this.description = buildDescription(adviceReference, pointcutReference);
-		}
-	}
+    public AdvisorComponentDefinition(String advisorBeanName, BeanDefinition advisorDefinition,
+            BeanDefinition pointcutDefinition) {
 
-	private String buildDescription(BeanReference adviceReference, BeanDefinition pointcutDefinition) {
-		return new StringBuilder("Advisor <advice(ref)='").
-				append(adviceReference.getBeanName()).append("', pointcut(expression)=[").
-				append(pointcutDefinition.getPropertyValues().getPropertyValue("expression").getValue()).
-				append("]>").toString();
-	}
-
-	private String buildDescription(BeanReference adviceReference, BeanReference pointcutReference) {
-		return new StringBuilder("Advisor <advice(ref)='").
-				append(adviceReference.getBeanName()).append("', pointcut(ref)='").
-				append(pointcutReference.getBeanName()).append("'>").toString();
-	}
+        Assert.notNull(advisorBeanName, "'advisorBeanName' must not be null");
+        Assert.notNull(advisorDefinition, "'advisorDefinition' must not be null");
+        this.advisorBeanName = advisorBeanName;
+        this.advisorDefinition = advisorDefinition;
+        unwrapDefinitions(advisorDefinition, pointcutDefinition);
+    }
 
 
-	@Override
-	public String getName() {
-		return this.advisorBeanName;
-	}
+    private void unwrapDefinitions(BeanDefinition advisorDefinition, BeanDefinition pointcutDefinition) {
+        MutablePropertyValues pvs = advisorDefinition.getPropertyValues();
+        BeanReference adviceReference = (BeanReference) pvs.getPropertyValue("adviceBeanName").getValue();
 
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
+        if (pointcutDefinition != null) {
+            this.beanReferences = new BeanReference[] {adviceReference};
+            this.beanDefinitions = new BeanDefinition[] {advisorDefinition, pointcutDefinition};
+            this.description = buildDescription(adviceReference, pointcutDefinition);
+        } else {
+            BeanReference pointcutReference = (BeanReference) pvs.getPropertyValue("pointcut").getValue();
+            this.beanReferences = new BeanReference[] {adviceReference, pointcutReference};
+            this.beanDefinitions = new BeanDefinition[] {advisorDefinition};
+            this.description = buildDescription(adviceReference, pointcutReference);
+        }
+    }
 
-	@Override
-	public BeanDefinition[] getBeanDefinitions() {
-		return this.beanDefinitions;
-	}
+    private String buildDescription(BeanReference adviceReference, BeanDefinition pointcutDefinition) {
+        return new StringBuilder("Advisor <advice(ref)='").append(adviceReference.getBeanName())
+                .append("', pointcut(expression)=[")
+                .append(pointcutDefinition.getPropertyValues().getPropertyValue("expression").getValue()).append("]>")
+                .toString();
+    }
 
-	@Override
-	public BeanReference[] getBeanReferences() {
-		return this.beanReferences;
-	}
+    private String buildDescription(BeanReference adviceReference, BeanReference pointcutReference) {
+        return new StringBuilder("Advisor <advice(ref)='").append(adviceReference.getBeanName())
+                .append("', pointcut(ref)='").append(pointcutReference.getBeanName()).append("'>").toString();
+    }
 
-	@Override
-	public Object getSource() {
-		return this.advisorDefinition.getSource();
-	}
+
+    @Override
+    public String getName() {
+        return this.advisorBeanName;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public BeanDefinition[] getBeanDefinitions() {
+        return this.beanDefinitions;
+    }
+
+    @Override
+    public BeanReference[] getBeanReferences() {
+        return this.beanReferences;
+    }
+
+    @Override
+    public Object getSource() {
+        return this.advisorDefinition.getSource();
+    }
 
 }

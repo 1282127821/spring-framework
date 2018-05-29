@@ -32,66 +32,66 @@ import org.springframework.util.StringUtils;
  */
 public class MethodLocatingFactoryBean implements FactoryBean<Method>, BeanFactoryAware {
 
-	private String targetBeanName;
+    private String targetBeanName;
 
-	private String methodName;
+    private String methodName;
 
-	private Method method;
-
-
-	/**
-	 * Set the name of the bean to locate the {@link Method} on.
-	 * <p>This property is required.
-	 * @param targetBeanName the name of the bean to locate the {@link Method} on
-	 */
-	public void setTargetBeanName(String targetBeanName) {
-		this.targetBeanName = targetBeanName;
-	}
-
-	/**
-	 * Set the name of the {@link Method} to locate.
-	 * <p>This property is required.
-	 * @param methodName the name of the {@link Method} to locate
-	 */
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
-	}
-
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
-		if (!StringUtils.hasText(this.targetBeanName)) {
-			throw new IllegalArgumentException("Property 'targetBeanName' is required");
-		}
-		if (!StringUtils.hasText(this.methodName)) {
-			throw new IllegalArgumentException("Property 'methodName' is required");
-		}
-
-		Class<?> beanClass = beanFactory.getType(this.targetBeanName);
-		if (beanClass == null) {
-			throw new IllegalArgumentException("Can't determine type of bean with name '" + this.targetBeanName + "'");
-		}
-		this.method = BeanUtils.resolveSignature(this.methodName, beanClass);
-
-		if (this.method == null) {
-			throw new IllegalArgumentException("Unable to locate method [" + this.methodName +
-					"] on bean [" + this.targetBeanName + "]");
-		}
-	}
+    private Method method;
 
 
-	@Override
-	public Method getObject() throws Exception {
-		return this.method;
-	}
+    /**
+     * Set the name of the bean to locate the {@link Method} on.
+     * <p>This property is required.
+     * @param targetBeanName the name of the bean to locate the {@link Method} on
+     */
+    public void setTargetBeanName(String targetBeanName) {
+        this.targetBeanName = targetBeanName;
+    }
 
-	@Override
-	public Class<Method> getObjectType() {
-		return Method.class;
-	}
+    /**
+     * Set the name of the {@link Method} to locate.
+     * <p>This property is required.
+     * @param methodName the name of the {@link Method} to locate
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        if (!StringUtils.hasText(this.targetBeanName)) {
+            throw new IllegalArgumentException("Property 'targetBeanName' is required");
+        }
+        if (!StringUtils.hasText(this.methodName)) {
+            throw new IllegalArgumentException("Property 'methodName' is required");
+        }
+
+        Class<?> beanClass = beanFactory.getType(this.targetBeanName);
+        if (beanClass == null) {
+            throw new IllegalArgumentException("Can't determine type of bean with name '" + this.targetBeanName + "'");
+        }
+        this.method = BeanUtils.resolveSignature(this.methodName, beanClass);
+
+        if (this.method == null) {
+            throw new IllegalArgumentException(
+                    "Unable to locate method [" + this.methodName + "] on bean [" + this.targetBeanName + "]");
+        }
+    }
+
+
+    @Override
+    public Method getObject() throws Exception {
+        return this.method;
+    }
+
+    @Override
+    public Class<Method> getObjectType() {
+        return Method.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

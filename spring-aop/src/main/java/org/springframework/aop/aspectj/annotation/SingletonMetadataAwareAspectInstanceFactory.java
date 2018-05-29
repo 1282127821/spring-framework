@@ -31,30 +31,30 @@ import org.springframework.core.annotation.OrderUtils;
  * @see SimpleMetadataAwareAspectInstanceFactory
  */
 public class SingletonMetadataAwareAspectInstanceFactory extends SingletonAspectInstanceFactory
-		implements MetadataAwareAspectInstanceFactory {
+        implements MetadataAwareAspectInstanceFactory {
 
-	private final AspectMetadata metadata;
-
-
-	/**
-	 * Create a new SingletonMetadataAwareAspectInstanceFactory for the given aspect.
-	 * @param aspectInstance the singleton aspect instance
-	 * @param aspectName the name of the aspect
-	 */
-	public SingletonMetadataAwareAspectInstanceFactory(Object aspectInstance, String aspectName) {
-		super(aspectInstance);
-		this.metadata = new AspectMetadata(aspectInstance.getClass(), aspectName);
-	}
+    private final AspectMetadata metadata;
 
 
-	@Override
-	public final AspectMetadata getAspectMetadata() {
-		return this.metadata;
-	}
+    /**
+     * Create a new SingletonMetadataAwareAspectInstanceFactory for the given aspect.
+     * @param aspectInstance the singleton aspect instance
+     * @param aspectName the name of the aspect
+     */
+    public SingletonMetadataAwareAspectInstanceFactory(Object aspectInstance, String aspectName) {
+        super(aspectInstance);
+        this.metadata = new AspectMetadata(aspectInstance.getClass(), aspectName);
+    }
 
-	@Override
-	protected int getOrderForAspectClass(Class<?> aspectClass) {
-		return OrderUtils.getOrder(aspectClass, Ordered.LOWEST_PRECEDENCE);
-	}
+
+    @Override
+    public final AspectMetadata getAspectMetadata() {
+        return this.metadata;
+    }
+
+    @Override
+    protected int getOrderForAspectClass(Class<?> aspectClass) {
+        return OrderUtils.getOrder(aspectClass, Ordered.LOWEST_PRECEDENCE);
+    }
 
 }
