@@ -1,4 +1,4 @@
-package com.cyh;
+package com.cyh.ioc.xml;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -12,7 +12,7 @@ public class PersonTest {
 
     @Test
     public void testClassPath() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("com/cyh/person.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("com/cyh/ioc/xml/person.xml");
         Object person = context.getBean("person");
         System.out.println("person.getClass().getName(): " + person.getClass().getName());
     }
