@@ -18,6 +18,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
@@ -57,6 +59,8 @@ import org.springframework.util.ClassUtils;
  * @see org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor
  */
 public class AnnotationConfigUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationConfigUtils.class);
 
     /**
      * The bean name of the internally managed Configuration annotation processor.
@@ -143,6 +147,7 @@ public class AnnotationConfigUtils {
     public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(BeanDefinitionRegistry registry,
             Object source) {
 
+        LOGGER.debug("Register annotation config processors for registry: {}", registry);
         DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
         if (beanFactory != null) {
             if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {

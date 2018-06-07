@@ -792,6 +792,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
         Assert.hasText(beanName, "Bean name must not be empty");
         Assert.notNull(beanDefinition, "BeanDefinition must not be null");
+        logger.debug("Register bean definition for beanName: " + beanName);
 
         if (beanDefinition instanceof AbstractBeanDefinition) {
             try {
@@ -802,9 +803,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
         }
 
-        BeanDefinition oldBeanDefinition;
-
-        oldBeanDefinition = this.beanDefinitionMap.get(beanName);
+        BeanDefinition oldBeanDefinition = this.beanDefinitionMap.get(beanName);
         if (oldBeanDefinition != null) {
             if (!isAllowBeanDefinitionOverriding()) {
                 throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,
@@ -836,12 +835,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 // Cannot modify startup-time collection elements anymore (for stable iteration)
                 synchronized (this.beanDefinitionMap) {
                     this.beanDefinitionMap.put(beanName, beanDefinition);
-                    List<String> updatedDefinitions = new ArrayList<String>(this.beanDefinitionNames.size() + 1);
+                    List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
                     updatedDefinitions.addAll(this.beanDefinitionNames);
                     updatedDefinitions.add(beanName);
                     this.beanDefinitionNames = updatedDefinitions;
                     if (this.manualSingletonNames.contains(beanName)) {
-                        Set<String> updatedSingletons = new LinkedHashSet<String>(this.manualSingletonNames);
+                        Set<String> updatedSingletons = new LinkedHashSet<>(this.manualSingletonNames);
                         updatedSingletons.remove(beanName);
                         this.manualSingletonNames = updatedSingletons;
                     }

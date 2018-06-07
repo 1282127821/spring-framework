@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -49,6 +51,7 @@ import org.springframework.core.PriorityOrdered;
  * @since 4.0
  */
 class PostProcessorRegistrationDelegate {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostProcessorRegistrationDelegate.class);
 
     public static void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory,
             List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
@@ -255,6 +258,8 @@ class PostProcessorRegistrationDelegate {
             Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
 
         for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
+            LOGGER.debug("Post process BeanDefinitionRegistry. postProcessor: {}, registry: {}", postProcessor,
+                    registry);
             postProcessor.postProcessBeanDefinitionRegistry(registry);
         }
     }
@@ -266,6 +271,7 @@ class PostProcessorRegistrationDelegate {
             ConfigurableListableBeanFactory beanFactory) {
 
         for (BeanFactoryPostProcessor postProcessor : postProcessors) {
+            LOGGER.debug("Post process BeanFactory. postProcessor: {}, beanFactory: {}", postProcessor, beanFactory);
             postProcessor.postProcessBeanFactory(beanFactory);
         }
     }

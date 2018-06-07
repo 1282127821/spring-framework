@@ -16,6 +16,8 @@
 
 package org.springframework.beans.factory.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -35,6 +37,8 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.xml.DefaultBeanDefinitionDocumentReader
  */
 public class BeanDefinitionReaderUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanDefinitionReaderUtils.class);
 
     /**
      * Separator for generated bean names. If a class name or parent name is not
@@ -141,6 +145,7 @@ public class BeanDefinitionReaderUtils {
         // Register bean definition under primary name.
         String beanName = definitionHolder.getBeanName();
         registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+        LOGGER.debug("Registered a bean named '{}' to registry: {}", beanName, registry);
 
         // Register aliases for bean name, if any.
         String[] aliases = definitionHolder.getAliases();

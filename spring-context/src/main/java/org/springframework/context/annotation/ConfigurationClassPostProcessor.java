@@ -264,7 +264,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
      * {@link Configuration} classes.
      */
     public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-        List<BeanDefinitionHolder> configCandidates = new ArrayList<BeanDefinitionHolder>();
+        List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
         String[] candidateNames = registry.getBeanDefinitionNames();
 
         for (String beanName : candidateNames) {
@@ -311,14 +311,13 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         ConfigurationClassParser parser = new ConfigurationClassParser(this.metadataReaderFactory, this.problemReporter,
                 this.environment, this.resourceLoader, this.componentScanBeanNameGenerator, registry);
 
-        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<BeanDefinitionHolder>(configCandidates);
-        Set<ConfigurationClass> alreadyParsed = new HashSet<ConfigurationClass>(configCandidates.size());
+        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+        Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
         do {
             parser.parse(candidates);
             parser.validate();
 
-            Set<ConfigurationClass> configClasses =
-                    new LinkedHashSet<ConfigurationClass>(parser.getConfigurationClasses());
+            Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
             configClasses.removeAll(alreadyParsed);
 
             // Read the model and create bean definitions based on its content

@@ -138,10 +138,11 @@ public abstract class BeanUtils {
      */
     public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException {
         Assert.notNull(ctor, "Constructor must not be null");
-        logger.debug("真正的通过 Constructor.newInstance() 方法创建Bean。constructor: " + ctor + ", args: " + args);
         try {
             ReflectionUtils.makeAccessible(ctor);
-            return ctor.newInstance(args);
+            T newInstance = ctor.newInstance(args);
+            logger.debug("真正的通过 Constructor.newInstance() 方法创建Bean。newInstance: " + newInstance);
+            return newInstance;
         } catch (InstantiationException ex) {
             throw new BeanInstantiationException(ctor.getDeclaringClass(), "Is it an abstract class?", ex);
         } catch (IllegalAccessException ex) {
