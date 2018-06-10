@@ -29,14 +29,14 @@ import org.springframework.jmx.JmxException;
 @SuppressWarnings("serial")
 public class MBeanConnectFailureException extends JmxException {
 
-	/**
-	 * Create a new {@code MBeanConnectFailureException}
-	 * with the specified error message and root cause.
-	 * @param msg the detail message
-	 * @param cause the root cause
-	 */
-	public MBeanConnectFailureException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Create a new {@code MBeanConnectFailureException}
+     * with the specified error message and root cause.
+     * @param msg the detail message
+     * @param cause the root cause
+     */
+    public MBeanConnectFailureException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

@@ -32,64 +32,60 @@ import org.springframework.util.Assert;
  */
 public class NoOpCache implements Cache {
 
-	private final String name;
+    private final String name;
 
 
-	/**
-	 * Create a {@link NoOpCache} instance with the specified name
-	 * @param name the name of the cache
-	 */
-	public NoOpCache(String name) {
-		Assert.notNull(name, "Cache name must not be null");
-		this.name = name;
-	}
+    /**
+     * Create a {@link NoOpCache} instance with the specified name
+     * @param name the name of the cache
+     */
+    public NoOpCache(String name) {
+        Assert.notNull(name, "Cache name must not be null");
+        this.name = name;
+    }
 
 
-	@Override
-	public String getName() {
-		return this.name;
-	}
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-	@Override
-	public Object getNativeCache() {
-		return null;
-	}
+    @Override
+    public Object getNativeCache() {
+        return null;
+    }
 
-	@Override
-	public ValueWrapper get(Object key) {
-		return null;
-	}
+    @Override
+    public ValueWrapper get(Object key) {
+        return null;
+    }
 
-	@Override
-	public <T> T get(Object key, Class<T> type) {
-		return null;
-	}
+    @Override
+    public <T> T get(Object key, Class<T> type) {
+        return null;
+    }
 
-	@Override
-	public <T> T get(Object key, Callable<T> valueLoader) {
-		try {
-			return valueLoader.call();
-		}
-		catch (Exception ex) {
-			throw new ValueRetrievalException(key, valueLoader, ex);
-		}
-	}
+    @Override
+    public <T> T get(Object key, Callable<T> valueLoader) {
+        try {
+            return valueLoader.call();
+        } catch (Exception ex) {
+            throw new ValueRetrievalException(key, valueLoader, ex);
+        }
+    }
 
-	@Override
-	public void put(Object key, Object value) {
-	}
+    @Override
+    public void put(Object key, Object value) {}
 
-	@Override
-	public ValueWrapper putIfAbsent(Object key, Object value) {
-		return null;
-	}
+    @Override
+    public ValueWrapper putIfAbsent(Object key, Object value) {
+        return null;
+    }
 
-	@Override
-	public void evict(Object key) {
-	}
+    @Override
+    public void evict(Object key) {}
 
-	@Override
-	public void clear() {
-	}
+    @Override
+    public void clear() {}
 
 }

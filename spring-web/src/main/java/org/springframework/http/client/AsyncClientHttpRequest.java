@@ -35,12 +35,12 @@ import org.springframework.util.concurrent.ListenableFuture;
  */
 public interface AsyncClientHttpRequest extends HttpRequest, HttpOutputMessage {
 
-	/**
-	 * Execute this request asynchronously, resulting in a Future handle.
-	 * {@link ClientHttpResponse} that can be read.
-	 * @return the future response result of the execution
-	 * @throws java.io.IOException in case of I/O errors
-	 */
-	ListenableFuture<ClientHttpResponse> executeAsync() throws IOException;
+    /**
+     * Execute this request asynchronously, resulting in a Future handle.
+     * {@link ClientHttpResponse} that can be read.
+     * @return the future response result of the execution
+     * @throws java.io.IOException in case of I/O errors
+     */
+    ListenableFuture<ClientHttpResponse> executeAsync() throws IOException;
 
 }

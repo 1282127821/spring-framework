@@ -35,12 +35,12 @@ import org.springframework.instrument.classloading.LoadTimeWeaver;
  */
 public interface LoadTimeWeavingConfigurer {
 
-	/**
-	 * Create, configure and return the {@code LoadTimeWeaver} instance to be used. Note
-	 * that it is unnecessary to annotate this method with {@code @Bean}, because the
-	 * object returned will automatically be registered as a bean by
-	 * {@link LoadTimeWeavingConfiguration#loadTimeWeaver()}
-	 */
-	LoadTimeWeaver getLoadTimeWeaver();
+    /**
+     * Create, configure and return the {@code LoadTimeWeaver} instance to be used. Note
+     * that it is unnecessary to annotate this method with {@code @Bean}, because the
+     * object returned will automatically be registered as a bean by
+     * {@link LoadTimeWeavingConfiguration#loadTimeWeaver()}
+     */
+    LoadTimeWeaver getLoadTimeWeaver();
 
 }

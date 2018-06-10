@@ -28,13 +28,13 @@ import org.springframework.web.servlet.mvc.Controller;
 @Deprecated
 class ControllerTypePredicate {
 
-	public boolean isControllerType(Class<?> beanClass) {
-		return Controller.class.isAssignableFrom(beanClass);
-	}
+    public boolean isControllerType(Class<?> beanClass) {
+        return Controller.class.isAssignableFrom(beanClass);
+    }
 
-	@SuppressWarnings("deprecation")
-	public boolean isMultiActionControllerType(Class<?> beanClass) {
-		return org.springframework.web.servlet.mvc.multiaction.MultiActionController.class.isAssignableFrom(beanClass);
-	}
+    @SuppressWarnings("deprecation")
+    public boolean isMultiActionControllerType(Class<?> beanClass) {
+        return org.springframework.web.servlet.mvc.multiaction.MultiActionController.class.isAssignableFrom(beanClass);
+    }
 
 }

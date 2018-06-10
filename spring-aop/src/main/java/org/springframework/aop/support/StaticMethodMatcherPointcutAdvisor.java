@@ -19,7 +19,6 @@ package org.springframework.aop.support;
 import java.io.Serializable;
 
 import org.aopalliance.aop.Advice;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.PointcutAdvisor;
 import org.springframework.core.Ordered;
@@ -34,57 +33,56 @@ import org.springframework.util.Assert;
  */
 @SuppressWarnings("serial")
 public abstract class StaticMethodMatcherPointcutAdvisor extends StaticMethodMatcherPointcut
-		implements PointcutAdvisor, Ordered, Serializable {
+        implements PointcutAdvisor, Ordered, Serializable {
 
-	private int order = Integer.MAX_VALUE;
+    private int order = Integer.MAX_VALUE;
 
-	private Advice advice;
-
-
-	/**
-	 * Create a new StaticMethodMatcherPointcutAdvisor,
-	 * expecting bean-style configuration.
-	 * @see #setAdvice
-	 */
-	public StaticMethodMatcherPointcutAdvisor() {
-	}
-
-	/**
-	 * Create a new StaticMethodMatcherPointcutAdvisor for the given advice.
-	 * @param advice the Advice to use
-	 */
-	public StaticMethodMatcherPointcutAdvisor(Advice advice) {
-		Assert.notNull(advice, "Advice must not be null");
-		this.advice = advice;
-	}
+    private Advice advice;
 
 
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    /**
+     * Create a new StaticMethodMatcherPointcutAdvisor,
+     * expecting bean-style configuration.
+     * @see #setAdvice
+     */
+    public StaticMethodMatcherPointcutAdvisor() {}
 
-	@Override
-	public int getOrder() {
-		return this.order;
-	}
+    /**
+     * Create a new StaticMethodMatcherPointcutAdvisor for the given advice.
+     * @param advice the Advice to use
+     */
+    public StaticMethodMatcherPointcutAdvisor(Advice advice) {
+        Assert.notNull(advice, "Advice must not be null");
+        this.advice = advice;
+    }
 
-	public void setAdvice(Advice advice) {
-		this.advice = advice;
-	}
 
-	@Override
-	public Advice getAdvice() {
-		return this.advice;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-	@Override
-	public boolean isPerInstance() {
-		return true;
-	}
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 
-	@Override
-	public Pointcut getPointcut() {
-		return this;
-	}
+    public void setAdvice(Advice advice) {
+        this.advice = advice;
+    }
+
+    @Override
+    public Advice getAdvice() {
+        return this.advice;
+    }
+
+    @Override
+    public boolean isPerInstance() {
+        return true;
+    }
+
+    @Override
+    public Pointcut getPointcut() {
+        return this;
+    }
 
 }

@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.handler;
 
 import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,26 +37,26 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 public class DispatcherServletWebRequest extends ServletWebRequest {
 
-	/**
-	 * Create a new DispatcherServletWebRequest instance for the given request.
-	 * @param request current HTTP request
-	 */
-	public DispatcherServletWebRequest(HttpServletRequest request) {
-		super(request);
-	}
+    /**
+     * Create a new DispatcherServletWebRequest instance for the given request.
+     * @param request current HTTP request
+     */
+    public DispatcherServletWebRequest(HttpServletRequest request) {
+        super(request);
+    }
 
-	/**
-	 * Create a new DispatcherServletWebRequest instance for the given request and response.
-	 * @param request current HTTP request
-	 * @param response current HTTP response
-	 */
-	public DispatcherServletWebRequest(HttpServletRequest request, HttpServletResponse response) {
-		super(request, response);
-	}
+    /**
+     * Create a new DispatcherServletWebRequest instance for the given request and response.
+     * @param request current HTTP request
+     * @param response current HTTP response
+     */
+    public DispatcherServletWebRequest(HttpServletRequest request, HttpServletResponse response) {
+        super(request, response);
+    }
 
-	@Override
-	public Locale getLocale() {
-		return RequestContextUtils.getLocale(getRequest());
-	}
+    @Override
+    public Locale getLocale() {
+        return RequestContextUtils.getLocale(getRequest());
+    }
 
 }

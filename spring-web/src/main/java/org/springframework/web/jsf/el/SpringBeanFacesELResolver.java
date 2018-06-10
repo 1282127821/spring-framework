@@ -66,28 +66,28 @@ import org.springframework.web.jsf.FacesContextUtils;
  */
 public class SpringBeanFacesELResolver extends SpringBeanELResolver {
 
-	/**
-	 * This implementation delegates to {@link #getWebApplicationContext}.
-	 * Can be overridden to provide an arbitrary BeanFactory reference to resolve
-	 * against; usually, this will be a full Spring ApplicationContext.
-	 * @param elContext the current JSF ELContext
-	 * @return the Spring BeanFactory (never {@code null})
-	 */
-	@Override
-	protected BeanFactory getBeanFactory(ELContext elContext) {
-		return getWebApplicationContext(elContext);
-	}
+    /**
+     * This implementation delegates to {@link #getWebApplicationContext}.
+     * Can be overridden to provide an arbitrary BeanFactory reference to resolve
+     * against; usually, this will be a full Spring ApplicationContext.
+     * @param elContext the current JSF ELContext
+     * @return the Spring BeanFactory (never {@code null})
+     */
+    @Override
+    protected BeanFactory getBeanFactory(ELContext elContext) {
+        return getWebApplicationContext(elContext);
+    }
 
-	/**
-	 * Retrieve the web application context to delegate bean name resolution to.
-	 * <p>The default implementation delegates to FacesContextUtils.
-	 * @param elContext the current JSF ELContext
-	 * @return the Spring web application context (never {@code null})
-	 * @see org.springframework.web.jsf.FacesContextUtils#getRequiredWebApplicationContext
-	 */
-	protected WebApplicationContext getWebApplicationContext(ELContext elContext) {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
-	}
+    /**
+     * Retrieve the web application context to delegate bean name resolution to.
+     * <p>The default implementation delegates to FacesContextUtils.
+     * @param elContext the current JSF ELContext
+     * @return the Spring web application context (never {@code null})
+     * @see org.springframework.web.jsf.FacesContextUtils#getRequiredWebApplicationContext
+     */
+    protected WebApplicationContext getWebApplicationContext(ELContext elContext) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        return FacesContextUtils.getRequiredWebApplicationContext(facesContext);
+    }
 
 }

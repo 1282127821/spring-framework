@@ -34,8 +34,7 @@ import org.springframework.util.CollectionUtils;
  */
 public abstract class InterceptingAsyncHttpAccessor extends AsyncHttpAccessor {
 
-    private List<AsyncClientHttpRequestInterceptor> interceptors =
-            new ArrayList<AsyncClientHttpRequestInterceptor>();
+    private List<AsyncClientHttpRequestInterceptor> interceptors = new ArrayList<AsyncClientHttpRequestInterceptor>();
 
 
     /**
@@ -59,8 +58,7 @@ public abstract class InterceptingAsyncHttpAccessor extends AsyncHttpAccessor {
         AsyncClientHttpRequestFactory delegate = super.getAsyncRequestFactory();
         if (!CollectionUtils.isEmpty(getInterceptors())) {
             return new InterceptingAsyncClientHttpRequestFactory(delegate, getInterceptors());
-        }
-        else {
+        } else {
             return delegate;
         }
     }

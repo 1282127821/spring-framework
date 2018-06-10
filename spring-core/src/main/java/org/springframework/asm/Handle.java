@@ -193,13 +193,12 @@ public final class Handle {
             return false;
         }
         Handle h = (Handle) obj;
-        return tag == h.tag && itf == h.itf && owner.equals(h.owner)
-                && name.equals(h.name) && desc.equals(h.desc);
+        return tag == h.tag && itf == h.itf && owner.equals(h.owner) && name.equals(h.name) && desc.equals(h.desc);
     }
 
     @Override
     public int hashCode() {
-        return tag + (itf? 64: 0) + owner.hashCode() * name.hashCode() * desc.hashCode();
+        return tag + (itf ? 64 : 0) + owner.hashCode() * name.hashCode() * desc.hashCode();
     }
 
     /**
@@ -217,6 +216,6 @@ public final class Handle {
      */
     @Override
     public String toString() {
-        return owner + '.' + name + desc + " (" + tag + (itf? " itf": "") + ')';
+        return owner + '.' + name + desc + " (" + tag + (itf ? " itf" : "") + ')';
     }
 }

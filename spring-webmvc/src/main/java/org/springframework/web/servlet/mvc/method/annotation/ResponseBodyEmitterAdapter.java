@@ -31,14 +31,14 @@ import org.springframework.http.server.ServerHttpResponse;
 @Deprecated
 public interface ResponseBodyEmitterAdapter {
 
-	/**
-	 * Obtain a {@code ResponseBodyEmitter} for the given return value.
-	 * If the return is the body {@code ResponseEntity} then the given
-	 * {@code ServerHttpResponse} contains its status and headers.
-	 * @param returnValue the return value (never {@code null})
-	 * @param response the response
-	 * @return the return value adapted to a {@code ResponseBodyEmitter}
-	 */
-	ResponseBodyEmitter adaptToEmitter(Object returnValue, ServerHttpResponse response);
+    /**
+     * Obtain a {@code ResponseBodyEmitter} for the given return value.
+     * If the return is the body {@code ResponseEntity} then the given
+     * {@code ServerHttpResponse} contains its status and headers.
+     * @param returnValue the return value (never {@code null})
+     * @param response the response
+     * @return the return value adapted to a {@code ResponseBodyEmitter}
+     */
+    ResponseBodyEmitter adaptToEmitter(Object returnValue, ServerHttpResponse response);
 
 }

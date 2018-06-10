@@ -36,50 +36,49 @@ import java.util.Locale;
  */
 public class NumberStyleFormatter extends AbstractNumberFormatter {
 
-	private String pattern;
+    private String pattern;
 
 
-	/**
-	 * Create a new NumberStyleFormatter without a pattern.
-	 */
-	public NumberStyleFormatter() {
-	}
+    /**
+     * Create a new NumberStyleFormatter without a pattern.
+     */
+    public NumberStyleFormatter() {}
 
-	/**
-	 * Create a new NumberStyleFormatter with the specified pattern.
-	 * @param pattern the format pattern
-	 * @see #setPattern
-	 */
-	public NumberStyleFormatter(String pattern) {
-		this.pattern = pattern;
-	}
-
-
-	/**
-	 * Specify the pattern to use to format number values.
-	 * If not specified, the default DecimalFormat pattern is used.
-	 * @see java.text.DecimalFormat#applyPattern(String)
-	 */
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-	}
+    /**
+     * Create a new NumberStyleFormatter with the specified pattern.
+     * @param pattern the format pattern
+     * @see #setPattern
+     */
+    public NumberStyleFormatter(String pattern) {
+        this.pattern = pattern;
+    }
 
 
-	@Override
-	public NumberFormat getNumberFormat(Locale locale) {
-		NumberFormat format = NumberFormat.getInstance(locale);
-		if (!(format instanceof DecimalFormat)) {
-			if (this.pattern != null) {
-				throw new IllegalStateException("Cannot support pattern for non-DecimalFormat: " + format);
-			}
-			return format;
-		}
-		DecimalFormat decimalFormat = (DecimalFormat) format;
-		decimalFormat.setParseBigDecimal(true);
-		if (this.pattern != null) {
-			decimalFormat.applyPattern(this.pattern);
-		}
-		return decimalFormat;
-	}
+    /**
+     * Specify the pattern to use to format number values.
+     * If not specified, the default DecimalFormat pattern is used.
+     * @see java.text.DecimalFormat#applyPattern(String)
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+
+    @Override
+    public NumberFormat getNumberFormat(Locale locale) {
+        NumberFormat format = NumberFormat.getInstance(locale);
+        if (!(format instanceof DecimalFormat)) {
+            if (this.pattern != null) {
+                throw new IllegalStateException("Cannot support pattern for non-DecimalFormat: " + format);
+            }
+            return format;
+        }
+        DecimalFormat decimalFormat = (DecimalFormat) format;
+        decimalFormat.setParseBigDecimal(true);
+        if (this.pattern != null) {
+            decimalFormat.applyPattern(this.pattern);
+        }
+        return decimalFormat;
+    }
 
 }

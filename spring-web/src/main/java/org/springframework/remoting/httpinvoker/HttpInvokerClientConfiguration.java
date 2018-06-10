@@ -26,17 +26,17 @@ package org.springframework.remoting.httpinvoker;
  */
 public interface HttpInvokerClientConfiguration {
 
-	/**
-	 * Return the HTTP URL of the target service.
-	 */
-	String getServiceUrl();
+    /**
+     * Return the HTTP URL of the target service.
+     */
+    String getServiceUrl();
 
-	/**
-	 * Return the codebase URL to download classes from if not found locally.
-	 * Can consist of multiple URLs, separated by spaces.
-	 * @return the codebase URL, or {@code null} if none
-	 * @see java.rmi.server.RMIClassLoader
-	 */
-	String getCodebaseUrl();
+    /**
+     * Return the codebase URL to download classes from if not found locally.
+     * Can consist of multiple URLs, separated by spaces.
+     * @return the codebase URL, or {@code null} if none
+     * @see java.rmi.server.RMIClassLoader
+     */
+    String getCodebaseUrl();
 
 }

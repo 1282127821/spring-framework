@@ -28,19 +28,18 @@ package org.springframework.format.number;
 @Deprecated
 public class NumberFormatter extends NumberStyleFormatter {
 
-	/**
-	 * Create a new NumberFormatter without a pattern.
-	 */
-	public NumberFormatter() {
-	}
+    /**
+     * Create a new NumberFormatter without a pattern.
+     */
+    public NumberFormatter() {}
 
-	/**
-	 * Create a new NumberFormatter with the specified pattern.
-	 * @param pattern the format pattern
-	 * @see #setPattern
-	 */
-	public NumberFormatter(String pattern) {
-		super(pattern);
-	}
+    /**
+     * Create a new NumberFormatter with the specified pattern.
+     * @param pattern the format pattern
+     * @see #setPattern
+     */
+    public NumberFormatter(String pattern) {
+        super(pattern);
+    }
 
 }

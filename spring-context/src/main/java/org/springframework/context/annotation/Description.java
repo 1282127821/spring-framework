@@ -35,9 +35,9 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Description {
 
-	/**
-	 * The textual description to associate with the bean definition.
-	 */
-	String value();
+    /**
+     * The textual description to associate with the bean definition.
+     */
+    String value();
 
 }

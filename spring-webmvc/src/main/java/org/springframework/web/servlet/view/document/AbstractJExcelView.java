@@ -19,16 +19,17 @@ package org.springframework.web.servlet.view.document;
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import jxl.Workbook;
-import jxl.write.WritableWorkbook;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.LocalizedResourceHelper;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.AbstractView;
+
+import jxl.Workbook;
+import jxl.write.WritableWorkbook;
 
 /**
  * Convenient superclass for Excel document views.
@@ -84,98 +85,97 @@ import org.springframework.web.servlet.view.AbstractView;
 @Deprecated
 public abstract class AbstractJExcelView extends AbstractView {
 
-	/** The content type for an Excel response */
-	private static final String CONTENT_TYPE = "application/vnd.ms-excel";
+    /** The content type for an Excel response */
+    private static final String CONTENT_TYPE = "application/vnd.ms-excel";
 
-	/** The extension to look for existing templates */
-	private static final String EXTENSION = ".xls";
-
-
-	/** The url at which the template to use is located */
-	private String url;
+    /** The extension to look for existing templates */
+    private static final String EXTENSION = ".xls";
 
 
-	/**
-	 * Default Constructor.
-	 * Sets the content type of the view to "application/vnd.ms-excel".
-	 */
-	public AbstractJExcelView() {
-		setContentType(CONTENT_TYPE);
-	}
-
-	/**
-	 * Set the URL of the Excel workbook source, without localization part nor extension.
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    /** The url at which the template to use is located */
+    private String url;
 
 
-	@Override
-	protected boolean generatesDownloadContent() {
-		return true;
-	}
+    /**
+     * Default Constructor.
+     * Sets the content type of the view to "application/vnd.ms-excel".
+     */
+    public AbstractJExcelView() {
+        setContentType(CONTENT_TYPE);
+    }
 
-	/**
-	 * Renders the Excel view, given the specified model.
-	 */
-	@Override
-	protected final void renderMergedOutputModel(
-			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    /**
+     * Set the URL of the Excel workbook source, without localization part nor extension.
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-		// Set the content type and get the output stream.
-		response.setContentType(getContentType());
-		OutputStream out = response.getOutputStream();
 
-		WritableWorkbook workbook;
-		if (this.url != null) {
-			Workbook template = getTemplateSource(this.url, request);
-			workbook = Workbook.createWorkbook(out, template);
-		}
-		else {
-			logger.debug("Creating Excel Workbook from scratch");
-			workbook = Workbook.createWorkbook(out);
-		}
+    @Override
+    protected boolean generatesDownloadContent() {
+        return true;
+    }
 
-		buildExcelDocument(model, workbook, request, response);
+    /**
+     * Renders the Excel view, given the specified model.
+     */
+    @Override
+    protected final void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
-		// Should we set the content length here?
-		// response.setContentLength(workbook.getBytes().length);
+        // Set the content type and get the output stream.
+        response.setContentType(getContentType());
+        OutputStream out = response.getOutputStream();
 
-		workbook.write();
-		out.flush();
-		workbook.close();
-	}
+        WritableWorkbook workbook;
+        if (this.url != null) {
+            Workbook template = getTemplateSource(this.url, request);
+            workbook = Workbook.createWorkbook(out, template);
+        } else {
+            logger.debug("Creating Excel Workbook from scratch");
+            workbook = Workbook.createWorkbook(out);
+        }
 
-	/**
-	 * Create the workbook from an existing XLS document.
-	 * @param url the URL of the Excel template without localization part nor extension
-	 * @param request current HTTP request
-	 * @return the template workbook
-	 * @throws Exception in case of failure
-	 */
-	protected Workbook getTemplateSource(String url, HttpServletRequest request) throws Exception {
-		LocalizedResourceHelper helper = new LocalizedResourceHelper(getApplicationContext());
-		Locale userLocale = RequestContextUtils.getLocale(request);
-		Resource inputFile = helper.findLocalizedResource(url, EXTENSION, userLocale);
+        buildExcelDocument(model, workbook, request, response);
 
-		// Create the Excel document from the source.
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loading Excel workbook from " + inputFile);
-		}
-		return Workbook.getWorkbook(inputFile.getInputStream());
-	}
+        // Should we set the content length here?
+        // response.setContentLength(workbook.getBytes().length);
 
-	/**
-	 * Subclasses must implement this method to create an Excel Workbook
-	 * document, given the model.
-	 * @param model the model Map
-	 * @param workbook the Excel workbook to complete
-	 * @param request in case we need locale etc. Shouldn't look at attributes.
-	 * @param response in case we need to set cookies. Shouldn't write to it.
-	 * @throws Exception in case of failure
-	 */
-	protected abstract void buildExcelDocument(Map<String, Object> model, WritableWorkbook workbook,
-			HttpServletRequest request, HttpServletResponse response) throws Exception;
+        workbook.write();
+        out.flush();
+        workbook.close();
+    }
+
+    /**
+     * Create the workbook from an existing XLS document.
+     * @param url the URL of the Excel template without localization part nor extension
+     * @param request current HTTP request
+     * @return the template workbook
+     * @throws Exception in case of failure
+     */
+    protected Workbook getTemplateSource(String url, HttpServletRequest request) throws Exception {
+        LocalizedResourceHelper helper = new LocalizedResourceHelper(getApplicationContext());
+        Locale userLocale = RequestContextUtils.getLocale(request);
+        Resource inputFile = helper.findLocalizedResource(url, EXTENSION, userLocale);
+
+        // Create the Excel document from the source.
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loading Excel workbook from " + inputFile);
+        }
+        return Workbook.getWorkbook(inputFile.getInputStream());
+    }
+
+    /**
+     * Subclasses must implement this method to create an Excel Workbook
+     * document, given the model.
+     * @param model the model Map
+     * @param workbook the Excel workbook to complete
+     * @param request in case we need locale etc. Shouldn't look at attributes.
+     * @param response in case we need to set cookies. Shouldn't write to it.
+     * @throws Exception in case of failure
+     */
+    protected abstract void buildExcelDocument(Map<String, Object> model, WritableWorkbook workbook,
+            HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }

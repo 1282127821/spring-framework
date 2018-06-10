@@ -28,23 +28,23 @@ import org.springframework.util.StringValueResolver;
  */
 public class EmbeddedValueResolutionSupport implements EmbeddedValueResolverAware {
 
-	private StringValueResolver embeddedValueResolver;
+    private StringValueResolver embeddedValueResolver;
 
 
-	@Override
-	public void setEmbeddedValueResolver(StringValueResolver resolver) {
-		this.embeddedValueResolver = resolver;
-	}
+    @Override
+    public void setEmbeddedValueResolver(StringValueResolver resolver) {
+        this.embeddedValueResolver = resolver;
+    }
 
-	/**
-	 * Resolve the given embedded value through this instance's {@link StringValueResolver}.
-	 * @param value the value to resolve
-	 * @return the resolved value, or always the original value if no resolver is available
-	 * @see #setEmbeddedValueResolver
-	 */
-	protected String resolveEmbeddedValue(String value) {
-		return (this.embeddedValueResolver != null ? this.embeddedValueResolver.resolveStringValue(value) : value);
-	}
+    /**
+     * Resolve the given embedded value through this instance's {@link StringValueResolver}.
+     * @param value the value to resolve
+     * @return the resolved value, or always the original value if no resolver is available
+     * @see #setEmbeddedValueResolver
+     */
+    protected String resolveEmbeddedValue(String value) {
+        return (this.embeddedValueResolver != null ? this.embeddedValueResolver.resolveStringValue(value) : value);
+    }
 
 
 }

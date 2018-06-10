@@ -17,6 +17,7 @@
 package org.springframework.web.util;
 
 import java.io.Serializable;
+
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -43,24 +44,24 @@ import javax.servlet.http.HttpSessionListener;
  */
 public class HttpSessionMutexListener implements HttpSessionListener {
 
-	@Override
-	public void sessionCreated(HttpSessionEvent event) {
-		event.getSession().setAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE, new Mutex());
-	}
+    @Override
+    public void sessionCreated(HttpSessionEvent event) {
+        event.getSession().setAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE, new Mutex());
+    }
 
-	@Override
-	public void sessionDestroyed(HttpSessionEvent event) {
-		event.getSession().removeAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
-	}
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event) {
+        event.getSession().removeAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
+    }
 
 
-	/**
-	 * The mutex to be registered.
-	 * Doesn't need to be anything but a plain Object to synchronize on.
-	 * Should be serializable to allow for HttpSession persistence.
-	 */
-	@SuppressWarnings("serial")
-	private static class Mutex implements Serializable {
-	}
+    /**
+     * The mutex to be registered.
+     * Doesn't need to be anything but a plain Object to synchronize on.
+     * Should be serializable to allow for HttpSession persistence.
+     */
+    @SuppressWarnings("serial")
+    private static class Mutex implements Serializable {
+    }
 
 }

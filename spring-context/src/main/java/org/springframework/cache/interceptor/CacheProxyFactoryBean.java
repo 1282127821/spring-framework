@@ -43,33 +43,33 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 @SuppressWarnings("serial")
 public class CacheProxyFactoryBean extends AbstractSingletonProxyFactoryBean {
 
-	private final CacheInterceptor cachingInterceptor = new CacheInterceptor();
+    private final CacheInterceptor cachingInterceptor = new CacheInterceptor();
 
-	private Pointcut pointcut = Pointcut.TRUE;
+    private Pointcut pointcut = Pointcut.TRUE;
 
 
-	/**
-	 * Set the sources used to find cache operations.
-	 */
-	public void setCacheOperationSources(CacheOperationSource... cacheOperationSources) {
-		this.cachingInterceptor.setCacheOperationSources(cacheOperationSources);
-	}
+    /**
+     * Set the sources used to find cache operations.
+     */
+    public void setCacheOperationSources(CacheOperationSource... cacheOperationSources) {
+        this.cachingInterceptor.setCacheOperationSources(cacheOperationSources);
+    }
 
-	/**
-	 * Set a pointcut, i.e a bean that can cause conditional invocation
-	 * of the CacheInterceptor depending on method and attributes passed.
-	 * Note: Additional interceptors are always invoked.
-	 * @see #setPreInterceptors
-	 * @see #setPostInterceptors
-	 */
-	public void setPointcut(Pointcut pointcut) {
-		this.pointcut = pointcut;
-	}
+    /**
+     * Set a pointcut, i.e a bean that can cause conditional invocation
+     * of the CacheInterceptor depending on method and attributes passed.
+     * Note: Additional interceptors are always invoked.
+     * @see #setPreInterceptors
+     * @see #setPostInterceptors
+     */
+    public void setPointcut(Pointcut pointcut) {
+        this.pointcut = pointcut;
+    }
 
-	@Override
-	protected Object createMainInterceptor() {
-		this.cachingInterceptor.afterPropertiesSet();
-		return new DefaultPointcutAdvisor(this.pointcut, this.cachingInterceptor);
-	}
+    @Override
+    protected Object createMainInterceptor() {
+        this.cachingInterceptor.afterPropertiesSet();
+        return new DefaultPointcutAdvisor(this.pointcut, this.cachingInterceptor);
+    }
 
 }

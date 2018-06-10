@@ -31,9 +31,9 @@ import org.springframework.core.env.PropertySource;
  */
 public class DefaultPropertySourceFactory implements PropertySourceFactory {
 
-	@Override
-	public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
-		return (name != null ? new ResourcePropertySource(name, resource) : new ResourcePropertySource(resource));
-	}
+    @Override
+    public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
+        return (name != null ? new ResourcePropertySource(name, resource) : new ResourcePropertySource(resource));
+    }
 
 }

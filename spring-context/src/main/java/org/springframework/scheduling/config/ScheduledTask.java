@@ -29,21 +29,20 @@ import java.util.concurrent.ScheduledFuture;
  */
 public final class ScheduledTask {
 
-	volatile ScheduledFuture<?> future;
+    volatile ScheduledFuture<?> future;
 
 
-	ScheduledTask() {
-	}
+    ScheduledTask() {}
 
 
-	/**
-	 * Trigger cancellation of this scheduled task.
-	 */
-	public void cancel() {
-		ScheduledFuture<?> future = this.future;
-		if (future != null) {
-			future.cancel(true);
-		}
-	}
+    /**
+     * Trigger cancellation of this scheduled task.
+     */
+    public void cancel() {
+        ScheduledFuture<?> future = this.future;
+        if (future != null) {
+            future.cancel(true);
+        }
+    }
 
 }

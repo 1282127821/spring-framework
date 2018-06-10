@@ -25,19 +25,19 @@ package org.springframework.scheduling.config;
  */
 public class Task {
 
-	private final Runnable runnable;
+    private final Runnable runnable;
 
 
-	/**
-	 * Create a new {@code Task}.
-	 * @param runnable the underlying task to execute.
-	 */
-	public Task(Runnable runnable) {
-		this.runnable = runnable;
-	}
+    /**
+     * Create a new {@code Task}.
+     * @param runnable the underlying task to execute.
+     */
+    public Task(Runnable runnable) {
+        this.runnable = runnable;
+    }
 
 
-	public Runnable getRunnable() {
-		return runnable;
-	}
+    public Runnable getRunnable() {
+        return runnable;
+    }
 }

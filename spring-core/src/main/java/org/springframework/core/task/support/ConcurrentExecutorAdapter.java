@@ -37,22 +37,22 @@ import org.springframework.util.Assert;
  */
 public class ConcurrentExecutorAdapter implements Executor {
 
-	private final TaskExecutor taskExecutor;
+    private final TaskExecutor taskExecutor;
 
 
-	/**
-	 * Create a new ConcurrentExecutorAdapter for the given Spring TaskExecutor.
-	 * @param taskExecutor the Spring TaskExecutor to wrap
-	 */
-	public ConcurrentExecutorAdapter(TaskExecutor taskExecutor) {
-		Assert.notNull(taskExecutor, "TaskExecutor must not be null");
-		this.taskExecutor = taskExecutor;
-	}
+    /**
+     * Create a new ConcurrentExecutorAdapter for the given Spring TaskExecutor.
+     * @param taskExecutor the Spring TaskExecutor to wrap
+     */
+    public ConcurrentExecutorAdapter(TaskExecutor taskExecutor) {
+        Assert.notNull(taskExecutor, "TaskExecutor must not be null");
+        this.taskExecutor = taskExecutor;
+    }
 
 
-	@Override
-	public void execute(Runnable command) {
-		this.taskExecutor.execute(command);
-	}
+    @Override
+    public void execute(Runnable command) {
+        this.taskExecutor.execute(command);
+    }
 
 }

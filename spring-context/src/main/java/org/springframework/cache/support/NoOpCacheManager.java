@@ -40,36 +40,36 @@ import org.springframework.cache.CacheManager;
  */
 public class NoOpCacheManager implements CacheManager {
 
-	private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>(16);
+    private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>(16);
 
-	private final Set<String> cacheNames = new LinkedHashSet<String>(16);
+    private final Set<String> cacheNames = new LinkedHashSet<String>(16);
 
 
-	/**
-	 * This implementation always returns a {@link Cache} implementation that will not store items.
-	 * Additionally, the request cache will be remembered by the manager for consistency.
-	 */
-	@Override
-	public Cache getCache(String name) {
-		Cache cache = this.caches.get(name);
-		if (cache == null) {
-			this.caches.putIfAbsent(name, new NoOpCache(name));
-			synchronized (this.cacheNames) {
-				this.cacheNames.add(name);
-			}
-		}
+    /**
+     * This implementation always returns a {@link Cache} implementation that will not store items.
+     * Additionally, the request cache will be remembered by the manager for consistency.
+     */
+    @Override
+    public Cache getCache(String name) {
+        Cache cache = this.caches.get(name);
+        if (cache == null) {
+            this.caches.putIfAbsent(name, new NoOpCache(name));
+            synchronized (this.cacheNames) {
+                this.cacheNames.add(name);
+            }
+        }
 
-		return this.caches.get(name);
-	}
+        return this.caches.get(name);
+    }
 
-	/**
-	 * This implementation returns the name of the caches previously requested.
-	 */
-	@Override
-	public Collection<String> getCacheNames() {
-		synchronized (this.cacheNames) {
-			return Collections.unmodifiableSet(this.cacheNames);
-		}
-	}
+    /**
+     * This implementation returns the name of the caches previously requested.
+     */
+    @Override
+    public Collection<String> getCacheNames() {
+        synchronized (this.cacheNames) {
+            return Collections.unmodifiableSet(this.cacheNames);
+        }
+    }
 
 }

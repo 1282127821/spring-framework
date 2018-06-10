@@ -33,14 +33,14 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public interface RemoteInvocationFactory {
 
-	/**
-	 * Create a serializable RemoteInvocation object from the given AOP
-	 * MethodInvocation.
-	 * <p>Can be implemented to add custom context information to the
-	 * remote invocation, for example user credentials.
-	 * @param methodInvocation the original AOP MethodInvocation object
-	 * @return the RemoteInvocation object
-	 */
-	RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation);
+    /**
+     * Create a serializable RemoteInvocation object from the given AOP
+     * MethodInvocation.
+     * <p>Can be implemented to add custom context information to the
+     * remote invocation, for example user credentials.
+     * @param methodInvocation the original AOP MethodInvocation object
+     * @return the RemoteInvocation object
+     */
+    RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation);
 
 }

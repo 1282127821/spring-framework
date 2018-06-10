@@ -40,10 +40,10 @@ package org.springframework.context;
  */
 public interface ApplicationContextInitializer<C extends ConfigurableApplicationContext> {
 
-	/**
-	 * Initialize the given application context.
-	 * @param applicationContext the application to configure
-	 */
-	void initialize(C applicationContext);
+    /**
+     * Initialize the given application context.
+     * @param applicationContext the application to configure
+     */
+    void initialize(C applicationContext);
 
 }

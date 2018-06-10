@@ -32,21 +32,20 @@ import org.springframework.util.Assert;
  */
 public class BeanFactoryResolver implements BeanResolver {
 
-	private final BeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
-	public BeanFactoryResolver(BeanFactory beanFactory) {
-		Assert.notNull(beanFactory, "BeanFactory must not be null");
-		this.beanFactory = beanFactory;
-	}
+    public BeanFactoryResolver(BeanFactory beanFactory) {
+        Assert.notNull(beanFactory, "BeanFactory must not be null");
+        this.beanFactory = beanFactory;
+    }
 
-	@Override
-	public Object resolve(EvaluationContext context, String beanName) throws AccessException {
-		try {
-			return this.beanFactory.getBean(beanName);
-		}
-		catch (BeansException ex) {
-			throw new AccessException("Could not resolve bean reference against BeanFactory", ex);
-		}
-	}
+    @Override
+    public Object resolve(EvaluationContext context, String beanName) throws AccessException {
+        try {
+            return this.beanFactory.getBean(beanName);
+        } catch (BeansException ex) {
+            throw new AccessException("Could not resolve bean reference against BeanFactory", ex);
+        }
+    }
 
 }

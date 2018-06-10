@@ -44,25 +44,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
  */
 public class RedirectAttributesMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return RedirectAttributes.class.isAssignableFrom(parameter.getParameterType());
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return RedirectAttributes.class.isAssignableFrom(parameter.getParameterType());
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		ModelMap redirectAttributes;
-		if(binderFactory != null) {
-			DataBinder dataBinder = binderFactory.createBinder(webRequest, null, null);
-			redirectAttributes  = new RedirectAttributesModelMap(dataBinder);
-		}
-		else {
-			redirectAttributes  = new RedirectAttributesModelMap();
-		}
-		mavContainer.setRedirectModel(redirectAttributes);
-		return redirectAttributes;
-	}
+        ModelMap redirectAttributes;
+        if (binderFactory != null) {
+            DataBinder dataBinder = binderFactory.createBinder(webRequest, null, null);
+            redirectAttributes = new RedirectAttributesModelMap(dataBinder);
+        } else {
+            redirectAttributes = new RedirectAttributesModelMap();
+        }
+        mavContainer.setRedirectModel(redirectAttributes);
+        return redirectAttributes;
+    }
 
 }

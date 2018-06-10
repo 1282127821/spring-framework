@@ -33,18 +33,18 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 @SuppressWarnings({"deprecation", "rawtypes"})
 public class JasperReportsXlsxView extends AbstractJasperReportsSingleFormatView {
 
-	public JasperReportsXlsxView() {
-		setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	}
+    public JasperReportsXlsxView() {
+        setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
 
-	@Override
-	protected net.sf.jasperreports.engine.JRExporter createExporter() {
-		return new JRXlsxExporter();
-	}
+    @Override
+    protected net.sf.jasperreports.engine.JRExporter createExporter() {
+        return new JRXlsxExporter();
+    }
 
-	@Override
-	protected boolean useWriter() {
-		return false;
-	}
+    @Override
+    protected boolean useWriter() {
+        return false;
+    }
 
 }

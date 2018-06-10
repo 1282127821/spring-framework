@@ -111,7 +111,7 @@ public abstract class MethodVisitor {
      *            allowed (see {@link Opcodes}).
      */
     public void visitParameter(String name, int access) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
@@ -180,9 +180,8 @@ public abstract class MethodVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitTypeAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
@@ -205,8 +204,7 @@ public abstract class MethodVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitParameterAnnotation(int parameter,
-            String desc, boolean visible) {
+    public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
         if (mv != null) {
             return mv.visitParameterAnnotation(parameter, desc, visible);
         }
@@ -309,8 +307,7 @@ public abstract class MethodVisitor {
      *             instruction between the two (unless this frame is a
      *             Opcodes#F_SAME frame, in which case it is silently ignored).
      */
-    public void visitFrame(int type, int nLocal, Object[] local, int nStack,
-            Object[] stack) {
+    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
         if (mv != null) {
             mv.visitFrame(type, nLocal, local, nStack, stack);
         }
@@ -421,8 +418,7 @@ public abstract class MethodVisitor {
      * @param desc
      *            the field's descriptor (see {@link Type Type}).
      */
-    public void visitFieldInsn(int opcode, String owner, String name,
-            String desc) {
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
         if (mv != null) {
             mv.visitFieldInsn(opcode, owner, name, desc);
         }
@@ -445,8 +441,7 @@ public abstract class MethodVisitor {
      *            the method's descriptor (see {@link Type Type}).
      */
     @Deprecated
-    public void visitMethodInsn(int opcode, String owner, String name,
-            String desc) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
         if (api >= Opcodes.ASM5) {
             boolean itf = opcode == Opcodes.INVOKEINTERFACE;
             visitMethodInsn(opcode, owner, name, desc, itf);
@@ -475,12 +470,10 @@ public abstract class MethodVisitor {
      * @param itf
      *            if the method's owner class is an interface.
      */
-    public void visitMethodInsn(int opcode, String owner, String name,
-            String desc, boolean itf) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (api < Opcodes.ASM5) {
             if (itf != (opcode == Opcodes.INVOKEINTERFACE)) {
-                throw new IllegalArgumentException(
-                        "INVOKESPECIAL/STATIC on interfaces require ASM 5");
+                throw new IllegalArgumentException("INVOKESPECIAL/STATIC on interfaces require ASM 5");
             }
             visitMethodInsn(opcode, owner, name, desc);
             return;
@@ -506,8 +499,7 @@ public abstract class MethodVisitor {
      *            value. This method is allowed to modify the content of the
      *            array so a caller should expect that this array may change.
      */
-    public void visitInvokeDynamicInsn(String name, String desc, Handle bsm,
-            Object... bsmArgs) {
+    public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
         if (mv != null) {
             mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
         }
@@ -627,8 +619,7 @@ public abstract class MethodVisitor {
      *            beginnings of the handler blocks. <tt>labels[i]</tt> is the
      *            beginning of the handler block for the <tt>min + i</tt> key.
      */
-    public void visitTableSwitchInsn(int min, int max, Label dflt,
-            Label... labels) {
+    public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {
         if (mv != null) {
             mv.visitTableSwitchInsn(min, max, dflt, labels);
         }
@@ -696,9 +687,8 @@ public abstract class MethodVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitInsnAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitInsnAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
@@ -730,8 +720,7 @@ public abstract class MethodVisitor {
      *             if one of the labels has already been visited by this visitor
      *             (by the {@link #visitLabel visitLabel} method).
      */
-    public void visitTryCatchBlock(Label start, Label end, Label handler,
-            String type) {
+    public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
         if (mv != null) {
             mv.visitTryCatchBlock(start, end, handler, type);
         }
@@ -758,9 +747,8 @@ public abstract class MethodVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitTryCatchAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitTryCatchAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
@@ -794,8 +782,7 @@ public abstract class MethodVisitor {
      *             if one of the labels has not already been visited by this
      *             visitor (by the {@link #visitLabel visitLabel} method).
      */
-    public void visitLocalVariable(String name, String desc, String signature,
-            Label start, Label end, int index) {
+    public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
         if (mv != null) {
             mv.visitLocalVariable(name, desc, signature, start, end, index);
         }
@@ -830,17 +817,15 @@ public abstract class MethodVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitLocalVariableAnnotation(int typeRef,
-            TypePath typePath, Label[] start, Label[] end, int[] index,
-            String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end,
+            int[] index, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
         */
         if (mv != null) {
-            return mv.visitLocalVariableAnnotation(typeRef, typePath, start,
-                    end, index, desc, visible);
+            return mv.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, desc, visible);
         }
         return null;
     }

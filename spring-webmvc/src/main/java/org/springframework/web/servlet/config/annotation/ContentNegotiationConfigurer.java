@@ -18,6 +18,7 @@ package org.springframework.web.servlet.config.annotation;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.http.MediaType;
@@ -91,167 +92,167 @@ import org.springframework.web.accept.PathExtensionContentNegotiationStrategy;
  */
 public class ContentNegotiationConfigurer {
 
-	private final ContentNegotiationManagerFactoryBean factory = new ContentNegotiationManagerFactoryBean();
+    private final ContentNegotiationManagerFactoryBean factory = new ContentNegotiationManagerFactoryBean();
 
-	private final Map<String, MediaType> mediaTypes = new HashMap<String, MediaType>();
-
-
-	/**
-	 * Class constructor with {@link javax.servlet.ServletContext}.
-	 */
-	public ContentNegotiationConfigurer(ServletContext servletContext) {
-		this.factory.setServletContext(servletContext);
-	}
+    private final Map<String, MediaType> mediaTypes = new HashMap<String, MediaType>();
 
 
-	/**
-	 * Whether the path extension in the URL path should be used to determine
-	 * the requested media type.
-	 * <p>By default this is set to {@code true} in which case a request
-	 * for {@code /hotels.pdf} will be interpreted as a request for
-	 * {@code "application/pdf"} regardless of the 'Accept' header.
-	 */
-	public ContentNegotiationConfigurer favorPathExtension(boolean favorPathExtension) {
-		this.factory.setFavorPathExtension(favorPathExtension);
-		return this;
-	}
-
-	/**
-	 * Add a mapping from a key, extracted from a path extension or a query
-	 * parameter, to a MediaType. This is required in order for the parameter
-	 * strategy to work. Any extensions explicitly registered here are also
-	 * whitelisted for the purpose of Reflected File Download attack detection
-	 * (see Spring Framework reference documentation for more details on RFD
-	 * attack protection).
-	 * <p>The path extension strategy will also try to use
-	 * {@link ServletContext#getMimeType} and JAF (if present) to resolve path
-	 * extensions. To change this behavior see the {@link #useJaf} property.
-	 * @param extension the key to look up
-	 * @param mediaType the media type
-	 * @see #mediaTypes(Map)
-	 * @see #replaceMediaTypes(Map)
-	 */
-	public ContentNegotiationConfigurer mediaType(String extension, MediaType mediaType) {
-		this.mediaTypes.put(extension, mediaType);
-		return this;
-	}
-
-	/**
-	 * An alternative to {@link #mediaType}.
-	 * @see #mediaType(String, MediaType)
-	 * @see #replaceMediaTypes(Map)
-	 */
-	public ContentNegotiationConfigurer mediaTypes(Map<String, MediaType> mediaTypes) {
-		if (mediaTypes != null) {
-			this.mediaTypes.putAll(mediaTypes);
-		}
-		return this;
-	}
-
-	/**
-	 * Similar to {@link #mediaType} but for replacing existing mappings.
-	 * @see #mediaType(String, MediaType)
-	 * @see #mediaTypes(Map)
-	 */
-	public ContentNegotiationConfigurer replaceMediaTypes(Map<String, MediaType> mediaTypes) {
-		this.mediaTypes.clear();
-		mediaTypes(mediaTypes);
-		return this;
-	}
-
-	/**
-	 * Whether to ignore requests with path extension that cannot be resolved
-	 * to any media type. Setting this to {@code false} will result in an
-	 * {@code HttpMediaTypeNotAcceptableException} if there is no match.
-	 * <p>By default this is set to {@code true}.
-	 */
-	public ContentNegotiationConfigurer ignoreUnknownPathExtensions(boolean ignore) {
-		this.factory.setIgnoreUnknownPathExtensions(ignore);
-		return this;
-	}
-
-	/**
-	 * When {@link #favorPathExtension} is set, this property determines whether
-	 * to allow use of JAF (Java Activation Framework) to resolve a path
-	 * extension to a specific MediaType.
-	 * <p>By default this is not set in which case
-	 * {@code PathExtensionContentNegotiationStrategy} will use JAF if available.
-	 */
-	public ContentNegotiationConfigurer useJaf(boolean useJaf) {
-		this.factory.setUseJaf(useJaf);
-		return this;
-	}
-
-	/**
-	 * Whether a request parameter ("format" by default) should be used to
-	 * determine the requested media type. For this option to work you must
-	 * register {@link #mediaType(String, MediaType) media type mappings}.
-	 * <p>By default this is set to {@code false}.
-	 * @see #parameterName(String)
-	 */
-	public ContentNegotiationConfigurer favorParameter(boolean favorParameter) {
-		this.factory.setFavorParameter(favorParameter);
-		return this;
-	}
-
-	/**
-	 * Set the query parameter name to use when {@link #favorParameter} is on.
-	 * <p>The default parameter name is {@code "format"}.
-	 */
-	public ContentNegotiationConfigurer parameterName(String parameterName) {
-		this.factory.setParameterName(parameterName);
-		return this;
-	}
-
-	/**
-	 * Whether to disable checking the 'Accept' request header.
-	 * <p>By default this value is set to {@code false}.
-	 */
-	public ContentNegotiationConfigurer ignoreAcceptHeader(boolean ignoreAcceptHeader) {
-		this.factory.setIgnoreAcceptHeader(ignoreAcceptHeader);
-		return this;
-	}
-
-	/**
-	 * Set the default content type to use when no content type is requested.
-	 * <p>By default this is not set.
-	 * @see #defaultContentTypeStrategy
-	 */
-	public ContentNegotiationConfigurer defaultContentType(MediaType defaultContentType) {
-		this.factory.setDefaultContentType(defaultContentType);
-		return this;
-	}
-
-	/**
-	 * Set a custom {@link ContentNegotiationStrategy} to use to determine
-	 * the content type to use when no content type is requested.
-	 * <p>By default this is not set.
-	 * @see #defaultContentType
-	 * @since 4.1.2
-	 */
-	public ContentNegotiationConfigurer defaultContentTypeStrategy(ContentNegotiationStrategy defaultStrategy) {
-		this.factory.setDefaultContentTypeStrategy(defaultStrategy);
-		return this;
-	}
+    /**
+     * Class constructor with {@link javax.servlet.ServletContext}.
+     */
+    public ContentNegotiationConfigurer(ServletContext servletContext) {
+        this.factory.setServletContext(servletContext);
+    }
 
 
-	/**
-	 * Build a {@link ContentNegotiationManager} based on this configurer's settings.
-	 * @since 4.3.12
-	 * @see ContentNegotiationManagerFactoryBean#getObject()
-	 */
-	protected ContentNegotiationManager buildContentNegotiationManager() {
-		this.factory.addMediaTypes(this.mediaTypes);
-		this.factory.afterPropertiesSet();
-		return this.factory.getObject();
-	}
+    /**
+     * Whether the path extension in the URL path should be used to determine
+     * the requested media type.
+     * <p>By default this is set to {@code true} in which case a request
+     * for {@code /hotels.pdf} will be interpreted as a request for
+     * {@code "application/pdf"} regardless of the 'Accept' header.
+     */
+    public ContentNegotiationConfigurer favorPathExtension(boolean favorPathExtension) {
+        this.factory.setFavorPathExtension(favorPathExtension);
+        return this;
+    }
 
-	/**
-	 * @deprecated as of 4.3.12, in favor of {@link #buildContentNegotiationManager()}
-	 */
-	@Deprecated
-	protected ContentNegotiationManager getContentNegotiationManager() throws Exception {
-		return buildContentNegotiationManager();
-	}
+    /**
+     * Add a mapping from a key, extracted from a path extension or a query
+     * parameter, to a MediaType. This is required in order for the parameter
+     * strategy to work. Any extensions explicitly registered here are also
+     * whitelisted for the purpose of Reflected File Download attack detection
+     * (see Spring Framework reference documentation for more details on RFD
+     * attack protection).
+     * <p>The path extension strategy will also try to use
+     * {@link ServletContext#getMimeType} and JAF (if present) to resolve path
+     * extensions. To change this behavior see the {@link #useJaf} property.
+     * @param extension the key to look up
+     * @param mediaType the media type
+     * @see #mediaTypes(Map)
+     * @see #replaceMediaTypes(Map)
+     */
+    public ContentNegotiationConfigurer mediaType(String extension, MediaType mediaType) {
+        this.mediaTypes.put(extension, mediaType);
+        return this;
+    }
+
+    /**
+     * An alternative to {@link #mediaType}.
+     * @see #mediaType(String, MediaType)
+     * @see #replaceMediaTypes(Map)
+     */
+    public ContentNegotiationConfigurer mediaTypes(Map<String, MediaType> mediaTypes) {
+        if (mediaTypes != null) {
+            this.mediaTypes.putAll(mediaTypes);
+        }
+        return this;
+    }
+
+    /**
+     * Similar to {@link #mediaType} but for replacing existing mappings.
+     * @see #mediaType(String, MediaType)
+     * @see #mediaTypes(Map)
+     */
+    public ContentNegotiationConfigurer replaceMediaTypes(Map<String, MediaType> mediaTypes) {
+        this.mediaTypes.clear();
+        mediaTypes(mediaTypes);
+        return this;
+    }
+
+    /**
+     * Whether to ignore requests with path extension that cannot be resolved
+     * to any media type. Setting this to {@code false} will result in an
+     * {@code HttpMediaTypeNotAcceptableException} if there is no match.
+     * <p>By default this is set to {@code true}.
+     */
+    public ContentNegotiationConfigurer ignoreUnknownPathExtensions(boolean ignore) {
+        this.factory.setIgnoreUnknownPathExtensions(ignore);
+        return this;
+    }
+
+    /**
+     * When {@link #favorPathExtension} is set, this property determines whether
+     * to allow use of JAF (Java Activation Framework) to resolve a path
+     * extension to a specific MediaType.
+     * <p>By default this is not set in which case
+     * {@code PathExtensionContentNegotiationStrategy} will use JAF if available.
+     */
+    public ContentNegotiationConfigurer useJaf(boolean useJaf) {
+        this.factory.setUseJaf(useJaf);
+        return this;
+    }
+
+    /**
+     * Whether a request parameter ("format" by default) should be used to
+     * determine the requested media type. For this option to work you must
+     * register {@link #mediaType(String, MediaType) media type mappings}.
+     * <p>By default this is set to {@code false}.
+     * @see #parameterName(String)
+     */
+    public ContentNegotiationConfigurer favorParameter(boolean favorParameter) {
+        this.factory.setFavorParameter(favorParameter);
+        return this;
+    }
+
+    /**
+     * Set the query parameter name to use when {@link #favorParameter} is on.
+     * <p>The default parameter name is {@code "format"}.
+     */
+    public ContentNegotiationConfigurer parameterName(String parameterName) {
+        this.factory.setParameterName(parameterName);
+        return this;
+    }
+
+    /**
+     * Whether to disable checking the 'Accept' request header.
+     * <p>By default this value is set to {@code false}.
+     */
+    public ContentNegotiationConfigurer ignoreAcceptHeader(boolean ignoreAcceptHeader) {
+        this.factory.setIgnoreAcceptHeader(ignoreAcceptHeader);
+        return this;
+    }
+
+    /**
+     * Set the default content type to use when no content type is requested.
+     * <p>By default this is not set.
+     * @see #defaultContentTypeStrategy
+     */
+    public ContentNegotiationConfigurer defaultContentType(MediaType defaultContentType) {
+        this.factory.setDefaultContentType(defaultContentType);
+        return this;
+    }
+
+    /**
+     * Set a custom {@link ContentNegotiationStrategy} to use to determine
+     * the content type to use when no content type is requested.
+     * <p>By default this is not set.
+     * @see #defaultContentType
+     * @since 4.1.2
+     */
+    public ContentNegotiationConfigurer defaultContentTypeStrategy(ContentNegotiationStrategy defaultStrategy) {
+        this.factory.setDefaultContentTypeStrategy(defaultStrategy);
+        return this;
+    }
+
+
+    /**
+     * Build a {@link ContentNegotiationManager} based on this configurer's settings.
+     * @since 4.3.12
+     * @see ContentNegotiationManagerFactoryBean#getObject()
+     */
+    protected ContentNegotiationManager buildContentNegotiationManager() {
+        this.factory.addMediaTypes(this.mediaTypes);
+        this.factory.afterPropertiesSet();
+        return this.factory.getObject();
+    }
+
+    /**
+     * @deprecated as of 4.3.12, in favor of {@link #buildContentNegotiationManager()}
+     */
+    @Deprecated
+    protected ContentNegotiationManager getContentNegotiationManager() throws Exception {
+        return buildContentNegotiationManager();
+    }
 
 }

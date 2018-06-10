@@ -31,18 +31,18 @@ import java.util.concurrent.Future;
  */
 public interface ListenableFuture<T> extends Future<T> {
 
-	/**
-	 * Register the given {@code ListenableFutureCallback}.
-	 * @param callback the callback to register
-	 */
-	void addCallback(ListenableFutureCallback<? super T> callback);
+    /**
+     * Register the given {@code ListenableFutureCallback}.
+     * @param callback the callback to register
+     */
+    void addCallback(ListenableFutureCallback<? super T> callback);
 
-	/**
-	 * Java 8 lambda-friendly alternative with success and failure callbacks.
-	 * @param successCallback the success callback
-	 * @param failureCallback the failure callback
-	 * @since 4.1
-	 */
-	void addCallback(SuccessCallback<? super T> successCallback, FailureCallback failureCallback);
+    /**
+     * Java 8 lambda-friendly alternative with success and failure callbacks.
+     * @param successCallback the success callback
+     * @param failureCallback the failure callback
+     * @since 4.1
+     */
+    void addCallback(SuccessCallback<? super T> successCallback, FailureCallback failureCallback);
 
 }

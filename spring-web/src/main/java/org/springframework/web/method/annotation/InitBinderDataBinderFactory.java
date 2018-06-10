@@ -37,48 +37,47 @@ import org.springframework.web.method.support.InvocableHandlerMethod;
  */
 public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 
-	private final List<InvocableHandlerMethod> binderMethods;
+    private final List<InvocableHandlerMethod> binderMethods;
 
 
-	/**
-	 * Create a new InitBinderDataBinderFactory instance.
-	 * @param binderMethods {@code @InitBinder} methods
-	 * @param initializer for global data binder initialization
-	 */
-	public InitBinderDataBinderFactory(List<InvocableHandlerMethod> binderMethods, WebBindingInitializer initializer) {
-		super(initializer);
-		this.binderMethods = (binderMethods != null ? binderMethods : Collections.<InvocableHandlerMethod>emptyList());
-	}
+    /**
+     * Create a new InitBinderDataBinderFactory instance.
+     * @param binderMethods {@code @InitBinder} methods
+     * @param initializer for global data binder initialization
+     */
+    public InitBinderDataBinderFactory(List<InvocableHandlerMethod> binderMethods, WebBindingInitializer initializer) {
+        super(initializer);
+        this.binderMethods = (binderMethods != null ? binderMethods : Collections.<InvocableHandlerMethod>emptyList());
+    }
 
 
-	/**
-	 * Initialize a WebDataBinder with {@code @InitBinder} methods.
-	 * If the {@code @InitBinder} annotation specifies attributes names, it is
-	 * invoked only if the names include the target object name.
-	 * @throws Exception if one of the invoked @{@link InitBinder} methods fail.
-	 */
-	@Override
-	public void initBinder(WebDataBinder binder, NativeWebRequest request) throws Exception {
-		for (InvocableHandlerMethod binderMethod : this.binderMethods) {
-			if (isBinderMethodApplicable(binderMethod, binder)) {
-				Object returnValue = binderMethod.invokeForRequest(request, null, binder);
-				if (returnValue != null) {
-					throw new IllegalStateException(
-							"@InitBinder methods should return void: " + binderMethod);
-				}
-			}
-		}
-	}
+    /**
+     * Initialize a WebDataBinder with {@code @InitBinder} methods.
+     * If the {@code @InitBinder} annotation specifies attributes names, it is
+     * invoked only if the names include the target object name.
+     * @throws Exception if one of the invoked @{@link InitBinder} methods fail.
+     */
+    @Override
+    public void initBinder(WebDataBinder binder, NativeWebRequest request) throws Exception {
+        for (InvocableHandlerMethod binderMethod : this.binderMethods) {
+            if (isBinderMethodApplicable(binderMethod, binder)) {
+                Object returnValue = binderMethod.invokeForRequest(request, null, binder);
+                if (returnValue != null) {
+                    throw new IllegalStateException("@InitBinder methods should return void: " + binderMethod);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Whether the given {@code @InitBinder} method should be used to initialize
-	 * the given WebDataBinder instance. By default we check the attributes
-	 * names of the annotation, if present.
-	 */
-	protected boolean isBinderMethodApplicable(HandlerMethod initBinderMethod, WebDataBinder binder) {
-		InitBinder ann = initBinderMethod.getMethodAnnotation(InitBinder.class);
-		Collection<String> names = Arrays.asList(ann.value());
-		return (names.isEmpty() || names.contains(binder.getObjectName()));
-	}
+    /**
+     * Whether the given {@code @InitBinder} method should be used to initialize
+     * the given WebDataBinder instance. By default we check the attributes
+     * names of the annotation, if present.
+     */
+    protected boolean isBinderMethodApplicable(HandlerMethod initBinderMethod, WebDataBinder binder) {
+        InitBinder ann = initBinderMethod.getMethodAnnotation(InitBinder.class);
+        Collection<String> names = Arrays.asList(ann.value());
+        return (names.isEmpty() || names.contains(binder.getObjectName()));
+    }
 
 }

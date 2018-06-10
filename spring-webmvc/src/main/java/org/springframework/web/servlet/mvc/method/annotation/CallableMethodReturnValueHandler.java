@@ -32,27 +32,27 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class CallableMethodReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return Callable.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return Callable.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		return (returnValue != null && returnValue instanceof Callable);
-	}
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        return (returnValue != null && returnValue instanceof Callable);
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		Callable<?> callable = (Callable<?>) returnValue;
-		WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(callable, mavContainer);
-	}
+        Callable<?> callable = (Callable<?>) returnValue;
+        WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(callable, mavContainer);
+    }
 
 }

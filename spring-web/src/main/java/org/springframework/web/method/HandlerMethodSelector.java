@@ -33,16 +33,16 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 @Deprecated
 public abstract class HandlerMethodSelector {
 
-	/**
-	 * Select handler methods for the given handler type.
-	 * <p>Callers define handler methods of interest through the {@link MethodFilter} parameter.
-	 * @param handlerType the handler type to search handler methods on
-	 * @param handlerMethodFilter a {@link MethodFilter} to help recognize handler methods of interest
-	 * @return the selected methods, or an empty set
-	 * @see MethodIntrospector#selectMethods
-	 */
-	public static Set<Method> selectMethods(Class<?> handlerType, MethodFilter handlerMethodFilter) {
-		return MethodIntrospector.selectMethods(handlerType, handlerMethodFilter);
-	}
+    /**
+     * Select handler methods for the given handler type.
+     * <p>Callers define handler methods of interest through the {@link MethodFilter} parameter.
+     * @param handlerType the handler type to search handler methods on
+     * @param handlerMethodFilter a {@link MethodFilter} to help recognize handler methods of interest
+     * @return the selected methods, or an empty set
+     * @see MethodIntrospector#selectMethods
+     */
+    public static Set<Method> selectMethods(Class<?> handlerType, MethodFilter handlerMethodFilter) {
+        return MethodIntrospector.selectMethods(handlerType, handlerMethodFilter);
+    }
 
 }

@@ -74,8 +74,7 @@ public class ClassWriter extends ClassVisitor {
     /**
      * Factor to convert from ACC_SYNTHETIC_ATTRIBUTE to Opcode.ACC_SYNTHETIC.
      */
-    static final int TO_ACC_SYNTHETIC = ACC_SYNTHETIC_ATTRIBUTE
-            / Opcodes.ACC_SYNTHETIC;
+    static final int TO_ACC_SYNTHETIC = ACC_SYNTHETIC_ATTRIBUTE / Opcodes.ACC_SYNTHETIC;
 
     /**
      * The type of instructions without any argument.
@@ -625,8 +624,7 @@ public class ClassWriter extends ClassVisitor {
         key3 = new Item();
         key4 = new Item();
         this.compute = (flags & COMPUTE_FRAMES) != 0 ? MethodWriter.FRAMES
-                : ((flags & COMPUTE_MAXS) != 0 ? MethodWriter.MAXS
-                        : MethodWriter.NOTHING);
+                : ((flags & COMPUTE_MAXS) != 0 ? MethodWriter.MAXS : MethodWriter.NOTHING);
     }
 
     /**
@@ -672,9 +670,8 @@ public class ClassWriter extends ClassVisitor {
     // ------------------------------------------------------------------------
 
     @Override
-    public final void visit(final int version, final int access,
-            final String name, final String signature, final String superName,
-            final String[] interfaces) {
+    public final void visit(final int version, final int access, final String name, final String signature,
+            final String superName, final String[] interfaces) {
         this.version = version;
         this.access = access;
         this.name = newClass(name);
@@ -698,14 +695,12 @@ public class ClassWriter extends ClassVisitor {
             sourceFile = newUTF8(file);
         }
         if (debug != null) {
-            sourceDebug = new ByteVector().encodeUTF8(debug, 0,
-                    Integer.MAX_VALUE);
+            sourceDebug = new ByteVector().encodeUTF8(debug, 0, Integer.MAX_VALUE);
         }
     }
 
     @Override
-    public final void visitOuterClass(final String owner, final String name,
-            final String desc) {
+    public final void visitOuterClass(final String owner, final String name, final String desc) {
         enclosingMethodOwner = newClass(owner);
         if (name != null && desc != null) {
             enclosingMethod = newNameType(name, desc);
@@ -713,8 +708,7 @@ public class ClassWriter extends ClassVisitor {
     }
 
     @Override
-    public final AnnotationVisitor visitAnnotation(final String desc,
-            final boolean visible) {
+    public final AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         if (!ClassReader.ANNOTATIONS) {
             return null;
         }
@@ -733,8 +727,8 @@ public class ClassWriter extends ClassVisitor {
     }
 
     @Override
-    public final AnnotationVisitor visitTypeAnnotation(int typeRef,
-            TypePath typePath, final String desc, final boolean visible) {
+    public final AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, final String desc,
+            final boolean visible) {
         if (!ClassReader.ANNOTATIONS) {
             return null;
         }
@@ -743,8 +737,7 @@ public class ClassWriter extends ClassVisitor {
         AnnotationWriter.putTarget(typeRef, typePath, bv);
         // write type, and reserve space for values count
         bv.putShort(newUTF8(desc)).putShort(0);
-        AnnotationWriter aw = new AnnotationWriter(this, true, bv, bv,
-                bv.length - 2);
+        AnnotationWriter aw = new AnnotationWriter(this, true, bv, bv, bv.length - 2);
         if (visible) {
             aw.next = tanns;
             tanns = aw;
@@ -762,8 +755,8 @@ public class ClassWriter extends ClassVisitor {
     }
 
     @Override
-    public final void visitInnerClass(final String name,
-            final String outerName, final String innerName, final int access) {
+    public final void visitInnerClass(final String name, final String outerName, final String innerName,
+            final int access) {
         if (innerClasses == null) {
             innerClasses = new ByteVector();
         }
@@ -793,21 +786,19 @@ public class ClassWriter extends ClassVisitor {
     }
 
     @Override
-    public final FieldVisitor visitField(final int access, final String name,
-            final String desc, final String signature, final Object value) {
+    public final FieldVisitor visitField(final int access, final String name, final String desc, final String signature,
+            final Object value) {
         return new FieldWriter(this, access, name, desc, signature, value);
     }
 
     @Override
-    public final MethodVisitor visitMethod(final int access, final String name,
-            final String desc, final String signature, final String[] exceptions) {
-        return new MethodWriter(this, access, name, desc, signature,
-                exceptions, compute);
+    public final MethodVisitor visitMethod(final int access, final String name, final String desc,
+            final String signature, final String[] exceptions) {
+        return new MethodWriter(this, access, name, desc, signature, exceptions, compute);
     }
 
     @Override
-    public final void visitEnd() {
-    }
+    public final void visitEnd() {}
 
     // ------------------------------------------------------------------------
     // Other public methods
@@ -872,8 +863,7 @@ public class ClassWriter extends ClassVisitor {
             newUTF8("Deprecated");
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-            if ((version & 0xFFFF) < Opcodes.V1_5
-                    || (access & ACC_SYNTHETIC_ATTRIBUTE) != 0) {
+            if ((version & 0xFFFF) < Opcodes.V1_5 || (access & ACC_SYNTHETIC_ATTRIBUTE) != 0) {
                 ++attributeCount;
                 size += 6;
                 newUTF8("Synthetic");
@@ -936,8 +926,7 @@ public class ClassWriter extends ClassVisitor {
         out.putShort(attributeCount);
         if (bootstrapMethods != null) {
             out.putShort(newUTF8("BootstrapMethods"));
-            out.putInt(bootstrapMethods.length + 2).putShort(
-                    bootstrapMethodsCount);
+            out.putInt(bootstrapMethods.length + 2).putShort(bootstrapMethodsCount);
             out.putByteArray(bootstrapMethods.data, 0, bootstrapMethods.length);
         }
         if (ClassReader.SIGNATURES && signature != 0) {
@@ -959,8 +948,7 @@ public class ClassWriter extends ClassVisitor {
             out.putShort(newUTF8("Deprecated")).putInt(0);
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-            if ((version & 0xFFFF) < Opcodes.V1_5
-                    || (access & ACC_SYNTHETIC_ATTRIBUTE) != 0) {
+            if ((version & 0xFFFF) < Opcodes.V1_5 || (access & ACC_SYNTHETIC_ATTRIBUTE) != 0) {
                 out.putShort(newUTF8("Synthetic")).putInt(0);
             }
         }
@@ -1000,8 +988,7 @@ public class ClassWriter extends ClassVisitor {
             lastMethod = null;
             compute = MethodWriter.INSERTED_FRAMES;
             hasAsmInsns = false;
-            new ClassReader(out.data).accept(this, ClassReader.EXPAND_FRAMES
-                    | ClassReader.EXPAND_ASM_INSNS);
+            new ClassReader(out.data).accept(this, ClassReader.EXPAND_FRAMES | ClassReader.EXPAND_ASM_INSNS);
             return toByteArray();
         }
         return out.data;
@@ -1200,17 +1187,14 @@ public class ClassWriter extends ClassVisitor {
      *            true if the owner is an interface.
      * @return a new or an already existing method type reference item.
      */
-    Item newHandleItem(final int tag, final String owner, final String name,
-            final String desc, final boolean itf) {
+    Item newHandleItem(final int tag, final String owner, final String name, final String desc, final boolean itf) {
         key4.set(HANDLE_BASE + tag, owner, name, desc);
         Item result = get(key4);
         if (result == null) {
             if (tag <= Opcodes.H_PUTSTATIC) {
                 put112(HANDLE, tag, newField(owner, name, desc));
             } else {
-                put112(HANDLE,
-                        tag,
-                        newMethod(owner, name, desc, itf));
+                put112(HANDLE, tag, newMethod(owner, name, desc, itf));
             }
             result = new Item(index++, key4);
             put(result);
@@ -1245,8 +1229,7 @@ public class ClassWriter extends ClassVisitor {
      *             {@link #newHandle(int, String, String, String, boolean)}.
      */
     @Deprecated
-    public int newHandle(final int tag, final String owner, final String name,
-            final String desc) {
+    public int newHandle(final int tag, final String owner, final String name, final String desc) {
         return newHandle(tag, owner, name, desc, tag == Opcodes.H_INVOKEINTERFACE);
     }
 
@@ -1275,8 +1258,7 @@ public class ClassWriter extends ClassVisitor {
      * @return the index of a new or already existing method type reference
      *         item.
      */
-    public int newHandle(final int tag, final String owner, final String name,
-            final String desc, final boolean itf) {
+    public int newHandle(final int tag, final String owner, final String name, final String desc, final boolean itf) {
         return newHandleItem(tag, owner, name, desc, itf).index;
     }
 
@@ -1297,8 +1279,7 @@ public class ClassWriter extends ClassVisitor {
      * 
      * @return a new or an already existing invokedynamic type reference item.
      */
-    Item newInvokeDynamicItem(final String name, final String desc,
-            final Handle bsm, final Object... bsmArgs) {
+    Item newInvokeDynamicItem(final String name, final String desc, final Handle bsm, final Object... bsmArgs) {
         // cache for performance
         ByteVector bootstrapMethods = this.bootstrapMethods;
         if (bootstrapMethods == null) {
@@ -1308,8 +1289,7 @@ public class ClassWriter extends ClassVisitor {
         int position = bootstrapMethods.length; // record current position
 
         int hashCode = bsm.hashCode();
-        bootstrapMethods.putShort(newHandle(bsm.tag, bsm.owner, bsm.name,
-                bsm.desc, bsm.isInterface()));
+        bootstrapMethods.putShort(newHandle(bsm.tag, bsm.owner, bsm.name, bsm.desc, bsm.isInterface()));
 
         int argsLength = bsmArgs.length;
         bootstrapMethods.putShort(argsLength);
@@ -1382,8 +1362,7 @@ public class ClassWriter extends ClassVisitor {
      * @return the index of a new or already existing invokedynamic reference
      *         item.
      */
-    public int newInvokeDynamic(final String name, final String desc,
-            final Handle bsm, final Object... bsmArgs) {
+    public int newInvokeDynamic(final String name, final String desc, final Handle bsm, final Object... bsmArgs) {
         return newInvokeDynamicItem(name, desc, bsm, bsmArgs).index;
     }
 
@@ -1442,8 +1421,7 @@ public class ClassWriter extends ClassVisitor {
      *            <tt>true</tt> if <tt>owner</tt> is an interface.
      * @return a new or already existing method reference item.
      */
-    Item newMethodItem(final String owner, final String name,
-            final String desc, final boolean itf) {
+    Item newMethodItem(final String owner, final String name, final String desc, final boolean itf) {
         int type = itf ? IMETH : METH;
         key3.set(type, owner, name, desc);
         Item result = get(key3);
@@ -1471,8 +1449,7 @@ public class ClassWriter extends ClassVisitor {
      *            <tt>true</tt> if <tt>owner</tt> is an interface.
      * @return the index of a new or already existing method reference item.
      */
-    public int newMethod(final String owner, final String name,
-            final String desc, final boolean itf) {
+    public int newMethod(final String owner, final String name, final String desc, final boolean itf) {
         return newMethodItem(owner, name, desc, itf).index;
     }
 

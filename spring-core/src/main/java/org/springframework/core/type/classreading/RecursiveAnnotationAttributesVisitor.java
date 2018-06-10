@@ -26,20 +26,20 @@ import org.springframework.core.annotation.AnnotationUtils;
  */
 class RecursiveAnnotationAttributesVisitor extends AbstractRecursiveAnnotationVisitor {
 
-	protected final String annotationType;
+    protected final String annotationType;
 
 
-	public RecursiveAnnotationAttributesVisitor(
-			String annotationType, AnnotationAttributes attributes, ClassLoader classLoader) {
+    public RecursiveAnnotationAttributesVisitor(String annotationType, AnnotationAttributes attributes,
+            ClassLoader classLoader) {
 
-		super(classLoader, attributes);
-		this.annotationType = annotationType;
-	}
+        super(classLoader, attributes);
+        this.annotationType = annotationType;
+    }
 
 
-	@Override
-	public void visitEnd() {
-		AnnotationUtils.registerDefaultValues(this.attributes);
-	}
+    @Override
+    public void visitEnd() {
+        AnnotationUtils.registerDefaultValues(this.attributes);
+    }
 
 }

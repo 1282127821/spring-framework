@@ -39,39 +39,39 @@ import org.springframework.web.bind.annotation.CookieValue;
  */
 public abstract class AbstractCookieValueMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
 
-	/**
-	 * @param beanFactory a bean factory to use for resolving  ${...}
-	 * placeholder and #{...} SpEL expressions in default values;
-	 * or {@code null} if default values are not expected to contain expressions
-	 */
-	public AbstractCookieValueMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
-		super(beanFactory);
-	}
+    /**
+     * @param beanFactory a bean factory to use for resolving  ${...}
+     * placeholder and #{...} SpEL expressions in default values;
+     * or {@code null} if default values are not expected to contain expressions
+     */
+    public AbstractCookieValueMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
+        super(beanFactory);
+    }
 
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.hasParameterAnnotation(CookieValue.class);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(CookieValue.class);
+    }
 
-	@Override
-	protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
-		CookieValue annotation = parameter.getParameterAnnotation(CookieValue.class);
-		return new CookieValueNamedValueInfo(annotation);
-	}
+    @Override
+    protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
+        CookieValue annotation = parameter.getParameterAnnotation(CookieValue.class);
+        return new CookieValueNamedValueInfo(annotation);
+    }
 
-	@Override
-	protected void handleMissingValue(String name, MethodParameter parameter) throws ServletRequestBindingException {
-		throw new ServletRequestBindingException("Missing cookie '" + name +
-				"' for method parameter of type " + parameter.getNestedParameterType().getSimpleName());
-	}
+    @Override
+    protected void handleMissingValue(String name, MethodParameter parameter) throws ServletRequestBindingException {
+        throw new ServletRequestBindingException("Missing cookie '" + name + "' for method parameter of type "
+                + parameter.getNestedParameterType().getSimpleName());
+    }
 
 
-	private static class CookieValueNamedValueInfo extends NamedValueInfo {
+    private static class CookieValueNamedValueInfo extends NamedValueInfo {
 
-		private CookieValueNamedValueInfo(CookieValue annotation) {
-			super(annotation.name(), annotation.required(), annotation.defaultValue());
-		}
-	}
+        private CookieValueNamedValueInfo(CookieValue annotation) {
+            super(annotation.name(), annotation.required(), annotation.defaultValue());
+        }
+    }
 
 }

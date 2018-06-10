@@ -37,92 +37,92 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public class PathMatchConfigurer {
 
-	private Boolean suffixPatternMatch;
+    private Boolean suffixPatternMatch;
 
-	private Boolean trailingSlashMatch;
+    private Boolean trailingSlashMatch;
 
-	private Boolean registeredSuffixPatternMatch;
+    private Boolean registeredSuffixPatternMatch;
 
-	private UrlPathHelper urlPathHelper;
+    private UrlPathHelper urlPathHelper;
 
-	private PathMatcher pathMatcher;
-
-
-	/**
-	 * Whether to use suffix pattern match (".*") when matching patterns to
-	 * requests. If enabled a method mapped to "/users" also matches to "/users.*".
-	 * <p>By default this is set to {@code true}.
-	 * @see #registeredSuffixPatternMatch
-	 */
-	public PathMatchConfigurer setUseSuffixPatternMatch(Boolean suffixPatternMatch) {
-		this.suffixPatternMatch = suffixPatternMatch;
-		return this;
-	}
-
-	/**
-	 * Whether to match to URLs irrespective of the presence of a trailing slash.
-	 * If enabled a method mapped to "/users" also matches to "/users/".
-	 * <p>The default value is {@code true}.
-	 */
-	public PathMatchConfigurer setUseTrailingSlashMatch(Boolean trailingSlashMatch) {
-		this.trailingSlashMatch = trailingSlashMatch;
-		return this;
-	}
-
-	/**
-	 * Whether suffix pattern matching should work only against path extensions
-	 * explicitly registered when you
-	 * {@link WebMvcConfigurer#configureContentNegotiation configure content
-	 * negotiation}. This is generally recommended to reduce ambiguity and to
-	 * avoid issues such as when a "." appears in the path for other reasons.
-	 * <p>By default this is set to "false".
-	 * @see WebMvcConfigurer#configureContentNegotiation
-	 */
-	public PathMatchConfigurer setUseRegisteredSuffixPatternMatch(Boolean registeredSuffixPatternMatch) {
-		this.registeredSuffixPatternMatch = registeredSuffixPatternMatch;
-		return this;
-	}
-
-	/**
-	 * Set the UrlPathHelper to use for resolution of lookup paths.
-	 * <p>Use this to override the default UrlPathHelper with a custom subclass,
-	 * or to share common UrlPathHelper settings across multiple HandlerMappings
-	 * and MethodNameResolvers.
-	 */
-	public PathMatchConfigurer setUrlPathHelper(UrlPathHelper urlPathHelper) {
-		this.urlPathHelper = urlPathHelper;
-		return this;
-	}
-
-	/**
-	 * Set the PathMatcher implementation to use for matching URL paths
-	 * against registered URL patterns. Default is AntPathMatcher.
-	 * @see org.springframework.util.AntPathMatcher
-	 */
-	public PathMatchConfigurer setPathMatcher(PathMatcher pathMatcher) {
-		this.pathMatcher = pathMatcher;
-		return this;
-	}
+    private PathMatcher pathMatcher;
 
 
-	public Boolean isUseSuffixPatternMatch() {
-		return this.suffixPatternMatch;
-	}
+    /**
+     * Whether to use suffix pattern match (".*") when matching patterns to
+     * requests. If enabled a method mapped to "/users" also matches to "/users.*".
+     * <p>By default this is set to {@code true}.
+     * @see #registeredSuffixPatternMatch
+     */
+    public PathMatchConfigurer setUseSuffixPatternMatch(Boolean suffixPatternMatch) {
+        this.suffixPatternMatch = suffixPatternMatch;
+        return this;
+    }
 
-	public Boolean isUseTrailingSlashMatch() {
-		return this.trailingSlashMatch;
-	}
+    /**
+     * Whether to match to URLs irrespective of the presence of a trailing slash.
+     * If enabled a method mapped to "/users" also matches to "/users/".
+     * <p>The default value is {@code true}.
+     */
+    public PathMatchConfigurer setUseTrailingSlashMatch(Boolean trailingSlashMatch) {
+        this.trailingSlashMatch = trailingSlashMatch;
+        return this;
+    }
 
-	public Boolean isUseRegisteredSuffixPatternMatch() {
-		return this.registeredSuffixPatternMatch;
-	}
+    /**
+     * Whether suffix pattern matching should work only against path extensions
+     * explicitly registered when you
+     * {@link WebMvcConfigurer#configureContentNegotiation configure content
+     * negotiation}. This is generally recommended to reduce ambiguity and to
+     * avoid issues such as when a "." appears in the path for other reasons.
+     * <p>By default this is set to "false".
+     * @see WebMvcConfigurer#configureContentNegotiation
+     */
+    public PathMatchConfigurer setUseRegisteredSuffixPatternMatch(Boolean registeredSuffixPatternMatch) {
+        this.registeredSuffixPatternMatch = registeredSuffixPatternMatch;
+        return this;
+    }
 
-	public UrlPathHelper getUrlPathHelper() {
-		return this.urlPathHelper;
-	}
+    /**
+     * Set the UrlPathHelper to use for resolution of lookup paths.
+     * <p>Use this to override the default UrlPathHelper with a custom subclass,
+     * or to share common UrlPathHelper settings across multiple HandlerMappings
+     * and MethodNameResolvers.
+     */
+    public PathMatchConfigurer setUrlPathHelper(UrlPathHelper urlPathHelper) {
+        this.urlPathHelper = urlPathHelper;
+        return this;
+    }
 
-	public PathMatcher getPathMatcher() {
-		return this.pathMatcher;
-	}
+    /**
+     * Set the PathMatcher implementation to use for matching URL paths
+     * against registered URL patterns. Default is AntPathMatcher.
+     * @see org.springframework.util.AntPathMatcher
+     */
+    public PathMatchConfigurer setPathMatcher(PathMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+        return this;
+    }
+
+
+    public Boolean isUseSuffixPatternMatch() {
+        return this.suffixPatternMatch;
+    }
+
+    public Boolean isUseTrailingSlashMatch() {
+        return this.trailingSlashMatch;
+    }
+
+    public Boolean isUseRegisteredSuffixPatternMatch() {
+        return this.registeredSuffixPatternMatch;
+    }
+
+    public UrlPathHelper getUrlPathHelper() {
+        return this.urlPathHelper;
+    }
+
+    public PathMatcher getPathMatcher() {
+        return this.pathMatcher;
+    }
 
 }

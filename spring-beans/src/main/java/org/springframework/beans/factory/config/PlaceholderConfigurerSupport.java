@@ -86,150 +86,149 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.context.support.PropertySourcesPlaceholderConfigurer
  */
 public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfigurer
-		implements BeanNameAware, BeanFactoryAware {
+        implements BeanNameAware, BeanFactoryAware {
 
-	/** Default placeholder prefix: {@value} */
-	public static final String DEFAULT_PLACEHOLDER_PREFIX = "${";
+    /** Default placeholder prefix: {@value} */
+    public static final String DEFAULT_PLACEHOLDER_PREFIX = "${";
 
-	/** Default placeholder suffix: {@value} */
-	public static final String DEFAULT_PLACEHOLDER_SUFFIX = "}";
+    /** Default placeholder suffix: {@value} */
+    public static final String DEFAULT_PLACEHOLDER_SUFFIX = "}";
 
-	/** Default value separator: {@value} */
-	public static final String DEFAULT_VALUE_SEPARATOR = ":";
-
-
-	/** Defaults to {@value #DEFAULT_PLACEHOLDER_PREFIX} */
-	protected String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
-
-	/** Defaults to {@value #DEFAULT_PLACEHOLDER_SUFFIX} */
-	protected String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
-
-	/** Defaults to {@value #DEFAULT_VALUE_SEPARATOR} */
-	protected String valueSeparator = DEFAULT_VALUE_SEPARATOR;
-
-	protected boolean trimValues = false;
-
-	protected String nullValue;
-
-	protected boolean ignoreUnresolvablePlaceholders = false;
-
-	private String beanName;
-
-	private BeanFactory beanFactory;
+    /** Default value separator: {@value} */
+    public static final String DEFAULT_VALUE_SEPARATOR = ":";
 
 
-	/**
-	 * Set the prefix that a placeholder string starts with.
-	 * The default is {@value #DEFAULT_PLACEHOLDER_PREFIX}.
-	 */
-	public void setPlaceholderPrefix(String placeholderPrefix) {
-		this.placeholderPrefix = placeholderPrefix;
-	}
+    /** Defaults to {@value #DEFAULT_PLACEHOLDER_PREFIX} */
+    protected String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
 
-	/**
-	 * Set the suffix that a placeholder string ends with.
-	 * The default is {@value #DEFAULT_PLACEHOLDER_SUFFIX}.
-	 */
-	public void setPlaceholderSuffix(String placeholderSuffix) {
-		this.placeholderSuffix = placeholderSuffix;
-	}
+    /** Defaults to {@value #DEFAULT_PLACEHOLDER_SUFFIX} */
+    protected String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
 
-	/**
-	 * Specify the separating character between the placeholder variable
-	 * and the associated default value, or {@code null} if no such
-	 * special character should be processed as a value separator.
-	 * The default is {@value #DEFAULT_VALUE_SEPARATOR}.
-	 */
-	public void setValueSeparator(String valueSeparator) {
-		this.valueSeparator = valueSeparator;
-	}
+    /** Defaults to {@value #DEFAULT_VALUE_SEPARATOR} */
+    protected String valueSeparator = DEFAULT_VALUE_SEPARATOR;
 
-	/**
-	 * Specify whether to trim resolved values before applying them,
-	 * removing superfluous whitespace from the beginning and end.
-	 * <p>Default is {@code false}.
-	 * @since 4.3
-	 */
-	public void setTrimValues(boolean trimValues) {
-		this.trimValues = trimValues;
-	}
+    protected boolean trimValues = false;
 
-	/**
-	 * Set a value that should be treated as {@code null} when resolved
-	 * as a placeholder value: e.g. "" (empty String) or "null".
-	 * <p>Note that this will only apply to full property values,
-	 * not to parts of concatenated values.
-	 * <p>By default, no such null value is defined. This means that
-	 * there is no way to express {@code null} as a property value
-	 * unless you explicitly map a corresponding value here.
-	 */
-	public void setNullValue(String nullValue) {
-		this.nullValue = nullValue;
-	}
+    protected String nullValue;
 
-	/**
-	 * Set whether to ignore unresolvable placeholders.
-	 * <p>Default is "false": An exception will be thrown if a placeholder fails
-	 * to resolve. Switch this flag to "true" in order to preserve the placeholder
-	 * String as-is in such a case, leaving it up to other placeholder configurers
-	 * to resolve it.
-	 */
-	public void setIgnoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {
-		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
-	}
+    protected boolean ignoreUnresolvablePlaceholders = false;
 
-	/**
-	 * Only necessary to check that we're not parsing our own bean definition,
-	 * to avoid failing on unresolvable placeholders in properties file locations.
-	 * The latter case can happen with placeholders for system properties in
-	 * resource locations.
-	 * @see #setLocations
-	 * @see org.springframework.core.io.ResourceEditor
-	 */
-	@Override
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
+    private String beanName;
 
-	/**
-	 * Only necessary to check that we're not parsing our own bean definition,
-	 * to avoid failing on unresolvable placeholders in properties file locations.
-	 * The latter case can happen with placeholders for system properties in
-	 * resource locations.
-	 * @see #setLocations
-	 * @see org.springframework.core.io.ResourceEditor
-	 */
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
+    private BeanFactory beanFactory;
 
 
-	protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
-			StringValueResolver valueResolver) {
+    /**
+     * Set the prefix that a placeholder string starts with.
+     * The default is {@value #DEFAULT_PLACEHOLDER_PREFIX}.
+     */
+    public void setPlaceholderPrefix(String placeholderPrefix) {
+        this.placeholderPrefix = placeholderPrefix;
+    }
 
-		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
+    /**
+     * Set the suffix that a placeholder string ends with.
+     * The default is {@value #DEFAULT_PLACEHOLDER_SUFFIX}.
+     */
+    public void setPlaceholderSuffix(String placeholderSuffix) {
+        this.placeholderSuffix = placeholderSuffix;
+    }
 
-		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
-		for (String curName : beanNames) {
-			// Check that we're not parsing our own bean definition,
-			// to avoid failing on unresolvable placeholders in properties file locations.
-			if (!(curName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-				BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName);
-				try {
-					visitor.visitBeanDefinition(bd);
-				}
-				catch (Exception ex) {
-					throw new BeanDefinitionStoreException(bd.getResourceDescription(), curName, ex.getMessage(), ex);
-				}
-			}
-		}
+    /**
+     * Specify the separating character between the placeholder variable
+     * and the associated default value, or {@code null} if no such
+     * special character should be processed as a value separator.
+     * The default is {@value #DEFAULT_VALUE_SEPARATOR}.
+     */
+    public void setValueSeparator(String valueSeparator) {
+        this.valueSeparator = valueSeparator;
+    }
 
-		// New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
-		beanFactoryToProcess.resolveAliases(valueResolver);
+    /**
+     * Specify whether to trim resolved values before applying them,
+     * removing superfluous whitespace from the beginning and end.
+     * <p>Default is {@code false}.
+     * @since 4.3
+     */
+    public void setTrimValues(boolean trimValues) {
+        this.trimValues = trimValues;
+    }
 
-		// New in Spring 3.0: resolve placeholders in embedded values such as annotation attributes.
-		beanFactoryToProcess.addEmbeddedValueResolver(valueResolver);
-	}
+    /**
+     * Set a value that should be treated as {@code null} when resolved
+     * as a placeholder value: e.g. "" (empty String) or "null".
+     * <p>Note that this will only apply to full property values,
+     * not to parts of concatenated values.
+     * <p>By default, no such null value is defined. This means that
+     * there is no way to express {@code null} as a property value
+     * unless you explicitly map a corresponding value here.
+     */
+    public void setNullValue(String nullValue) {
+        this.nullValue = nullValue;
+    }
+
+    /**
+     * Set whether to ignore unresolvable placeholders.
+     * <p>Default is "false": An exception will be thrown if a placeholder fails
+     * to resolve. Switch this flag to "true" in order to preserve the placeholder
+     * String as-is in such a case, leaving it up to other placeholder configurers
+     * to resolve it.
+     */
+    public void setIgnoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {
+        this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
+    }
+
+    /**
+     * Only necessary to check that we're not parsing our own bean definition,
+     * to avoid failing on unresolvable placeholders in properties file locations.
+     * The latter case can happen with placeholders for system properties in
+     * resource locations.
+     * @see #setLocations
+     * @see org.springframework.core.io.ResourceEditor
+     */
+    @Override
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
+
+    /**
+     * Only necessary to check that we're not parsing our own bean definition,
+     * to avoid failing on unresolvable placeholders in properties file locations.
+     * The latter case can happen with placeholders for system properties in
+     * resource locations.
+     * @see #setLocations
+     * @see org.springframework.core.io.ResourceEditor
+     */
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+
+    protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
+            StringValueResolver valueResolver) {
+
+        BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
+
+        String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
+        for (String curName : beanNames) {
+            // Check that we're not parsing our own bean definition,
+            // to avoid failing on unresolvable placeholders in properties file locations.
+            if (!(curName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
+                BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName);
+                try {
+                    visitor.visitBeanDefinition(bd);
+                } catch (Exception ex) {
+                    throw new BeanDefinitionStoreException(bd.getResourceDescription(), curName, ex.getMessage(), ex);
+                }
+            }
+        }
+
+        // New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
+        beanFactoryToProcess.resolveAliases(valueResolver);
+
+        // New in Spring 3.0: resolve placeholders in embedded values such as annotation attributes.
+        beanFactoryToProcess.addEmbeddedValueResolver(valueResolver);
+    }
 
 }

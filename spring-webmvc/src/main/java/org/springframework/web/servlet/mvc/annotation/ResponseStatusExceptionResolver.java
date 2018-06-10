@@ -49,66 +49,62 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
  */
 public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionResolver implements MessageSourceAware {
 
-	private MessageSource messageSource;
+    private MessageSource messageSource;
 
 
-	@Override
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
 
-	@Override
-	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
-			Object handler, Exception ex) {
+    @Override
+    protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
+            Exception ex) {
 
-		ResponseStatus responseStatus = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
-		if (responseStatus != null) {
-			try {
-				return resolveResponseStatus(responseStatus, request, response, handler, ex);
-			}
-			catch (Exception resolveEx) {
-				logger.warn("Handling of @ResponseStatus resulted in Exception", resolveEx);
-			}
-		}
-		else if (ex.getCause() instanceof Exception) {
-			ex = (Exception) ex.getCause();
-			return doResolveException(request, response, handler, ex);
-		}
-		return null;
-	}
+        ResponseStatus responseStatus = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+        if (responseStatus != null) {
+            try {
+                return resolveResponseStatus(responseStatus, request, response, handler, ex);
+            } catch (Exception resolveEx) {
+                logger.warn("Handling of @ResponseStatus resulted in Exception", resolveEx);
+            }
+        } else if (ex.getCause() instanceof Exception) {
+            ex = (Exception) ex.getCause();
+            return doResolveException(request, response, handler, ex);
+        }
+        return null;
+    }
 
-	/**
-	 * Template method that handles {@link ResponseStatus @ResponseStatus} annotation.
-	 * <p>The default implementation sends a response error using
-	 * {@link HttpServletResponse#sendError(int)} or
-	 * {@link HttpServletResponse#sendError(int, String)} if the annotation has a
-	 * {@linkplain ResponseStatus#reason() reason} and then returns an empty ModelAndView.
-	 * @param responseStatus the annotation
-	 * @param request current HTTP request
-	 * @param response current HTTP response
-	 * @param handler the executed handler, or {@code null} if none chosen at the
-	 * time of the exception (for example, if multipart resolution failed)
-	 * @param ex the exception that got thrown during handler execution or the
-	 * exception that has the ResponseStatus annotation if found on the cause.
-	 * @return a corresponding ModelAndView to forward to, or {@code null}
-	 * for default processing
-	 */
-	protected ModelAndView resolveResponseStatus(ResponseStatus responseStatus, HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    /**
+     * Template method that handles {@link ResponseStatus @ResponseStatus} annotation.
+     * <p>The default implementation sends a response error using
+     * {@link HttpServletResponse#sendError(int)} or
+     * {@link HttpServletResponse#sendError(int, String)} if the annotation has a
+     * {@linkplain ResponseStatus#reason() reason} and then returns an empty ModelAndView.
+     * @param responseStatus the annotation
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler the executed handler, or {@code null} if none chosen at the
+     * time of the exception (for example, if multipart resolution failed)
+     * @param ex the exception that got thrown during handler execution or the
+     * exception that has the ResponseStatus annotation if found on the cause.
+     * @return a corresponding ModelAndView to forward to, or {@code null}
+     * for default processing
+     */
+    protected ModelAndView resolveResponseStatus(ResponseStatus responseStatus, HttpServletRequest request,
+            HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
-		int statusCode = responseStatus.code().value();
-		String reason = responseStatus.reason();
-		if (!StringUtils.hasLength(reason)) {
-			response.sendError(statusCode);
-		}
-		else {
-			String resolvedReason = (this.messageSource != null ?
-					this.messageSource.getMessage(reason, null, reason, LocaleContextHolder.getLocale()) :
-					reason);
-			response.sendError(statusCode, resolvedReason);
-		}
-		return new ModelAndView();
-	}
+        int statusCode = responseStatus.code().value();
+        String reason = responseStatus.reason();
+        if (!StringUtils.hasLength(reason)) {
+            response.sendError(statusCode);
+        } else {
+            String resolvedReason = (this.messageSource != null
+                    ? this.messageSource.getMessage(reason, null, reason, LocaleContextHolder.getLocale()) : reason);
+            response.sendError(statusCode, resolvedReason);
+        }
+        return new ModelAndView();
+    }
 
 }

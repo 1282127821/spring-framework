@@ -257,8 +257,7 @@ public class Label {
     /**
      * Constructs a new label.
      */
-    public Label() {
-    }
+    public Label() {}
 
     // ------------------------------------------------------------------------
     // Methods to compute offsets and to manage forward references
@@ -276,8 +275,7 @@ public class Label {
      */
     public int getOffset() {
         if ((status & RESOLVED) == 0) {
-            throw new IllegalStateException(
-                    "Label offset position has not been resolved yet");
+            throw new IllegalStateException("Label offset position has not been resolved yet");
         }
         return position;
     }
@@ -301,8 +299,7 @@ public class Label {
      * @throws IllegalArgumentException
      *             if this label has not been created by the given code writer.
      */
-    void put(final MethodWriter owner, final ByteVector out, final int source,
-            final boolean wideOffset) {
+    void put(final MethodWriter owner, final ByteVector out, final int source, final boolean wideOffset) {
         if ((status & RESOLVED) == 0) {
             if (wideOffset) {
                 addReference(-1 - source, out.length);
@@ -333,15 +330,13 @@ public class Label {
      *            the position where the offset for this forward reference must
      *            be stored.
      */
-    private void addReference(final int sourcePosition,
-            final int referencePosition) {
+    private void addReference(final int sourcePosition, final int referencePosition) {
         if (srcAndRefPositions == null) {
             srcAndRefPositions = new int[6];
         }
         if (referenceCount >= srcAndRefPositions.length) {
             int[] a = new int[srcAndRefPositions.length + 6];
-            System.arraycopy(srcAndRefPositions, 0, a, 0,
-                    srcAndRefPositions.length);
+            System.arraycopy(srcAndRefPositions, 0, a, 0, srcAndRefPositions.length);
             srcAndRefPositions = a;
         }
         srcAndRefPositions[referenceCount++] = sourcePosition;
@@ -370,8 +365,7 @@ public class Label {
      *             if this label has already been resolved, or if it has not
      *             been created by the given code writer.
      */
-    boolean resolve(final MethodWriter owner, final int position,
-            final byte[] data) {
+    boolean resolve(final MethodWriter owner, final int position, final byte[] data) {
         boolean needUpdate = false;
         this.status |= RESOLVED;
         this.position = position;

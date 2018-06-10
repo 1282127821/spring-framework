@@ -44,70 +44,67 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.2
  */
 public abstract class AbstractMappingContentNegotiationStrategy extends MappingMediaTypeFileExtensionResolver
-		implements ContentNegotiationStrategy {
+        implements ContentNegotiationStrategy {
 
-	/**
-	 * Create an instance with the given map of file extensions and media types.
-	 */
-	public AbstractMappingContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
-		super(mediaTypes);
-	}
-
-
-	@Override
-	public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest)
-			throws HttpMediaTypeNotAcceptableException {
-
-		return resolveMediaTypeKey(webRequest, getMediaTypeKey(webRequest));
-	}
-
-	/**
-	 * An alternative to {@link #resolveMediaTypes(NativeWebRequest)} that accepts
-	 * an already extracted key.
-	 * @since 3.2.16
-	 */
-	public List<MediaType> resolveMediaTypeKey(NativeWebRequest webRequest, String key)
-			throws HttpMediaTypeNotAcceptableException {
-
-		if (StringUtils.hasText(key)) {
-			MediaType mediaType = lookupMediaType(key);
-			if (mediaType != null) {
-				handleMatch(key, mediaType);
-				return Collections.singletonList(mediaType);
-			}
-			mediaType = handleNoMatch(webRequest, key);
-			if (mediaType != null) {
-				addMapping(key, mediaType);
-				return Collections.singletonList(mediaType);
-			}
-		}
-		return Collections.emptyList();
-	}
+    /**
+     * Create an instance with the given map of file extensions and media types.
+     */
+    public AbstractMappingContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
+        super(mediaTypes);
+    }
 
 
-	/**
-	 * Extract a key from the request to use to look up media types.
-	 * @return the lookup key, or {@code null} if none
-	 */
-	protected abstract String getMediaTypeKey(NativeWebRequest request);
+    @Override
+    public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest) throws HttpMediaTypeNotAcceptableException {
 
-	/**
-	 * Override to provide handling when a key is successfully resolved via
-	 * {@link #lookupMediaType}.
-	 */
-	protected void handleMatch(String key, MediaType mediaType) {
-	}
+        return resolveMediaTypeKey(webRequest, getMediaTypeKey(webRequest));
+    }
 
-	/**
-	 * Override to provide handling when a key is not resolved via.
-	 * {@link #lookupMediaType}. Sub-classes can take further steps to
-	 * determine the media type(s). If a MediaType is returned from
-	 * this method it will be added to the cache in the base class.
-	 */
-	protected MediaType handleNoMatch(NativeWebRequest request, String key)
-			throws HttpMediaTypeNotAcceptableException {
+    /**
+     * An alternative to {@link #resolveMediaTypes(NativeWebRequest)} that accepts
+     * an already extracted key.
+     * @since 3.2.16
+     */
+    public List<MediaType> resolveMediaTypeKey(NativeWebRequest webRequest, String key)
+            throws HttpMediaTypeNotAcceptableException {
 
-		return null;
-	}
+        if (StringUtils.hasText(key)) {
+            MediaType mediaType = lookupMediaType(key);
+            if (mediaType != null) {
+                handleMatch(key, mediaType);
+                return Collections.singletonList(mediaType);
+            }
+            mediaType = handleNoMatch(webRequest, key);
+            if (mediaType != null) {
+                addMapping(key, mediaType);
+                return Collections.singletonList(mediaType);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+
+    /**
+     * Extract a key from the request to use to look up media types.
+     * @return the lookup key, or {@code null} if none
+     */
+    protected abstract String getMediaTypeKey(NativeWebRequest request);
+
+    /**
+     * Override to provide handling when a key is successfully resolved via
+     * {@link #lookupMediaType}.
+     */
+    protected void handleMatch(String key, MediaType mediaType) {}
+
+    /**
+     * Override to provide handling when a key is not resolved via.
+     * {@link #lookupMediaType}. Sub-classes can take further steps to
+     * determine the media type(s). If a MediaType is returned from
+     * this method it will be added to the cache in the base class.
+     */
+    protected MediaType handleNoMatch(NativeWebRequest request, String key) throws HttpMediaTypeNotAcceptableException {
+
+        return null;
+    }
 
 }

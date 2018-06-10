@@ -38,39 +38,37 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class MapMethodProcessor implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return Map.class.isAssignableFrom(parameter.getParameterType());
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return Map.class.isAssignableFrom(parameter.getParameterType());
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		return mavContainer.getModel();
-	}
+        return mavContainer.getModel();
+    }
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return Map.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return Map.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			return;
-		}
-		else if (returnValue instanceof Map){
-			mavContainer.addAllAttributes((Map) returnValue);
-		}
-		else {
-			// should not happen
-			throw new UnsupportedOperationException("Unexpected return type: " +
-					returnType.getParameterType().getName() + " in method: " + returnType.getMethod());
-		}
-	}
+        if (returnValue == null) {
+            return;
+        } else if (returnValue instanceof Map) {
+            mavContainer.addAllAttributes((Map) returnValue);
+        } else {
+            // should not happen
+            throw new UnsupportedOperationException("Unexpected return type: " + returnType.getParameterType().getName()
+                    + " in method: " + returnType.getMethod());
+        }
+    }
 
 }

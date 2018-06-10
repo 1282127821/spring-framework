@@ -39,6 +39,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PropertySources {
 
-	PropertySource[] value();
+    PropertySource[] value();
 
 }

@@ -17,6 +17,7 @@
 package org.springframework.remoting.caucho;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,24 +54,23 @@ import org.springframework.web.util.NestedServletException;
 @Deprecated
 public class BurlapServiceExporter extends BurlapExporter implements HttpRequestHandler {
 
-	/**
-	 * Processes the incoming Burlap request and creates a Burlap response.
-	 */
-	@Override
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    /**
+     * Processes the incoming Burlap request and creates a Burlap response.
+     */
+    @Override
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		if (!"POST".equals(request.getMethod())) {
-			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
-					new String[] {"POST"}, "BurlapServiceExporter only supports POST requests");
-		}
+        if (!"POST".equals(request.getMethod())) {
+            throw new HttpRequestMethodNotSupportedException(request.getMethod(), new String[] {"POST"},
+                    "BurlapServiceExporter only supports POST requests");
+        }
 
-		try {
-		  invoke(request.getInputStream(), response.getOutputStream());
-		}
-		catch (Throwable ex) {
-		  throw new NestedServletException("Burlap skeleton invocation failed", ex);
-		}
-	}
+        try {
+            invoke(request.getInputStream(), response.getOutputStream());
+        } catch (Throwable ex) {
+            throw new NestedServletException("Burlap skeleton invocation failed", ex);
+        }
+    }
 
 }

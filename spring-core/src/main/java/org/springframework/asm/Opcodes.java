@@ -150,13 +150,20 @@ public interface Opcodes {
     // these values are compared by reference and not by value
     // The constructor of Integer was deprecated in 9
     // but we are stuck with it by backward compatibility
-    @SuppressWarnings("deprecation") Integer TOP = new Integer(0);
-    @SuppressWarnings("deprecation") Integer INTEGER = new Integer(1);
-    @SuppressWarnings("deprecation") Integer FLOAT = new Integer(2);
-    @SuppressWarnings("deprecation") Integer DOUBLE = new Integer(3);
-    @SuppressWarnings("deprecation") Integer LONG = new Integer(4);
-    @SuppressWarnings("deprecation") Integer NULL = new Integer(5);
-    @SuppressWarnings("deprecation") Integer UNINITIALIZED_THIS = new Integer(6);
+    @SuppressWarnings("deprecation")
+    Integer TOP = new Integer(0);
+    @SuppressWarnings("deprecation")
+    Integer INTEGER = new Integer(1);
+    @SuppressWarnings("deprecation")
+    Integer FLOAT = new Integer(2);
+    @SuppressWarnings("deprecation")
+    Integer DOUBLE = new Integer(3);
+    @SuppressWarnings("deprecation")
+    Integer LONG = new Integer(4);
+    @SuppressWarnings("deprecation")
+    Integer NULL = new Integer(5);
+    @SuppressWarnings("deprecation")
+    Integer UNINITIALIZED_THIS = new Integer(6);
 
     // opcodes // visit method (- = idem)
 

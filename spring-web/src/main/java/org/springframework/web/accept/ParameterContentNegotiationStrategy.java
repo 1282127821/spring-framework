@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -35,51 +34,50 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class ParameterContentNegotiationStrategy extends AbstractMappingContentNegotiationStrategy {
 
-	private static final Log logger = LogFactory.getLog(ParameterContentNegotiationStrategy.class);
+    private static final Log logger = LogFactory.getLog(ParameterContentNegotiationStrategy.class);
 
-	private String parameterName = "format";
-
-
-	/**
-	 * Create an instance with the given map of file extensions and media types.
-	 */
-	public ParameterContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
-		super(mediaTypes);
-	}
+    private String parameterName = "format";
 
 
-	/**
-	 * Set the name of the parameter to use to determine requested media types.
-	 * <p>By default this is set to {@code "format"}.
-	 */
-	public void setParameterName(String parameterName) {
-		Assert.notNull(parameterName, "'parameterName' is required");
-		this.parameterName = parameterName;
-	}
-
-	public String getParameterName() {
-		return this.parameterName;
-	}
+    /**
+     * Create an instance with the given map of file extensions and media types.
+     */
+    public ParameterContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
+        super(mediaTypes);
+    }
 
 
-	@Override
-	protected String getMediaTypeKey(NativeWebRequest request) {
-		return request.getParameter(getParameterName());
-	}
+    /**
+     * Set the name of the parameter to use to determine requested media types.
+     * <p>By default this is set to {@code "format"}.
+     */
+    public void setParameterName(String parameterName) {
+        Assert.notNull(parameterName, "'parameterName' is required");
+        this.parameterName = parameterName;
+    }
 
-	@Override
-	protected void handleMatch(String mediaTypeKey, MediaType mediaType) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Requested media type: '" + mediaType + "' based on '" +
-					getParameterName() + "'='" + mediaTypeKey + "'");
-		}
-	}
+    public String getParameterName() {
+        return this.parameterName;
+    }
 
-	@Override
-	protected MediaType handleNoMatch(NativeWebRequest request, String key)
-			throws HttpMediaTypeNotAcceptableException {
 
-		throw new HttpMediaTypeNotAcceptableException(getAllMediaTypes());
-	}
+    @Override
+    protected String getMediaTypeKey(NativeWebRequest request) {
+        return request.getParameter(getParameterName());
+    }
+
+    @Override
+    protected void handleMatch(String mediaTypeKey, MediaType mediaType) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Requested media type: '" + mediaType + "' based on '" + getParameterName() + "'='"
+                    + mediaTypeKey + "'");
+        }
+    }
+
+    @Override
+    protected MediaType handleNoMatch(NativeWebRequest request, String key) throws HttpMediaTypeNotAcceptableException {
+
+        throw new HttpMediaTypeNotAcceptableException(getAllMediaTypes());
+    }
 
 }

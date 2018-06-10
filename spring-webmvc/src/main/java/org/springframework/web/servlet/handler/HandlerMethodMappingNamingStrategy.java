@@ -39,12 +39,12 @@ import org.springframework.web.method.HandlerMethod;
  */
 public interface HandlerMethodMappingNamingStrategy<T> {
 
-	/**
-	 * Determine the name for the given HandlerMethod and mapping.
-	 * @param handlerMethod the handler method
-	 * @param mapping the mapping
-	 * @return the name
-	 */
-	String getName(HandlerMethod handlerMethod, T mapping);
+    /**
+     * Determine the name for the given HandlerMethod and mapping.
+     * @param handlerMethod the handler method
+     * @param mapping the mapping
+     * @return the name
+     */
+    String getName(HandlerMethod handlerMethod, T mapping);
 
 }

@@ -39,24 +39,24 @@ import org.springframework.core.io.Resource;
  */
 public class ServletContextResourceLoader extends DefaultResourceLoader {
 
-	private final ServletContext servletContext;
+    private final ServletContext servletContext;
 
 
-	/**
-	 * Create a new ServletContextResourceLoader.
-	 * @param servletContext the ServletContext to load resources with
-	 */
-	public ServletContextResourceLoader(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    /**
+     * Create a new ServletContextResourceLoader.
+     * @param servletContext the ServletContext to load resources with
+     */
+    public ServletContextResourceLoader(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	/**
-	 * This implementation supports file paths beneath the root of the web application.
-	 * @see ServletContextResource
-	 */
-	@Override
-	protected Resource getResourceByPath(String path) {
-		return new ServletContextResource(this.servletContext, path);
-	}
+    /**
+     * This implementation supports file paths beneath the root of the web application.
+     * @see ServletContextResource
+     */
+    @Override
+    protected Resource getResourceByPath(String path) {
+        return new ServletContextResource(this.servletContext, path);
+    }
 
 }

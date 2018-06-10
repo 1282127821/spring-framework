@@ -31,18 +31,18 @@ package org.springframework.web.servlet.view.jasperreports;
 @SuppressWarnings({"deprecation", "rawtypes"})
 public class JasperReportsHtmlView extends AbstractJasperReportsSingleFormatView {
 
-	public JasperReportsHtmlView() {
-		setContentType("text/html");
-	}
+    public JasperReportsHtmlView() {
+        setContentType("text/html");
+    }
 
-	@Override
-	protected net.sf.jasperreports.engine.JRExporter createExporter() {
-		return new net.sf.jasperreports.engine.export.JRHtmlExporter();
-	}
+    @Override
+    protected net.sf.jasperreports.engine.JRExporter createExporter() {
+        return new net.sf.jasperreports.engine.export.JRHtmlExporter();
+    }
 
-	@Override
-	protected boolean useWriter() {
-		return true;
-	}
+    @Override
+    protected boolean useWriter() {
+        return true;
+    }
 
 }

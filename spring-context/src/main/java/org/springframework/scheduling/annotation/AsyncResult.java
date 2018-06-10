@@ -45,100 +45,98 @@ import org.springframework.util.concurrent.SuccessCallback;
  */
 public class AsyncResult<V> implements ListenableFuture<V> {
 
-	private final V value;
+    private final V value;
 
-	private final ExecutionException executionException;
-
-
-	/**
-	 * Create a new AsyncResult holder.
-	 * @param value the value to pass through
-	 */
-	public AsyncResult(V value) {
-		this(value, null);
-	}
-
-	/**
-	 * Create a new AsyncResult holder.
-	 * @param value the value to pass through
-	 */
-	private AsyncResult(V value, ExecutionException ex) {
-		this.value = value;
-		this.executionException = ex;
-	}
+    private final ExecutionException executionException;
 
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return false;
-	}
+    /**
+     * Create a new AsyncResult holder.
+     * @param value the value to pass through
+     */
+    public AsyncResult(V value) {
+        this(value, null);
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return false;
-	}
-
-	@Override
-	public boolean isDone() {
-		return true;
-	}
-
-	@Override
-	public V get() throws ExecutionException {
-		if (this.executionException != null) {
-			throw this.executionException;
-		}
-		return this.value;
-	}
-
-	@Override
-	public V get(long timeout, TimeUnit unit) throws ExecutionException {
-		return get();
-	}
-
-	@Override
-	public void addCallback(ListenableFutureCallback<? super V> callback) {
-		addCallback(callback, callback);
-	}
-
-	@Override
-	public void addCallback(SuccessCallback<? super V> successCallback, FailureCallback failureCallback) {
-		try {
-			if (this.executionException != null) {
-				Throwable cause = this.executionException.getCause();
-				failureCallback.onFailure(cause != null ? cause : this.executionException);
-			}
-			else {
-				successCallback.onSuccess(this.value);
-			}
-		}
-		catch (Throwable ex) {
-			// Ignore
-		}
-	}
+    /**
+     * Create a new AsyncResult holder.
+     * @param value the value to pass through
+     */
+    private AsyncResult(V value, ExecutionException ex) {
+        this.value = value;
+        this.executionException = ex;
+    }
 
 
-	/**
-	 * Create a new async result which exposes the given value from {@link Future#get()}.
-	 * @param value the value to expose
-	 * @since 4.2
-	 * @see Future#get()
-	 */
-	public static <V> ListenableFuture<V> forValue(V value) {
-		return new AsyncResult<V>(value, null);
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return false;
+    }
 
-	/**
-	 * Create a new async result which exposes the given exception as an
-	 * {@link ExecutionException} from {@link Future#get()}.
-	 * @param ex the exception to expose (either an pre-built {@link ExecutionException}
-	 * or a cause to be wrapped in an {@link ExecutionException})
-	 * @since 4.2
-	 * @see ExecutionException
-	 */
-	public static <V> ListenableFuture<V> forExecutionException(Throwable ex) {
-		return new AsyncResult<V>(null,
-				(ex instanceof ExecutionException ? (ExecutionException) ex : new ExecutionException(ex)));
-	}
+    @Override
+    public boolean isCancelled() {
+        return false;
+    }
+
+    @Override
+    public boolean isDone() {
+        return true;
+    }
+
+    @Override
+    public V get() throws ExecutionException {
+        if (this.executionException != null) {
+            throw this.executionException;
+        }
+        return this.value;
+    }
+
+    @Override
+    public V get(long timeout, TimeUnit unit) throws ExecutionException {
+        return get();
+    }
+
+    @Override
+    public void addCallback(ListenableFutureCallback<? super V> callback) {
+        addCallback(callback, callback);
+    }
+
+    @Override
+    public void addCallback(SuccessCallback<? super V> successCallback, FailureCallback failureCallback) {
+        try {
+            if (this.executionException != null) {
+                Throwable cause = this.executionException.getCause();
+                failureCallback.onFailure(cause != null ? cause : this.executionException);
+            } else {
+                successCallback.onSuccess(this.value);
+            }
+        } catch (Throwable ex) {
+            // Ignore
+        }
+    }
+
+
+    /**
+     * Create a new async result which exposes the given value from {@link Future#get()}.
+     * @param value the value to expose
+     * @since 4.2
+     * @see Future#get()
+     */
+    public static <V> ListenableFuture<V> forValue(V value) {
+        return new AsyncResult<V>(value, null);
+    }
+
+    /**
+     * Create a new async result which exposes the given exception as an
+     * {@link ExecutionException} from {@link Future#get()}.
+     * @param ex the exception to expose (either an pre-built {@link ExecutionException}
+     * or a cause to be wrapped in an {@link ExecutionException})
+     * @since 4.2
+     * @see ExecutionException
+     */
+    public static <V> ListenableFuture<V> forExecutionException(Throwable ex) {
+        return new AsyncResult<V>(null,
+                (ex instanceof ExecutionException ? (ExecutionException) ex : new ExecutionException(ex)));
+    }
 
 }

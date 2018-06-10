@@ -17,6 +17,7 @@
 package org.springframework.web.filter;
 
 import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,34 +42,34 @@ import org.springframework.util.Assert;
  */
 public class RelativeRedirectFilter extends OncePerRequestFilter {
 
-	private HttpStatus redirectStatus = HttpStatus.SEE_OTHER;
+    private HttpStatus redirectStatus = HttpStatus.SEE_OTHER;
 
 
-	/**
-	 * Set the default HTTP Status to use for redirects.
-	 * <p>By default this is {@link HttpStatus#SEE_OTHER}.
-	 * @param status the 3xx redirect status to use
-	 */
-	public void setRedirectStatus(HttpStatus status) {
-		Assert.notNull(status, "Property 'redirectStatus' is required");
-		Assert.isTrue(status.is3xxRedirection(), "Not a redirect status code");
-		this.redirectStatus = status;
-	}
+    /**
+     * Set the default HTTP Status to use for redirects.
+     * <p>By default this is {@link HttpStatus#SEE_OTHER}.
+     * @param status the 3xx redirect status to use
+     */
+    public void setRedirectStatus(HttpStatus status) {
+        Assert.notNull(status, "Property 'redirectStatus' is required");
+        Assert.isTrue(status.is3xxRedirection(), "Not a redirect status code");
+        this.redirectStatus = status;
+    }
 
-	/**
-	 * Return the configured redirect status.
-	 */
-	public HttpStatus getRedirectStatus() {
-		return this.redirectStatus;
-	}
+    /**
+     * Return the configured redirect status.
+     */
+    public HttpStatus getRedirectStatus() {
+        return this.redirectStatus;
+    }
 
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-		response = RelativeRedirectResponseWrapper.wrapIfNecessary(response, this.redirectStatus);
-		filterChain.doFilter(request, response);
-	}
+        response = RelativeRedirectResponseWrapper.wrapIfNecessary(response, this.redirectStatus);
+        filterChain.doFilter(request, response);
+    }
 
 }

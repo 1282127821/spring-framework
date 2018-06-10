@@ -28,6 +28,6 @@ import org.springframework.core.io.Resource;
  */
 public interface VersionedResource extends Resource {
 
-	String getVersion();
+    String getVersion();
 
 }

@@ -39,189 +39,189 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MutablePropertySources implements PropertySources {
 
-	private final Log logger;
+    private final Log logger;
 
-	private final List<PropertySource<?>> propertySourceList = new CopyOnWriteArrayList<PropertySource<?>>();
-
-
-	/**
-	 * Create a new {@link MutablePropertySources} object.
-	 */
-	public MutablePropertySources() {
-		this.logger = LogFactory.getLog(getClass());
-	}
-
-	/**
-	 * Create a new {@code MutablePropertySources} from the given propertySources
-	 * object, preserving the original order of contained {@code PropertySource} objects.
-	 */
-	public MutablePropertySources(PropertySources propertySources) {
-		this();
-		for (PropertySource<?> propertySource : propertySources) {
-			addLast(propertySource);
-		}
-	}
-
-	/**
-	 * Create a new {@link MutablePropertySources} object and inherit the given logger,
-	 * usually from an enclosing {@link Environment}.
-	 */
-	MutablePropertySources(Log logger) {
-		this.logger = logger;
-	}
+    private final List<PropertySource<?>> propertySourceList = new CopyOnWriteArrayList<PropertySource<?>>();
 
 
-	@Override
-	public boolean contains(String name) {
-		return this.propertySourceList.contains(PropertySource.named(name));
-	}
+    /**
+     * Create a new {@link MutablePropertySources} object.
+     */
+    public MutablePropertySources() {
+        this.logger = LogFactory.getLog(getClass());
+    }
 
-	@Override
-	public PropertySource<?> get(String name) {
-		int index = this.propertySourceList.indexOf(PropertySource.named(name));
-		return (index != -1 ? this.propertySourceList.get(index) : null);
-	}
+    /**
+     * Create a new {@code MutablePropertySources} from the given propertySources
+     * object, preserving the original order of contained {@code PropertySource} objects.
+     */
+    public MutablePropertySources(PropertySources propertySources) {
+        this();
+        for (PropertySource<?> propertySource : propertySources) {
+            addLast(propertySource);
+        }
+    }
 
-	@Override
-	public Iterator<PropertySource<?>> iterator() {
-		return this.propertySourceList.iterator();
-	}
+    /**
+     * Create a new {@link MutablePropertySources} object and inherit the given logger,
+     * usually from an enclosing {@link Environment}.
+     */
+    MutablePropertySources(Log logger) {
+        this.logger = logger;
+    }
 
-	/**
-	 * Add the given property source object with highest precedence.
-	 */
-	public void addFirst(PropertySource<?> propertySource) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding PropertySource '" + propertySource.getName() + "' with highest search precedence");
-		}
-		removeIfPresent(propertySource);
-		this.propertySourceList.add(0, propertySource);
-	}
 
-	/**
-	 * Add the given property source object with lowest precedence.
-	 */
-	public void addLast(PropertySource<?> propertySource) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding PropertySource '" + propertySource.getName() + "' with lowest search precedence");
-		}
-		removeIfPresent(propertySource);
-		this.propertySourceList.add(propertySource);
-	}
+    @Override
+    public boolean contains(String name) {
+        return this.propertySourceList.contains(PropertySource.named(name));
+    }
 
-	/**
-	 * Add the given property source object with precedence immediately higher
-	 * than the named relative property source.
-	 */
-	public void addBefore(String relativePropertySourceName, PropertySource<?> propertySource) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding PropertySource '" + propertySource.getName() +
-					"' with search precedence immediately higher than '" + relativePropertySourceName + "'");
-		}
-		assertLegalRelativeAddition(relativePropertySourceName, propertySource);
-		removeIfPresent(propertySource);
-		int index = assertPresentAndGetIndex(relativePropertySourceName);
-		addAtIndex(index, propertySource);
-	}
+    @Override
+    public PropertySource<?> get(String name) {
+        int index = this.propertySourceList.indexOf(PropertySource.named(name));
+        return (index != -1 ? this.propertySourceList.get(index) : null);
+    }
 
-	/**
-	 * Add the given property source object with precedence immediately lower
-	 * than the named relative property source.
-	 */
-	public void addAfter(String relativePropertySourceName, PropertySource<?> propertySource) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding PropertySource '" + propertySource.getName() +
-					"' with search precedence immediately lower than '" + relativePropertySourceName + "'");
-		}
-		assertLegalRelativeAddition(relativePropertySourceName, propertySource);
-		removeIfPresent(propertySource);
-		int index = assertPresentAndGetIndex(relativePropertySourceName);
-		addAtIndex(index + 1, propertySource);
-	}
+    @Override
+    public Iterator<PropertySource<?>> iterator() {
+        return this.propertySourceList.iterator();
+    }
 
-	/**
-	 * Return the precedence of the given property source, {@code -1} if not found.
-	 */
-	public int precedenceOf(PropertySource<?> propertySource) {
-		return this.propertySourceList.indexOf(propertySource);
-	}
+    /**
+     * Add the given property source object with highest precedence.
+     */
+    public void addFirst(PropertySource<?> propertySource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding PropertySource '" + propertySource.getName() + "' with highest search precedence");
+        }
+        removeIfPresent(propertySource);
+        this.propertySourceList.add(0, propertySource);
+    }
 
-	/**
-	 * Remove and return the property source with the given name, {@code null} if not found.
-	 * @param name the name of the property source to find and remove
-	 */
-	public PropertySource<?> remove(String name) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Removing PropertySource '" + name + "'");
-		}
-		int index = this.propertySourceList.indexOf(PropertySource.named(name));
-		return (index != -1 ? this.propertySourceList.remove(index) : null);
-	}
+    /**
+     * Add the given property source object with lowest precedence.
+     */
+    public void addLast(PropertySource<?> propertySource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding PropertySource '" + propertySource.getName() + "' with lowest search precedence");
+        }
+        removeIfPresent(propertySource);
+        this.propertySourceList.add(propertySource);
+    }
 
-	/**
-	 * Replace the property source with the given name with the given property source object.
-	 * @param name the name of the property source to find and replace
-	 * @param propertySource the replacement property source
-	 * @throws IllegalArgumentException if no property source with the given name is present
-	 * @see #contains
-	 */
-	public void replace(String name, PropertySource<?> propertySource) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Replacing PropertySource '" + name + "' with '" + propertySource.getName() + "'");
-		}
-		int index = assertPresentAndGetIndex(name);
-		this.propertySourceList.set(index, propertySource);
-	}
+    /**
+     * Add the given property source object with precedence immediately higher
+     * than the named relative property source.
+     */
+    public void addBefore(String relativePropertySourceName, PropertySource<?> propertySource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding PropertySource '" + propertySource.getName()
+                    + "' with search precedence immediately higher than '" + relativePropertySourceName + "'");
+        }
+        assertLegalRelativeAddition(relativePropertySourceName, propertySource);
+        removeIfPresent(propertySource);
+        int index = assertPresentAndGetIndex(relativePropertySourceName);
+        addAtIndex(index, propertySource);
+    }
 
-	/**
-	 * Return the number of {@link PropertySource} objects contained.
-	 */
-	public int size() {
-		return this.propertySourceList.size();
-	}
+    /**
+     * Add the given property source object with precedence immediately lower
+     * than the named relative property source.
+     */
+    public void addAfter(String relativePropertySourceName, PropertySource<?> propertySource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding PropertySource '" + propertySource.getName()
+                    + "' with search precedence immediately lower than '" + relativePropertySourceName + "'");
+        }
+        assertLegalRelativeAddition(relativePropertySourceName, propertySource);
+        removeIfPresent(propertySource);
+        int index = assertPresentAndGetIndex(relativePropertySourceName);
+        addAtIndex(index + 1, propertySource);
+    }
 
-	@Override
-	public String toString() {
-		return this.propertySourceList.toString();
-	}
+    /**
+     * Return the precedence of the given property source, {@code -1} if not found.
+     */
+    public int precedenceOf(PropertySource<?> propertySource) {
+        return this.propertySourceList.indexOf(propertySource);
+    }
 
-	/**
-	 * Ensure that the given property source is not being added relative to itself.
-	 */
-	protected void assertLegalRelativeAddition(String relativePropertySourceName, PropertySource<?> propertySource) {
-		String newPropertySourceName = propertySource.getName();
-		if (relativePropertySourceName.equals(newPropertySourceName)) {
-			throw new IllegalArgumentException(
-					"PropertySource named '" + newPropertySourceName + "' cannot be added relative to itself");
-		}
-	}
+    /**
+     * Remove and return the property source with the given name, {@code null} if not found.
+     * @param name the name of the property source to find and remove
+     */
+    public PropertySource<?> remove(String name) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Removing PropertySource '" + name + "'");
+        }
+        int index = this.propertySourceList.indexOf(PropertySource.named(name));
+        return (index != -1 ? this.propertySourceList.remove(index) : null);
+    }
 
-	/**
-	 * Remove the given property source if it is present.
-	 */
-	protected void removeIfPresent(PropertySource<?> propertySource) {
-		this.propertySourceList.remove(propertySource);
-	}
+    /**
+     * Replace the property source with the given name with the given property source object.
+     * @param name the name of the property source to find and replace
+     * @param propertySource the replacement property source
+     * @throws IllegalArgumentException if no property source with the given name is present
+     * @see #contains
+     */
+    public void replace(String name, PropertySource<?> propertySource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Replacing PropertySource '" + name + "' with '" + propertySource.getName() + "'");
+        }
+        int index = assertPresentAndGetIndex(name);
+        this.propertySourceList.set(index, propertySource);
+    }
 
-	/**
-	 * Add the given property source at a particular index in the list.
-	 */
-	private void addAtIndex(int index, PropertySource<?> propertySource) {
-		removeIfPresent(propertySource);
-		this.propertySourceList.add(index, propertySource);
-	}
+    /**
+     * Return the number of {@link PropertySource} objects contained.
+     */
+    public int size() {
+        return this.propertySourceList.size();
+    }
 
-	/**
-	 * Assert that the named property source is present and return its index.
-	 * @param name {@linkplain PropertySource#getName() name of the property source} to find
-	 * @throws IllegalArgumentException if the named property source is not present
-	 */
-	private int assertPresentAndGetIndex(String name) {
-		int index = this.propertySourceList.indexOf(PropertySource.named(name));
-		if (index == -1) {
-			throw new IllegalArgumentException("PropertySource named '" + name + "' does not exist");
-		}
-		return index;
-	}
+    @Override
+    public String toString() {
+        return this.propertySourceList.toString();
+    }
+
+    /**
+     * Ensure that the given property source is not being added relative to itself.
+     */
+    protected void assertLegalRelativeAddition(String relativePropertySourceName, PropertySource<?> propertySource) {
+        String newPropertySourceName = propertySource.getName();
+        if (relativePropertySourceName.equals(newPropertySourceName)) {
+            throw new IllegalArgumentException(
+                    "PropertySource named '" + newPropertySourceName + "' cannot be added relative to itself");
+        }
+    }
+
+    /**
+     * Remove the given property source if it is present.
+     */
+    protected void removeIfPresent(PropertySource<?> propertySource) {
+        this.propertySourceList.remove(propertySource);
+    }
+
+    /**
+     * Add the given property source at a particular index in the list.
+     */
+    private void addAtIndex(int index, PropertySource<?> propertySource) {
+        removeIfPresent(propertySource);
+        this.propertySourceList.add(index, propertySource);
+    }
+
+    /**
+     * Assert that the named property source is present and return its index.
+     * @param name {@linkplain PropertySource#getName() name of the property source} to find
+     * @throws IllegalArgumentException if the named property source is not present
+     */
+    private int assertPresentAndGetIndex(String name) {
+        int index = this.propertySourceList.indexOf(PropertySource.named(name));
+        if (index == -1) {
+            throw new IllegalArgumentException("PropertySource named '" + name + "' does not exist");
+        }
+        return index;
+    }
 
 }

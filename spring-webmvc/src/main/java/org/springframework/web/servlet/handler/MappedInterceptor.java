@@ -44,134 +44,133 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public final class MappedInterceptor implements HandlerInterceptor {
 
-	private final String[] includePatterns;
+    private final String[] includePatterns;
 
-	private final String[] excludePatterns;
+    private final String[] excludePatterns;
 
-	private final HandlerInterceptor interceptor;
+    private final HandlerInterceptor interceptor;
 
-	private PathMatcher pathMatcher;
-
-
-	/**
-	 * Create a new MappedInterceptor instance.
-	 * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
-	 * @param interceptor the HandlerInterceptor instance to map to the given patterns
-	 */
-	public MappedInterceptor(String[] includePatterns, HandlerInterceptor interceptor) {
-		this(includePatterns, null, interceptor);
-	}
-
-	/**
-	 * Create a new MappedInterceptor instance.
-	 * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
-	 * @param excludePatterns the path patterns to exclude
-	 * @param interceptor the HandlerInterceptor instance to map to the given patterns
-	 */
-	public MappedInterceptor(String[] includePatterns, String[] excludePatterns, HandlerInterceptor interceptor) {
-		this.includePatterns = includePatterns;
-		this.excludePatterns = excludePatterns;
-		this.interceptor = interceptor;
-	}
+    private PathMatcher pathMatcher;
 
 
-	/**
-	 * Create a new MappedInterceptor instance.
-	 * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
-	 * @param interceptor the WebRequestInterceptor instance to map to the given patterns
-	 */
-	public MappedInterceptor(String[] includePatterns, WebRequestInterceptor interceptor) {
-		this(includePatterns, null, interceptor);
-	}
+    /**
+     * Create a new MappedInterceptor instance.
+     * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
+     * @param interceptor the HandlerInterceptor instance to map to the given patterns
+     */
+    public MappedInterceptor(String[] includePatterns, HandlerInterceptor interceptor) {
+        this(includePatterns, null, interceptor);
+    }
 
-	/**
-	 * Create a new MappedInterceptor instance.
-	 * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
-	 * @param interceptor the WebRequestInterceptor instance to map to the given patterns
-	 */
-	public MappedInterceptor(String[] includePatterns, String[] excludePatterns, WebRequestInterceptor interceptor) {
-		this(includePatterns, excludePatterns, new WebRequestHandlerInterceptorAdapter(interceptor));
-	}
+    /**
+     * Create a new MappedInterceptor instance.
+     * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
+     * @param excludePatterns the path patterns to exclude
+     * @param interceptor the HandlerInterceptor instance to map to the given patterns
+     */
+    public MappedInterceptor(String[] includePatterns, String[] excludePatterns, HandlerInterceptor interceptor) {
+        this.includePatterns = includePatterns;
+        this.excludePatterns = excludePatterns;
+        this.interceptor = interceptor;
+    }
 
 
-	/**
-	 * Configure a PathMatcher to use with this MappedInterceptor instead of the
-	 * one passed by default to the {@link #matches(String, org.springframework.util.PathMatcher)}
-	 * method. This is an advanced property that is only required when using custom
-	 * PathMatcher implementations that support mapping metadata other than the
-	 * Ant-style path patterns supported by default.
-	 */
-	public void setPathMatcher(PathMatcher pathMatcher) {
-		this.pathMatcher = pathMatcher;
-	}
+    /**
+     * Create a new MappedInterceptor instance.
+     * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
+     * @param interceptor the WebRequestInterceptor instance to map to the given patterns
+     */
+    public MappedInterceptor(String[] includePatterns, WebRequestInterceptor interceptor) {
+        this(includePatterns, null, interceptor);
+    }
 
-	/**
-	 * The configured PathMatcher, or {@code null} if none.
-	 */
-	public PathMatcher getPathMatcher() {
-		return this.pathMatcher;
-	}
+    /**
+     * Create a new MappedInterceptor instance.
+     * @param includePatterns the path patterns to map with a {@code null} value matching to all paths
+     * @param interceptor the WebRequestInterceptor instance to map to the given patterns
+     */
+    public MappedInterceptor(String[] includePatterns, String[] excludePatterns, WebRequestInterceptor interceptor) {
+        this(includePatterns, excludePatterns, new WebRequestHandlerInterceptorAdapter(interceptor));
+    }
 
-	/**
-	 * The path into the application the interceptor is mapped to.
-	 */
-	public String[] getPathPatterns() {
-		return this.includePatterns;
-	}
 
-	/**
-	 * The actual Interceptor reference.
-	 */
-	public HandlerInterceptor getInterceptor() {
-		return this.interceptor;
-	}
+    /**
+     * Configure a PathMatcher to use with this MappedInterceptor instead of the
+     * one passed by default to the {@link #matches(String, org.springframework.util.PathMatcher)}
+     * method. This is an advanced property that is only required when using custom
+     * PathMatcher implementations that support mapping metadata other than the
+     * Ant-style path patterns supported by default.
+     */
+    public void setPathMatcher(PathMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
 
-	/**
-	 * Returns {@code true} if the interceptor applies to the given request path.
-	 * @param lookupPath the current request path
-	 * @param pathMatcher a path matcher for path pattern matching
-	 */
-	public boolean matches(String lookupPath, PathMatcher pathMatcher) {
-		PathMatcher pathMatcherToUse = (this.pathMatcher != null) ? this.pathMatcher : pathMatcher;
-		if (this.excludePatterns != null) {
-			for (String pattern : this.excludePatterns) {
-				if (pathMatcherToUse.match(pattern, lookupPath)) {
-					return false;
-				}
-			}
-		}
-		if (ObjectUtils.isEmpty(this.includePatterns)) {
-			return true;
-		}
-		else {
-			for (String pattern : this.includePatterns) {
-				if (pathMatcherToUse.match(pattern, lookupPath)) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
+    /**
+     * The configured PathMatcher, or {@code null} if none.
+     */
+    public PathMatcher getPathMatcher() {
+        return this.pathMatcher;
+    }
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    /**
+     * The path into the application the interceptor is mapped to.
+     */
+    public String[] getPathPatterns() {
+        return this.includePatterns;
+    }
 
-		return this.interceptor.preHandle(request, response, handler);
-	}
+    /**
+     * The actual Interceptor reference.
+     */
+    public HandlerInterceptor getInterceptor() {
+        return this.interceptor;
+    }
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
+    /**
+     * Returns {@code true} if the interceptor applies to the given request path.
+     * @param lookupPath the current request path
+     * @param pathMatcher a path matcher for path pattern matching
+     */
+    public boolean matches(String lookupPath, PathMatcher pathMatcher) {
+        PathMatcher pathMatcherToUse = (this.pathMatcher != null) ? this.pathMatcher : pathMatcher;
+        if (this.excludePatterns != null) {
+            for (String pattern : this.excludePatterns) {
+                if (pathMatcherToUse.match(pattern, lookupPath)) {
+                    return false;
+                }
+            }
+        }
+        if (ObjectUtils.isEmpty(this.includePatterns)) {
+            return true;
+        } else {
+            for (String pattern : this.includePatterns) {
+                if (pathMatcherToUse.match(pattern, lookupPath)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
-		this.interceptor.postHandle(request, response, handler, modelAndView);
-	}
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-			Exception ex) throws Exception {
+        return this.interceptor.preHandle(request, response, handler);
+    }
 
-		this.interceptor.afterCompletion(request, response, handler, ex);
-	}
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
+
+        this.interceptor.postHandle(request, response, handler, modelAndView);
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+
+        this.interceptor.afterCompletion(request, response, handler, ex);
+    }
 
 }

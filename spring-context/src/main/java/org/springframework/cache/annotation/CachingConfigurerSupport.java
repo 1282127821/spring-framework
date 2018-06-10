@@ -31,24 +31,24 @@ import org.springframework.cache.interceptor.KeyGenerator;
  */
 public class CachingConfigurerSupport implements CachingConfigurer {
 
-	@Override
-	public CacheManager cacheManager() {
-		return null;
-	}
+    @Override
+    public CacheManager cacheManager() {
+        return null;
+    }
 
-	@Override
-	public KeyGenerator keyGenerator() {
-		return null;
-	}
+    @Override
+    public KeyGenerator keyGenerator() {
+        return null;
+    }
 
-	@Override
-	public CacheResolver cacheResolver() {
-		return null;
-	}
+    @Override
+    public CacheResolver cacheResolver() {
+        return null;
+    }
 
-	@Override
-	public CacheErrorHandler errorHandler() {
-		return null;
-	}
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return null;
+    }
 
 }

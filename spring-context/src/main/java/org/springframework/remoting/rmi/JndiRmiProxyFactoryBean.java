@@ -62,41 +62,41 @@ import org.springframework.util.ClassUtils;
  * @see javax.rmi.PortableRemoteObject#narrow
  */
 public class JndiRmiProxyFactoryBean extends JndiRmiClientInterceptor
-		implements FactoryBean<Object>, BeanClassLoaderAware {
+        implements FactoryBean<Object>, BeanClassLoaderAware {
 
-	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
+    private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
-	private Object serviceProxy;
-
-
-	@Override
-	public void setBeanClassLoader(ClassLoader classLoader) {
-		this.beanClassLoader = classLoader;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws NamingException {
-		super.afterPropertiesSet();
-		if (getServiceInterface() == null) {
-			throw new IllegalArgumentException("Property 'serviceInterface' is required");
-		}
-		this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(this.beanClassLoader);
-	}
+    private Object serviceProxy;
 
 
-	@Override
-	public Object getObject() {
-		return this.serviceProxy;
-	}
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.beanClassLoader = classLoader;
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return getServiceInterface();
-	}
+    @Override
+    public void afterPropertiesSet() throws NamingException {
+        super.afterPropertiesSet();
+        if (getServiceInterface() == null) {
+            throw new IllegalArgumentException("Property 'serviceInterface' is required");
+        }
+        this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(this.beanClassLoader);
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public Object getObject() {
+        return this.serviceProxy;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return getServiceInterface();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

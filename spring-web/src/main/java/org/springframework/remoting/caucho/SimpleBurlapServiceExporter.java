@@ -19,11 +19,11 @@ package org.springframework.remoting.caucho;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import org.springframework.lang.UsesSunHttpServer;
 import org.springframework.util.FileCopyUtils;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 /**
  * HTTP request handler that exports the specified service bean as
@@ -52,28 +52,27 @@ import org.springframework.util.FileCopyUtils;
 @UsesSunHttpServer
 public class SimpleBurlapServiceExporter extends BurlapExporter implements HttpHandler {
 
-	/**
-	 * Processes the incoming Burlap request and creates a Burlap response.
-	 */
-	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		if (!"POST".equals(exchange.getRequestMethod())) {
-			exchange.getResponseHeaders().set("Allow", "POST");
-			exchange.sendResponseHeaders(405, -1);
-			return;
-		}
+    /**
+     * Processes the incoming Burlap request and creates a Burlap response.
+     */
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        if (!"POST".equals(exchange.getRequestMethod())) {
+            exchange.getResponseHeaders().set("Allow", "POST");
+            exchange.sendResponseHeaders(405, -1);
+            return;
+        }
 
-		ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
-		try {
-			invoke(exchange.getRequestBody(), output);
-		}
-		catch (Throwable ex) {
-			exchange.sendResponseHeaders(500, -1);
-			logger.error("Burlap skeleton invocation failed", ex);
-		}
+        ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
+        try {
+            invoke(exchange.getRequestBody(), output);
+        } catch (Throwable ex) {
+            exchange.sendResponseHeaders(500, -1);
+            logger.error("Burlap skeleton invocation failed", ex);
+        }
 
-		exchange.sendResponseHeaders(200, output.size());
-		FileCopyUtils.copy(output.toByteArray(), exchange.getResponseBody());
-	}
+        exchange.sendResponseHeaders(200, output.size());
+        FileCopyUtils.copy(output.toByteArray(), exchange.getResponseBody());
+    }
 
 }

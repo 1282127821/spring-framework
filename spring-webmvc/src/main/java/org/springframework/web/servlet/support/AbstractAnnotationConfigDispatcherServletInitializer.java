@@ -40,59 +40,58 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
  * @since 3.2
  */
 public abstract class AbstractAnnotationConfigDispatcherServletInitializer
-		extends AbstractDispatcherServletInitializer {
+        extends AbstractDispatcherServletInitializer {
 
-	/**
-	 * {@inheritDoc}
-	 * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
-	 * providing it the annotated classes returned by {@link #getRootConfigClasses()}.
-	 * Returns {@code null} if {@link #getRootConfigClasses()} returns {@code null}.
-	 */
-	@Override
-	protected WebApplicationContext createRootApplicationContext() {
-		Class<?>[] configClasses = getRootConfigClasses();
-		if (!ObjectUtils.isEmpty(configClasses)) {
-			AnnotationConfigWebApplicationContext rootAppContext = new AnnotationConfigWebApplicationContext();
-			rootAppContext.register(configClasses);
-			return rootAppContext;
-		}
-		else {
-			return null;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
+     * providing it the annotated classes returned by {@link #getRootConfigClasses()}.
+     * Returns {@code null} if {@link #getRootConfigClasses()} returns {@code null}.
+     */
+    @Override
+    protected WebApplicationContext createRootApplicationContext() {
+        Class<?>[] configClasses = getRootConfigClasses();
+        if (!ObjectUtils.isEmpty(configClasses)) {
+            AnnotationConfigWebApplicationContext rootAppContext = new AnnotationConfigWebApplicationContext();
+            rootAppContext.register(configClasses);
+            return rootAppContext;
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
-	 * providing it the annotated classes returned by {@link #getServletConfigClasses()}.
-	 */
-	@Override
-	protected WebApplicationContext createServletApplicationContext() {
-		AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
-		Class<?>[] configClasses = getServletConfigClasses();
-		if (!ObjectUtils.isEmpty(configClasses)) {
-			servletAppContext.register(configClasses);
-		}
-		return servletAppContext;
-	}
+    /**
+     * {@inheritDoc}
+     * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
+     * providing it the annotated classes returned by {@link #getServletConfigClasses()}.
+     */
+    @Override
+    protected WebApplicationContext createServletApplicationContext() {
+        AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
+        Class<?>[] configClasses = getServletConfigClasses();
+        if (!ObjectUtils.isEmpty(configClasses)) {
+            servletAppContext.register(configClasses);
+        }
+        return servletAppContext;
+    }
 
-	/**
-	 * Specify {@link org.springframework.context.annotation.Configuration @Configuration}
-	 * and/or {@link org.springframework.stereotype.Component @Component} classes to be
-	 * provided to the {@linkplain #createRootApplicationContext() root application context}.
-	 * @return the configuration classes for the root application context, or {@code null}
-	 * if creation and registration of a root context is not desired
-	 */
-	protected abstract Class<?>[] getRootConfigClasses();
+    /**
+     * Specify {@link org.springframework.context.annotation.Configuration @Configuration}
+     * and/or {@link org.springframework.stereotype.Component @Component} classes to be
+     * provided to the {@linkplain #createRootApplicationContext() root application context}.
+     * @return the configuration classes for the root application context, or {@code null}
+     * if creation and registration of a root context is not desired
+     */
+    protected abstract Class<?>[] getRootConfigClasses();
 
-	/**
-	 * Specify {@link org.springframework.context.annotation.Configuration @Configuration}
-	 * and/or {@link org.springframework.stereotype.Component @Component} classes to be
-	 * provided to the {@linkplain #createServletApplicationContext() dispatcher servlet
-	 * application context}.
-	 * @return the configuration classes for the dispatcher servlet application context or
-	 * {@code null} if all configuration is specified through root config classes.
-	 */
-	protected abstract Class<?>[] getServletConfigClasses();
+    /**
+     * Specify {@link org.springframework.context.annotation.Configuration @Configuration}
+     * and/or {@link org.springframework.stereotype.Component @Component} classes to be
+     * provided to the {@linkplain #createServletApplicationContext() dispatcher servlet
+     * application context}.
+     * @return the configuration classes for the dispatcher servlet application context or
+     * {@code null} if all configuration is specified through root config classes.
+     */
+    protected abstract Class<?>[] getServletConfigClasses();
 
 }

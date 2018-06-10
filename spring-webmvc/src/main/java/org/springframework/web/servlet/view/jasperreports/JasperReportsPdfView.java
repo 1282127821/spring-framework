@@ -33,18 +33,18 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 @SuppressWarnings({"deprecation", "rawtypes"})
 public class JasperReportsPdfView extends AbstractJasperReportsSingleFormatView {
 
-	public JasperReportsPdfView() {
-		setContentType("application/pdf");
-	}
+    public JasperReportsPdfView() {
+        setContentType("application/pdf");
+    }
 
-	@Override
-	protected net.sf.jasperreports.engine.JRExporter createExporter() {
-		return new JRPdfExporter();
-	}
+    @Override
+    protected net.sf.jasperreports.engine.JRExporter createExporter() {
+        return new JRPdfExporter();
+    }
 
-	@Override
-	protected boolean useWriter() {
-		return false;
-	}
+    @Override
+    protected boolean useWriter() {
+        return false;
+    }
 
 }

@@ -61,10 +61,10 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Conditional {
 
-	/**
-	 * All {@link Condition}s that must {@linkplain Condition#matches match}
-	 * in order for the component to be registered.
-	 */
-	Class<? extends Condition>[] value();
+    /**
+     * All {@link Condition}s that must {@linkplain Condition#matches match}
+     * in order for the component to be registered.
+     */
+    Class<? extends Condition>[] value();
 
 }

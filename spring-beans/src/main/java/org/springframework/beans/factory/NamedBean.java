@@ -28,9 +28,9 @@ package org.springframework.beans.factory;
  */
 public interface NamedBean {
 
-	/**
-	 * Return the name of this bean in a Spring bean factory, if known.
-	 */
-	String getBeanName();
+    /**
+     * Return the name of this bean in a Spring bean factory, if known.
+     */
+    String getBeanName();
 
 }

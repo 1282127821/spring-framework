@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import org.joda.time.YearMonth;
-
 import org.springframework.format.Formatter;
 
 /**
@@ -33,14 +32,14 @@ import org.springframework.format.Formatter;
  */
 class YearMonthFormatter implements Formatter<YearMonth> {
 
-	@Override
-	public YearMonth parse(String text, Locale locale) throws ParseException {
-		return YearMonth.parse(text);
-	}
+    @Override
+    public YearMonth parse(String text, Locale locale) throws ParseException {
+        return YearMonth.parse(text);
+    }
 
-	@Override
-	public String print(YearMonth object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(YearMonth object, Locale locale) {
+        return object.toString();
+    }
 
 }

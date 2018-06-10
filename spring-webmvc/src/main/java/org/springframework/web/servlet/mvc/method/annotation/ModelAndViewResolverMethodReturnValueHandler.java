@@ -53,56 +53,55 @@ import org.springframework.web.servlet.mvc.annotation.ModelAndViewResolver;
  */
 public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
-	private final List<ModelAndViewResolver> mavResolvers;
+    private final List<ModelAndViewResolver> mavResolvers;
 
-	private final ModelAttributeMethodProcessor modelAttributeProcessor = new ModelAttributeMethodProcessor(true);
-
-
-	/**
-	 * Create a new instance.
-	 */
-	public ModelAndViewResolverMethodReturnValueHandler(List<ModelAndViewResolver> mavResolvers) {
-		this.mavResolvers = mavResolvers;
-	}
+    private final ModelAttributeMethodProcessor modelAttributeProcessor = new ModelAttributeMethodProcessor(true);
 
 
-	/**
-	 * Always returns {@code true}. See class-level note.
-	 */
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return true;
-	}
+    /**
+     * Create a new instance.
+     */
+    public ModelAndViewResolverMethodReturnValueHandler(List<ModelAndViewResolver> mavResolvers) {
+        this.mavResolvers = mavResolvers;
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
-		if (this.mavResolvers != null) {
-			for (ModelAndViewResolver mavResolver : this.mavResolvers) {
-				Class<?> handlerType = returnType.getContainingClass();
-				Method method = returnType.getMethod();
-				ExtendedModelMap model = (ExtendedModelMap) mavContainer.getModel();
-				ModelAndView mav = mavResolver.resolveModelAndView(method, handlerType, returnValue, model, webRequest);
-				if (mav != ModelAndViewResolver.UNRESOLVED) {
-					mavContainer.addAllAttributes(mav.getModel());
-					mavContainer.setViewName(mav.getViewName());
-					if (!mav.isReference()) {
-						mavContainer.setView(mav.getView());
-					}
-					return;
-				}
-			}
-		}
+    /**
+     * Always returns {@code true}. See class-level note.
+     */
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return true;
+    }
 
-		// No suitable ModelAndViewResolver...
-		if (this.modelAttributeProcessor.supportsReturnType(returnType)) {
-			this.modelAttributeProcessor.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
-		}
-		else {
-			throw new UnsupportedOperationException("Unexpected return type: " +
-					returnType.getParameterType().getName() + " in method: " + returnType.getMethod());
-		}
-	}
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
+
+        if (this.mavResolvers != null) {
+            for (ModelAndViewResolver mavResolver : this.mavResolvers) {
+                Class<?> handlerType = returnType.getContainingClass();
+                Method method = returnType.getMethod();
+                ExtendedModelMap model = (ExtendedModelMap) mavContainer.getModel();
+                ModelAndView mav = mavResolver.resolveModelAndView(method, handlerType, returnValue, model, webRequest);
+                if (mav != ModelAndViewResolver.UNRESOLVED) {
+                    mavContainer.addAllAttributes(mav.getModel());
+                    mavContainer.setViewName(mav.getViewName());
+                    if (!mav.isReference()) {
+                        mavContainer.setView(mav.getView());
+                    }
+                    return;
+                }
+            }
+        }
+
+        // No suitable ModelAndViewResolver...
+        if (this.modelAttributeProcessor.supportsReturnType(returnType)) {
+            this.modelAttributeProcessor.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
+        } else {
+            throw new UnsupportedOperationException("Unexpected return type: " + returnType.getParameterType().getName()
+                    + " in method: " + returnType.getMethod());
+        }
+    }
 
 }

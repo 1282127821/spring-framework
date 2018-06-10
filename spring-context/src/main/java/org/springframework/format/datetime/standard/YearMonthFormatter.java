@@ -34,14 +34,14 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 class YearMonthFormatter implements Formatter<YearMonth> {
 
-	@Override
-	public YearMonth parse(String text, Locale locale) throws ParseException {
-		return YearMonth.parse(text);
-	}
+    @Override
+    public YearMonth parse(String text, Locale locale) throws ParseException {
+        return YearMonth.parse(text);
+    }
 
-	@Override
-	public String print(YearMonth object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(YearMonth object, Locale locale) {
+        return object.toString();
+    }
 
 }

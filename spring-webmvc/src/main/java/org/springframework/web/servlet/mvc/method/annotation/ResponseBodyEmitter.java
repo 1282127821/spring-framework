@@ -60,225 +60,219 @@ import org.springframework.util.Assert;
  */
 public class ResponseBodyEmitter {
 
-	private final Long timeout;
+    private final Long timeout;
 
-	private final Set<DataWithMediaType> earlySendAttempts = new LinkedHashSet<DataWithMediaType>(8);
+    private final Set<DataWithMediaType> earlySendAttempts = new LinkedHashSet<DataWithMediaType>(8);
 
-	private Handler handler;
+    private Handler handler;
 
-	private boolean complete;
+    private boolean complete;
 
-	private Throwable failure;
+    private Throwable failure;
 
-	private final DefaultCallback timeoutCallback = new DefaultCallback();
+    private final DefaultCallback timeoutCallback = new DefaultCallback();
 
-	private final DefaultCallback completionCallback = new DefaultCallback();
-
-
-	/**
-	 * Create a new ResponseBodyEmitter instance.
-	 */
-	public ResponseBodyEmitter() {
-		this.timeout = null;
-	}
-
-	/**
-	 * Create a ResponseBodyEmitter with a custom timeout value.
-	 * <p>By default not set in which case the default configured in the MVC
-	 * Java Config or the MVC namespace is used, or if that's not set, then the
-	 * timeout depends on the default of the underlying server.
-	 * @param timeout timeout value in milliseconds
-	 */
-	public ResponseBodyEmitter(Long timeout) {
-		this.timeout = timeout;
-	}
+    private final DefaultCallback completionCallback = new DefaultCallback();
 
 
-	/**
-	 * Return the configured timeout value, if any.
-	 */
-	public Long getTimeout() {
-		return this.timeout;
-	}
+    /**
+     * Create a new ResponseBodyEmitter instance.
+     */
+    public ResponseBodyEmitter() {
+        this.timeout = null;
+    }
+
+    /**
+     * Create a ResponseBodyEmitter with a custom timeout value.
+     * <p>By default not set in which case the default configured in the MVC
+     * Java Config or the MVC namespace is used, or if that's not set, then the
+     * timeout depends on the default of the underlying server.
+     * @param timeout timeout value in milliseconds
+     */
+    public ResponseBodyEmitter(Long timeout) {
+        this.timeout = timeout;
+    }
 
 
-	synchronized void initialize(Handler handler) throws IOException {
-		this.handler = handler;
-
-		for (DataWithMediaType sendAttempt : this.earlySendAttempts) {
-			sendInternal(sendAttempt.getData(), sendAttempt.getMediaType());
-		}
-		this.earlySendAttempts.clear();
-
-		if (this.complete) {
-			if (this.failure != null) {
-				this.handler.completeWithError(this.failure);
-			}
-			else {
-				this.handler.complete();
-			}
-		}
-		else {
-			this.handler.onTimeout(this.timeoutCallback);
-			this.handler.onCompletion(this.completionCallback);
-		}
-	}
-
-	/**
-	 * Invoked after the response is updated with the status code and headers,
-	 * if the ResponseBodyEmitter is wrapped in a ResponseEntity, but before the
-	 * response is committed, i.e. before the response body has been written to.
-	 * <p>The default implementation is empty.
-	 */
-	protected void extendResponse(ServerHttpResponse outputMessage) {
-	}
-
-	/**
-	 * Write the given object to the response.
-	 * <p>If any exception occurs a dispatch is made back to the app server where
-	 * Spring MVC will pass the exception through its exception handling mechanism.
-	 * @param object the object to write
-	 * @throws IOException raised when an I/O error occurs
-	 * @throws java.lang.IllegalStateException wraps any other errors
-	 */
-	public void send(Object object) throws IOException {
-		send(object, null);
-	}
-
-	/**
-	 * Write the given object to the response also using a MediaType hint.
-	 * <p>If any exception occurs a dispatch is made back to the app server where
-	 * Spring MVC will pass the exception through its exception handling mechanism.
-	 * @param object the object to write
-	 * @param mediaType a MediaType hint for selecting an HttpMessageConverter
-	 * @throws IOException raised when an I/O error occurs
-	 * @throws java.lang.IllegalStateException wraps any other errors
-	 */
-	public synchronized void send(Object object, MediaType mediaType) throws IOException {
-		Assert.state(!this.complete, "ResponseBodyEmitter is already set complete");
-		sendInternal(object, mediaType);
-	}
-
-	private void sendInternal(Object object, MediaType mediaType) throws IOException {
-		if (object != null) {
-			if (this.handler != null) {
-				try {
-					this.handler.send(object, mediaType);
-				}
-				catch (IOException ex) {
-					throw ex;
-				}
-				catch (Throwable ex) {
-					throw new IllegalStateException("Failed to send " + object, ex);
-				}
-			}
-			else {
-				this.earlySendAttempts.add(new DataWithMediaType(object, mediaType));
-			}
-		}
-	}
-
-	/**
-	 * Complete request processing.
-	 * <p>A dispatch is made into the app server where Spring MVC completes
-	 * asynchronous request processing.
-	 */
-	public synchronized void complete() {
-		this.complete = true;
-		if (this.handler != null) {
-			this.handler.complete();
-		}
-	}
-
-	/**
-	 * Complete request processing with an error.
-	 * <p>A dispatch is made into the app server where Spring MVC will pass the
-	 * exception through its exception handling mechanism.
-	 */
-	public synchronized void completeWithError(Throwable ex) {
-		this.complete = true;
-		this.failure = ex;
-		if (this.handler != null) {
-			this.handler.completeWithError(ex);
-		}
-	}
-
-	/**
-	 * Register code to invoke when the async request times out. This method is
-	 * called from a container thread when an async request times out.
-	 */
-	public synchronized void onTimeout(Runnable callback) {
-		this.timeoutCallback.setDelegate(callback);
-	}
-
-	/**
-	 * Register code to invoke when the async request completes. This method is
-	 * called from a container thread when an async request completed for any
-	 * reason including timeout and network error. This method is useful for
-	 * detecting that a {@code ResponseBodyEmitter} instance is no longer usable.
-	 */
-	public synchronized void onCompletion(Runnable callback) {
-		this.completionCallback.setDelegate(callback);
-	}
+    /**
+     * Return the configured timeout value, if any.
+     */
+    public Long getTimeout() {
+        return this.timeout;
+    }
 
 
-	/**
-	 * Handle sent objects and complete request processing.
-	 */
-	interface Handler {
+    synchronized void initialize(Handler handler) throws IOException {
+        this.handler = handler;
 
-		void send(Object data, MediaType mediaType) throws IOException;
+        for (DataWithMediaType sendAttempt : this.earlySendAttempts) {
+            sendInternal(sendAttempt.getData(), sendAttempt.getMediaType());
+        }
+        this.earlySendAttempts.clear();
 
-		void complete();
+        if (this.complete) {
+            if (this.failure != null) {
+                this.handler.completeWithError(this.failure);
+            } else {
+                this.handler.complete();
+            }
+        } else {
+            this.handler.onTimeout(this.timeoutCallback);
+            this.handler.onCompletion(this.completionCallback);
+        }
+    }
 
-		void completeWithError(Throwable failure);
+    /**
+     * Invoked after the response is updated with the status code and headers,
+     * if the ResponseBodyEmitter is wrapped in a ResponseEntity, but before the
+     * response is committed, i.e. before the response body has been written to.
+     * <p>The default implementation is empty.
+     */
+    protected void extendResponse(ServerHttpResponse outputMessage) {}
 
-		void onTimeout(Runnable callback);
+    /**
+     * Write the given object to the response.
+     * <p>If any exception occurs a dispatch is made back to the app server where
+     * Spring MVC will pass the exception through its exception handling mechanism.
+     * @param object the object to write
+     * @throws IOException raised when an I/O error occurs
+     * @throws java.lang.IllegalStateException wraps any other errors
+     */
+    public void send(Object object) throws IOException {
+        send(object, null);
+    }
 
-		void onCompletion(Runnable callback);
-	}
+    /**
+     * Write the given object to the response also using a MediaType hint.
+     * <p>If any exception occurs a dispatch is made back to the app server where
+     * Spring MVC will pass the exception through its exception handling mechanism.
+     * @param object the object to write
+     * @param mediaType a MediaType hint for selecting an HttpMessageConverter
+     * @throws IOException raised when an I/O error occurs
+     * @throws java.lang.IllegalStateException wraps any other errors
+     */
+    public synchronized void send(Object object, MediaType mediaType) throws IOException {
+        Assert.state(!this.complete, "ResponseBodyEmitter is already set complete");
+        sendInternal(object, mediaType);
+    }
+
+    private void sendInternal(Object object, MediaType mediaType) throws IOException {
+        if (object != null) {
+            if (this.handler != null) {
+                try {
+                    this.handler.send(object, mediaType);
+                } catch (IOException ex) {
+                    throw ex;
+                } catch (Throwable ex) {
+                    throw new IllegalStateException("Failed to send " + object, ex);
+                }
+            } else {
+                this.earlySendAttempts.add(new DataWithMediaType(object, mediaType));
+            }
+        }
+    }
+
+    /**
+     * Complete request processing.
+     * <p>A dispatch is made into the app server where Spring MVC completes
+     * asynchronous request processing.
+     */
+    public synchronized void complete() {
+        this.complete = true;
+        if (this.handler != null) {
+            this.handler.complete();
+        }
+    }
+
+    /**
+     * Complete request processing with an error.
+     * <p>A dispatch is made into the app server where Spring MVC will pass the
+     * exception through its exception handling mechanism.
+     */
+    public synchronized void completeWithError(Throwable ex) {
+        this.complete = true;
+        this.failure = ex;
+        if (this.handler != null) {
+            this.handler.completeWithError(ex);
+        }
+    }
+
+    /**
+     * Register code to invoke when the async request times out. This method is
+     * called from a container thread when an async request times out.
+     */
+    public synchronized void onTimeout(Runnable callback) {
+        this.timeoutCallback.setDelegate(callback);
+    }
+
+    /**
+     * Register code to invoke when the async request completes. This method is
+     * called from a container thread when an async request completed for any
+     * reason including timeout and network error. This method is useful for
+     * detecting that a {@code ResponseBodyEmitter} instance is no longer usable.
+     */
+    public synchronized void onCompletion(Runnable callback) {
+        this.completionCallback.setDelegate(callback);
+    }
 
 
-	/**
-	 * A simple holder of data to be written along with a MediaType hint for
-	 * selecting a message converter to write with.
-	 */
-	public static class DataWithMediaType {
+    /**
+     * Handle sent objects and complete request processing.
+     */
+    interface Handler {
 
-		private final Object data;
+        void send(Object data, MediaType mediaType) throws IOException;
 
-		private final MediaType mediaType;
+        void complete();
 
-		public DataWithMediaType(Object data, MediaType mediaType) {
-			this.data = data;
-			this.mediaType = mediaType;
-		}
+        void completeWithError(Throwable failure);
 
-		public Object getData() {
-			return this.data;
-		}
+        void onTimeout(Runnable callback);
 
-		public MediaType getMediaType() {
-			return this.mediaType;
-		}
-	}
+        void onCompletion(Runnable callback);
+    }
 
 
-	private class DefaultCallback implements Runnable {
+    /**
+     * A simple holder of data to be written along with a MediaType hint for
+     * selecting a message converter to write with.
+     */
+    public static class DataWithMediaType {
 
-		private Runnable delegate;
+        private final Object data;
 
-		public void setDelegate(Runnable delegate) {
-			this.delegate = delegate;
-		}
+        private final MediaType mediaType;
 
-		@Override
-		public void run() {
-			ResponseBodyEmitter.this.complete = true;
-			if (this.delegate != null) {
-				this.delegate.run();
-			}
-		}
-	}
+        public DataWithMediaType(Object data, MediaType mediaType) {
+            this.data = data;
+            this.mediaType = mediaType;
+        }
+
+        public Object getData() {
+            return this.data;
+        }
+
+        public MediaType getMediaType() {
+            return this.mediaType;
+        }
+    }
+
+
+    private class DefaultCallback implements Runnable {
+
+        private Runnable delegate;
+
+        public void setDelegate(Runnable delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void run() {
+            ResponseBodyEmitter.this.complete = true;
+            if (this.delegate != null) {
+                this.delegate.run();
+            }
+        }
+    }
 
 }

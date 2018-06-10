@@ -43,18 +43,18 @@ package org.springframework.web.context.request;
  */
 public class RequestScope extends AbstractRequestAttributesScope {
 
-	@Override
-	protected int getScope() {
-		return RequestAttributes.SCOPE_REQUEST;
-	}
+    @Override
+    protected int getScope() {
+        return RequestAttributes.SCOPE_REQUEST;
+    }
 
-	/**
-	 * There is no conversation id concept for a request, so this method
-	 * returns {@code null}.
-	 */
-	@Override
-	public String getConversationId() {
-		return null;
-	}
+    /**
+     * There is no conversation id concept for a request, so this method
+     * returns {@code null}.
+     */
+    @Override
+    public String getConversationId() {
+        return null;
+    }
 
 }

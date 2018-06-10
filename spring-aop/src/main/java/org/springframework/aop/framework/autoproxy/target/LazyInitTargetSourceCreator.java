@@ -53,23 +53,23 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  */
 public class LazyInitTargetSourceCreator extends AbstractBeanFactoryBasedTargetSourceCreator {
 
-	@Override
-	protected boolean isPrototypeBased() {
-		return false;
-	}
+    @Override
+    protected boolean isPrototypeBased() {
+        return false;
+    }
 
-	@Override
-	protected AbstractBeanFactoryBasedTargetSource createBeanFactoryBasedTargetSource(
-			Class<?> beanClass, String beanName) {
+    @Override
+    protected AbstractBeanFactoryBasedTargetSource createBeanFactoryBasedTargetSource(Class<?> beanClass,
+            String beanName) {
 
-		if (getBeanFactory() instanceof ConfigurableListableBeanFactory) {
-			BeanDefinition definition =
-					((ConfigurableListableBeanFactory) getBeanFactory()).getBeanDefinition(beanName);
-			if (definition.isLazyInit()) {
-				return new LazyInitTargetSource();
-			}
-		}
-		return null;
-	}
+        if (getBeanFactory() instanceof ConfigurableListableBeanFactory) {
+            BeanDefinition definition =
+                    ((ConfigurableListableBeanFactory) getBeanFactory()).getBeanDefinition(beanName);
+            if (definition.isLazyInit()) {
+                return new LazyInitTargetSource();
+            }
+        }
+        return null;
+    }
 
 }

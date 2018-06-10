@@ -16,9 +16,9 @@
 
 package org.springframework.http.converter.feed;
 
-import com.rometools.rome.feed.atom.Feed;
-
 import org.springframework.http.MediaType;
+
+import com.rometools.rome.feed.atom.Feed;
 
 /**
  * Implementation of {@link org.springframework.http.converter.HttpMessageConverter}
@@ -37,13 +37,13 @@ import org.springframework.http.MediaType;
  */
 public class AtomFeedHttpMessageConverter extends AbstractWireFeedHttpMessageConverter<Feed> {
 
-	public AtomFeedHttpMessageConverter() {
-		super(new MediaType("application", "atom+xml"));
-	}
+    public AtomFeedHttpMessageConverter() {
+        super(new MediaType("application", "atom+xml"));
+    }
 
-	@Override
-	protected boolean supports(Class<?> clazz) {
-		return Feed.class.isAssignableFrom(clazz);
-	}
+    @Override
+    protected boolean supports(Class<?> clazz) {
+        return Feed.class.isAssignableFrom(clazz);
+    }
 
 }

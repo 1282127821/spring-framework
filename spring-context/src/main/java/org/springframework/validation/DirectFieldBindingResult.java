@@ -36,62 +36,62 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public class DirectFieldBindingResult extends AbstractPropertyBindingResult {
 
-	private final Object target;
+    private final Object target;
 
-	private final boolean autoGrowNestedPaths;
+    private final boolean autoGrowNestedPaths;
 
-	private transient ConfigurablePropertyAccessor directFieldAccessor;
-
-
-	/**
-	 * Create a new DirectFieldBindingResult instance.
-	 * @param target the target object to bind onto
-	 * @param objectName the name of the target object
-	 */
-	public DirectFieldBindingResult(Object target, String objectName) {
-		this(target, objectName, true);
-	}
-
-	/**
-	 * Create a new DirectFieldBindingResult instance.
-	 * @param target the target object to bind onto
-	 * @param objectName the name of the target object
-	 * @param autoGrowNestedPaths whether to "auto-grow" a nested path that contains a null value
-	 */
-	public DirectFieldBindingResult(Object target, String objectName, boolean autoGrowNestedPaths) {
-		super(objectName);
-		this.target = target;
-		this.autoGrowNestedPaths = autoGrowNestedPaths;
-	}
+    private transient ConfigurablePropertyAccessor directFieldAccessor;
 
 
-	@Override
-	public final Object getTarget() {
-		return this.target;
-	}
+    /**
+     * Create a new DirectFieldBindingResult instance.
+     * @param target the target object to bind onto
+     * @param objectName the name of the target object
+     */
+    public DirectFieldBindingResult(Object target, String objectName) {
+        this(target, objectName, true);
+    }
 
-	/**
-	 * Returns the DirectFieldAccessor that this instance uses.
-	 * Creates a new one if none existed before.
-	 * @see #createDirectFieldAccessor()
-	 */
-	@Override
-	public final ConfigurablePropertyAccessor getPropertyAccessor() {
-		if (this.directFieldAccessor == null) {
-			this.directFieldAccessor = createDirectFieldAccessor();
-			this.directFieldAccessor.setExtractOldValueForEditor(true);
-			this.directFieldAccessor.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
-		}
-		return this.directFieldAccessor;
-	}
+    /**
+     * Create a new DirectFieldBindingResult instance.
+     * @param target the target object to bind onto
+     * @param objectName the name of the target object
+     * @param autoGrowNestedPaths whether to "auto-grow" a nested path that contains a null value
+     */
+    public DirectFieldBindingResult(Object target, String objectName, boolean autoGrowNestedPaths) {
+        super(objectName);
+        this.target = target;
+        this.autoGrowNestedPaths = autoGrowNestedPaths;
+    }
 
-	/**
-	 * Create a new DirectFieldAccessor for the underlying target object.
-	 * @see #getTarget()
-	 */
-	protected ConfigurablePropertyAccessor createDirectFieldAccessor() {
-		Assert.state(this.target != null, "Cannot access fields on null target instance '" + getObjectName() + "'!");
-		return PropertyAccessorFactory.forDirectFieldAccess(this.target);
-	}
+
+    @Override
+    public final Object getTarget() {
+        return this.target;
+    }
+
+    /**
+     * Returns the DirectFieldAccessor that this instance uses.
+     * Creates a new one if none existed before.
+     * @see #createDirectFieldAccessor()
+     */
+    @Override
+    public final ConfigurablePropertyAccessor getPropertyAccessor() {
+        if (this.directFieldAccessor == null) {
+            this.directFieldAccessor = createDirectFieldAccessor();
+            this.directFieldAccessor.setExtractOldValueForEditor(true);
+            this.directFieldAccessor.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
+        }
+        return this.directFieldAccessor;
+    }
+
+    /**
+     * Create a new DirectFieldAccessor for the underlying target object.
+     * @see #getTarget()
+     */
+    protected ConfigurablePropertyAccessor createDirectFieldAccessor() {
+        Assert.state(this.target != null, "Cannot access fields on null target instance '" + getObjectName() + "'!");
+        return PropertyAccessorFactory.forDirectFieldAccess(this.target);
+    }
 
 }

@@ -36,8 +36,8 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ManagedOperation {
 
-	String description() default "";
+    String description() default "";
 
-	int currencyTimeLimit() default -1;
+    int currencyTimeLimit() default -1;
 
 }

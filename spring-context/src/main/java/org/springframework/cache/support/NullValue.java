@@ -28,22 +28,21 @@ import java.io.Serializable;
  */
 public final class NullValue implements Serializable {
 
-	/**
-	 * The canonical representation of a {@code null} replacement, as used by the
-	 * default implementation of {@link AbstractValueAdaptingCache#toStoreValue}/
-	 * {@link AbstractValueAdaptingCache#fromStoreValue}.
-	 * @since 4.3.10
-	 */
-	public static final Object INSTANCE = new NullValue();
+    /**
+     * The canonical representation of a {@code null} replacement, as used by the
+     * default implementation of {@link AbstractValueAdaptingCache#toStoreValue}/
+     * {@link AbstractValueAdaptingCache#fromStoreValue}.
+     * @since 4.3.10
+     */
+    public static final Object INSTANCE = new NullValue();
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 
-	private NullValue() {
-	}
+    private NullValue() {}
 
-	private Object readResolve() {
-		return INSTANCE;
-	}
+    private Object readResolve() {
+        return INSTANCE;
+    }
 
 }

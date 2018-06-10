@@ -35,43 +35,42 @@ import org.springframework.core.NestedIOException;
  */
 public class DefaultDeserializer implements Deserializer<Object> {
 
-	private final ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
 
-	/**
-	 * Create a {@code DefaultDeserializer} with default {@link ObjectInputStream}
-	 * configuration, using the "latest user-defined ClassLoader".
-	 */
-	public DefaultDeserializer() {
-		this.classLoader = null;
-	}
+    /**
+     * Create a {@code DefaultDeserializer} with default {@link ObjectInputStream}
+     * configuration, using the "latest user-defined ClassLoader".
+     */
+    public DefaultDeserializer() {
+        this.classLoader = null;
+    }
 
-	/**
-	 * Create a {@code DefaultDeserializer} for using an {@link ObjectInputStream}
-	 * with the given {@code ClassLoader}.
-	 * @since 4.2.1
-	 * @see ConfigurableObjectInputStream#ConfigurableObjectInputStream(InputStream, ClassLoader)
-	 */
-	public DefaultDeserializer(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
+    /**
+     * Create a {@code DefaultDeserializer} for using an {@link ObjectInputStream}
+     * with the given {@code ClassLoader}.
+     * @since 4.2.1
+     * @see ConfigurableObjectInputStream#ConfigurableObjectInputStream(InputStream, ClassLoader)
+     */
+    public DefaultDeserializer(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
 
-	/**
-	 * Read from the supplied {@code InputStream} and deserialize the contents
-	 * into an object.
-	 * @see ObjectInputStream#readObject()
-	 */
-	@Override
-	@SuppressWarnings("resource")
-	public Object deserialize(InputStream inputStream) throws IOException {
-		ObjectInputStream objectInputStream = new ConfigurableObjectInputStream(inputStream, this.classLoader);
-		try {
-			return objectInputStream.readObject();
-		}
-		catch (ClassNotFoundException ex) {
-			throw new NestedIOException("Failed to deserialize object type", ex);
-		}
-	}
+    /**
+     * Read from the supplied {@code InputStream} and deserialize the contents
+     * into an object.
+     * @see ObjectInputStream#readObject()
+     */
+    @Override
+    @SuppressWarnings("resource")
+    public Object deserialize(InputStream inputStream) throws IOException {
+        ObjectInputStream objectInputStream = new ConfigurableObjectInputStream(inputStream, this.classLoader);
+        try {
+            return objectInputStream.readObject();
+        } catch (ClassNotFoundException ex) {
+            throw new NestedIOException("Failed to deserialize object type", ex);
+        }
+    }
 
 }

@@ -43,166 +43,164 @@ import org.springframework.util.Assert;
  */
 public class AnnotatedBeanDefinitionReader {
 
-	private final BeanDefinitionRegistry registry;
+    private final BeanDefinitionRegistry registry;
 
-	private BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
+    private BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
 
-	private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
+    private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
-	private ConditionEvaluator conditionEvaluator;
-
-
-	/**
-	 * Create a new {@code AnnotatedBeanDefinitionReader} for the given registry.
-	 * If the registry is {@link EnvironmentCapable}, e.g. is an {@code ApplicationContext},
-	 * the {@link Environment} will be inherited, otherwise a new
-	 * {@link StandardEnvironment} will be created and used.
-	 * @param registry the {@code BeanFactory} to load bean definitions into,
-	 * in the form of a {@code BeanDefinitionRegistry}
-	 * @see #AnnotatedBeanDefinitionReader(BeanDefinitionRegistry, Environment)
-	 * @see #setEnvironment(Environment)
-	 */
-	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
-		this(registry, getOrCreateEnvironment(registry));
-	}
-
-	/**
-	 * Create a new {@code AnnotatedBeanDefinitionReader} for the given registry and using
-	 * the given {@link Environment}.
-	 * @param registry the {@code BeanFactory} to load bean definitions into,
-	 * in the form of a {@code BeanDefinitionRegistry}
-	 * @param environment the {@code Environment} to use when evaluating bean definition
-	 * profiles.
-	 * @since 3.1
-	 */
-	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
-		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
-		Assert.notNull(environment, "Environment must not be null");
-		this.registry = registry;
-		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
-		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
-	}
+    private ConditionEvaluator conditionEvaluator;
 
 
-	/**
-	 * Return the BeanDefinitionRegistry that this scanner operates on.
-	 */
-	public final BeanDefinitionRegistry getRegistry() {
-		return this.registry;
-	}
+    /**
+     * Create a new {@code AnnotatedBeanDefinitionReader} for the given registry.
+     * If the registry is {@link EnvironmentCapable}, e.g. is an {@code ApplicationContext},
+     * the {@link Environment} will be inherited, otherwise a new
+     * {@link StandardEnvironment} will be created and used.
+     * @param registry the {@code BeanFactory} to load bean definitions into,
+     * in the form of a {@code BeanDefinitionRegistry}
+     * @see #AnnotatedBeanDefinitionReader(BeanDefinitionRegistry, Environment)
+     * @see #setEnvironment(Environment)
+     */
+    public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
+        this(registry, getOrCreateEnvironment(registry));
+    }
 
-	/**
-	 * Set the Environment to use when evaluating whether
-	 * {@link Conditional @Conditional}-annotated component classes should be registered.
-	 * <p>The default is a {@link StandardEnvironment}.
-	 * @see #registerBean(Class, String, Class...)
-	 */
-	public void setEnvironment(Environment environment) {
-		this.conditionEvaluator = new ConditionEvaluator(this.registry, environment, null);
-	}
-
-	/**
-	 * Set the BeanNameGenerator to use for detected bean classes.
-	 * <p>The default is a {@link AnnotationBeanNameGenerator}.
-	 */
-	public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
-		this.beanNameGenerator = (beanNameGenerator != null ? beanNameGenerator : new AnnotationBeanNameGenerator());
-	}
-
-	/**
-	 * Set the ScopeMetadataResolver to use for detected bean classes.
-	 * <p>The default is an {@link AnnotationScopeMetadataResolver}.
-	 */
-	public void setScopeMetadataResolver(ScopeMetadataResolver scopeMetadataResolver) {
-		this.scopeMetadataResolver =
-				(scopeMetadataResolver != null ? scopeMetadataResolver : new AnnotationScopeMetadataResolver());
-	}
+    /**
+     * Create a new {@code AnnotatedBeanDefinitionReader} for the given registry and using
+     * the given {@link Environment}.
+     * @param registry the {@code BeanFactory} to load bean definitions into,
+     * in the form of a {@code BeanDefinitionRegistry}
+     * @param environment the {@code Environment} to use when evaluating bean definition
+     * profiles.
+     * @since 3.1
+     */
+    public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
+        Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
+        Assert.notNull(environment, "Environment must not be null");
+        this.registry = registry;
+        this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+        AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
+    }
 
 
-	/**
-	 * Register one or more annotated classes to be processed.
-	 * <p>Calls to {@code register} are idempotent; adding the same
-	 * annotated class more than once has no additional effect.
-	 * @param annotatedClasses one or more annotated classes,
-	 * e.g. {@link Configuration @Configuration} classes
-	 */
-	public void register(Class<?>... annotatedClasses) {
-		for (Class<?> annotatedClass : annotatedClasses) {
-			registerBean(annotatedClass);
-		}
-	}
+    /**
+     * Return the BeanDefinitionRegistry that this scanner operates on.
+     */
+    public final BeanDefinitionRegistry getRegistry() {
+        return this.registry;
+    }
 
-	/**
-	 * Register a bean from the given bean class, deriving its metadata from
-	 * class-declared annotations.
-	 * @param annotatedClass the class of the bean
-	 */
-	@SuppressWarnings("unchecked")
-	public void registerBean(Class<?> annotatedClass) {
-		registerBean(annotatedClass, null, (Class<? extends Annotation>[]) null);
-	}
+    /**
+     * Set the Environment to use when evaluating whether
+     * {@link Conditional @Conditional}-annotated component classes should be registered.
+     * <p>The default is a {@link StandardEnvironment}.
+     * @see #registerBean(Class, String, Class...)
+     */
+    public void setEnvironment(Environment environment) {
+        this.conditionEvaluator = new ConditionEvaluator(this.registry, environment, null);
+    }
 
-	/**
-	 * Register a bean from the given bean class, deriving its metadata from
-	 * class-declared annotations.
-	 * @param annotatedClass the class of the bean
-	 * @param qualifiers specific qualifier annotations to consider,
-	 * in addition to qualifiers at the bean class level
-	 */
-	@SuppressWarnings("unchecked")
-	public void registerBean(Class<?> annotatedClass, Class<? extends Annotation>... qualifiers) {
-		registerBean(annotatedClass, null, qualifiers);
-	}
+    /**
+     * Set the BeanNameGenerator to use for detected bean classes.
+     * <p>The default is a {@link AnnotationBeanNameGenerator}.
+     */
+    public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
+        this.beanNameGenerator = (beanNameGenerator != null ? beanNameGenerator : new AnnotationBeanNameGenerator());
+    }
 
-	/**
-	 * Register a bean from the given bean class, deriving its metadata from
-	 * class-declared annotations.
-	 * @param annotatedClass the class of the bean
-	 * @param name an explicit name for the bean
-	 * @param qualifiers specific qualifier annotations to consider,
-	 * in addition to qualifiers at the bean class level
-	 */
-	@SuppressWarnings("unchecked")
-	public void registerBean(Class<?> annotatedClass, String name, Class<? extends Annotation>... qualifiers) {
-		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
-		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
-			return;
-		}
-
-		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
-		abd.setScope(scopeMetadata.getScopeName());
-		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
-		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
-		if (qualifiers != null) {
-			for (Class<? extends Annotation> qualifier : qualifiers) {
-				if (Primary.class == qualifier) {
-					abd.setPrimary(true);
-				}
-				else if (Lazy.class == qualifier) {
-					abd.setLazyInit(true);
-				}
-				else {
-					abd.addQualifier(new AutowireCandidateQualifier(qualifier));
-				}
-			}
-		}
-
-		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
-		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
-		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
-	}
+    /**
+     * Set the ScopeMetadataResolver to use for detected bean classes.
+     * <p>The default is an {@link AnnotationScopeMetadataResolver}.
+     */
+    public void setScopeMetadataResolver(ScopeMetadataResolver scopeMetadataResolver) {
+        this.scopeMetadataResolver =
+                (scopeMetadataResolver != null ? scopeMetadataResolver : new AnnotationScopeMetadataResolver());
+    }
 
 
-	/**
-	 * Get the Environment from the given registry if possible, otherwise return a new
-	 * StandardEnvironment.
-	 */
-	private static Environment getOrCreateEnvironment(BeanDefinitionRegistry registry) {
-		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
-		if (registry instanceof EnvironmentCapable) {
-			return ((EnvironmentCapable) registry).getEnvironment();
-		}
-		return new StandardEnvironment();
-	}
+    /**
+     * Register one or more annotated classes to be processed.
+     * <p>Calls to {@code register} are idempotent; adding the same
+     * annotated class more than once has no additional effect.
+     * @param annotatedClasses one or more annotated classes,
+     * e.g. {@link Configuration @Configuration} classes
+     */
+    public void register(Class<?>... annotatedClasses) {
+        for (Class<?> annotatedClass : annotatedClasses) {
+            registerBean(annotatedClass);
+        }
+    }
+
+    /**
+     * Register a bean from the given bean class, deriving its metadata from
+     * class-declared annotations.
+     * @param annotatedClass the class of the bean
+     */
+    @SuppressWarnings("unchecked")
+    public void registerBean(Class<?> annotatedClass) {
+        registerBean(annotatedClass, null, (Class<? extends Annotation>[]) null);
+    }
+
+    /**
+     * Register a bean from the given bean class, deriving its metadata from
+     * class-declared annotations.
+     * @param annotatedClass the class of the bean
+     * @param qualifiers specific qualifier annotations to consider,
+     * in addition to qualifiers at the bean class level
+     */
+    @SuppressWarnings("unchecked")
+    public void registerBean(Class<?> annotatedClass, Class<? extends Annotation>... qualifiers) {
+        registerBean(annotatedClass, null, qualifiers);
+    }
+
+    /**
+     * Register a bean from the given bean class, deriving its metadata from
+     * class-declared annotations.
+     * @param annotatedClass the class of the bean
+     * @param name an explicit name for the bean
+     * @param qualifiers specific qualifier annotations to consider,
+     * in addition to qualifiers at the bean class level
+     */
+    @SuppressWarnings("unchecked")
+    public void registerBean(Class<?> annotatedClass, String name, Class<? extends Annotation>... qualifiers) {
+        AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
+        if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
+            return;
+        }
+
+        ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
+        abd.setScope(scopeMetadata.getScopeName());
+        String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
+        AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+        if (qualifiers != null) {
+            for (Class<? extends Annotation> qualifier : qualifiers) {
+                if (Primary.class == qualifier) {
+                    abd.setPrimary(true);
+                } else if (Lazy.class == qualifier) {
+                    abd.setLazyInit(true);
+                } else {
+                    abd.addQualifier(new AutowireCandidateQualifier(qualifier));
+                }
+            }
+        }
+
+        BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+        definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+        BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
+    }
+
+
+    /**
+     * Get the Environment from the given registry if possible, otherwise return a new
+     * StandardEnvironment.
+     */
+    private static Environment getOrCreateEnvironment(BeanDefinitionRegistry registry) {
+        Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
+        if (registry instanceof EnvironmentCapable) {
+            return ((EnvironmentCapable) registry).getEnvironment();
+        }
+        return new StandardEnvironment();
+    }
 
 }

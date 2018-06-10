@@ -16,6 +16,7 @@
 package org.springframework.web.filter;
 
 import java.io.IOException;
+
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -33,40 +34,39 @@ import org.springframework.util.Assert;
  */
 class RelativeRedirectResponseWrapper extends HttpServletResponseWrapper {
 
-	private final HttpStatus redirectStatus;
+    private final HttpStatus redirectStatus;
 
 
-	private RelativeRedirectResponseWrapper(HttpServletResponse response, HttpStatus redirectStatus) {
-		super(response);
-		Assert.notNull(redirectStatus, "'redirectStatus' is required");
-		this.redirectStatus = redirectStatus;
-	}
+    private RelativeRedirectResponseWrapper(HttpServletResponse response, HttpStatus redirectStatus) {
+        super(response);
+        Assert.notNull(redirectStatus, "'redirectStatus' is required");
+        this.redirectStatus = redirectStatus;
+    }
 
 
-	@Override
-	public void sendRedirect(String location) throws IOException {
-		setStatus(this.redirectStatus.value());
-		setHeader(HttpHeaders.LOCATION, location);
-	}
+    @Override
+    public void sendRedirect(String location) throws IOException {
+        setStatus(this.redirectStatus.value());
+        setHeader(HttpHeaders.LOCATION, location);
+    }
 
 
-	public static HttpServletResponse wrapIfNecessary(HttpServletResponse response,
-			HttpStatus redirectStatus) {
+    public static HttpServletResponse wrapIfNecessary(HttpServletResponse response, HttpStatus redirectStatus) {
 
-		return (hasWrapper(response) ? response : new RelativeRedirectResponseWrapper(response, redirectStatus));
-	}
+        return (hasWrapper(response) ? response : new RelativeRedirectResponseWrapper(response, redirectStatus));
+    }
 
-	private static boolean hasWrapper(ServletResponse response) {
-		if (response instanceof RelativeRedirectResponseWrapper) {
-			return true;
-		}
-		while (response instanceof HttpServletResponseWrapper) {
-			response = ((HttpServletResponseWrapper) response).getResponse();
-			if (response instanceof RelativeRedirectResponseWrapper) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private static boolean hasWrapper(ServletResponse response) {
+        if (response instanceof RelativeRedirectResponseWrapper) {
+            return true;
+        }
+        while (response instanceof HttpServletResponseWrapper) {
+            response = ((HttpServletResponseWrapper) response).getResponse();
+            if (response instanceof RelativeRedirectResponseWrapper) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

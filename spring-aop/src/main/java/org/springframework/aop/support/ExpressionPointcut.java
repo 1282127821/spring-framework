@@ -26,9 +26,9 @@ import org.springframework.aop.Pointcut;
  */
 public interface ExpressionPointcut extends Pointcut {
 
-	/**
-	 * Return the String expression for this pointcut.
-	 */
-	String getExpression();
+    /**
+     * Return the String expression for this pointcut.
+     */
+    String getExpression();
 
 }

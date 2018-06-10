@@ -36,41 +36,41 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @since 3.2
  * @see org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory
  */
-public class DateTimeFormatAnnotationFormatterFactory  extends EmbeddedValueResolutionSupport
-		implements AnnotationFormatterFactory<DateTimeFormat> {
+public class DateTimeFormatAnnotationFormatterFactory extends EmbeddedValueResolutionSupport
+        implements AnnotationFormatterFactory<DateTimeFormat> {
 
-	private static final Set<Class<?>> FIELD_TYPES;
+    private static final Set<Class<?>> FIELD_TYPES;
 
-	static {
-		Set<Class<?>> fieldTypes = new HashSet<Class<?>>(4);
-		fieldTypes.add(Date.class);
-		fieldTypes.add(Calendar.class);
-		fieldTypes.add(Long.class);
-		FIELD_TYPES = Collections.unmodifiableSet(fieldTypes);
-	}
+    static {
+        Set<Class<?>> fieldTypes = new HashSet<Class<?>>(4);
+        fieldTypes.add(Date.class);
+        fieldTypes.add(Calendar.class);
+        fieldTypes.add(Long.class);
+        FIELD_TYPES = Collections.unmodifiableSet(fieldTypes);
+    }
 
 
-	@Override
-	public Set<Class<?>> getFieldTypes() {
-		return FIELD_TYPES;
-	}
+    @Override
+    public Set<Class<?>> getFieldTypes() {
+        return FIELD_TYPES;
+    }
 
-	@Override
-	public Printer<?> getPrinter(DateTimeFormat annotation, Class<?> fieldType) {
-		return getFormatter(annotation, fieldType);
-	}
+    @Override
+    public Printer<?> getPrinter(DateTimeFormat annotation, Class<?> fieldType) {
+        return getFormatter(annotation, fieldType);
+    }
 
-	@Override
-	public Parser<?> getParser(DateTimeFormat annotation, Class<?> fieldType) {
-		return getFormatter(annotation, fieldType);
-	}
+    @Override
+    public Parser<?> getParser(DateTimeFormat annotation, Class<?> fieldType) {
+        return getFormatter(annotation, fieldType);
+    }
 
-	protected Formatter<Date> getFormatter(DateTimeFormat annotation, Class<?> fieldType) {
-		DateFormatter formatter = new DateFormatter();
-		formatter.setStylePattern(resolveEmbeddedValue(annotation.style()));
-		formatter.setIso(annotation.iso());
-		formatter.setPattern(resolveEmbeddedValue(annotation.pattern()));
-		return formatter;
-	}
+    protected Formatter<Date> getFormatter(DateTimeFormat annotation, Class<?> fieldType) {
+        DateFormatter formatter = new DateFormatter();
+        formatter.setStylePattern(resolveEmbeddedValue(annotation.style()));
+        formatter.setIso(annotation.iso());
+        formatter.setPattern(resolveEmbeddedValue(annotation.pattern()));
+        return formatter;
+    }
 
 }

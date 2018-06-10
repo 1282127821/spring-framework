@@ -29,11 +29,11 @@ import org.springframework.core.io.Resource;
 */
 public interface VersionStrategy extends VersionPathStrategy {
 
-	/**
-	 * Determine the version for the given resource.
-	 * @param resource the resource to check
-	 * @return the version (never {@code null})
-	 */
-	String getResourceVersion(Resource resource);
+    /**
+     * Determine the version for the given resource.
+     * @param resource the resource to check
+     * @return the version (never {@code null})
+     */
+    String getResourceVersion(Resource resource);
 
 }

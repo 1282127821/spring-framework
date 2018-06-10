@@ -38,17 +38,17 @@ import org.springframework.web.method.annotation.AbstractWebArgumentResolverAdap
  */
 public class ServletWebArgumentResolverAdapter extends AbstractWebArgumentResolverAdapter {
 
-	public ServletWebArgumentResolverAdapter(WebArgumentResolver adaptee) {
-		super(adaptee);
-	}
+    public ServletWebArgumentResolverAdapter(WebArgumentResolver adaptee) {
+        super(adaptee);
+    }
 
-	@Override
-	protected NativeWebRequest getWebRequest() {
-		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		if (requestAttributes instanceof ServletRequestAttributes) {
-			ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
-			return new ServletWebRequest(servletRequestAttributes.getRequest());
-		}
-		return null;
-	}
+    @Override
+    protected NativeWebRequest getWebRequest() {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+            return new ServletWebRequest(servletRequestAttributes.getRequest());
+        }
+        return null;
+    }
 }

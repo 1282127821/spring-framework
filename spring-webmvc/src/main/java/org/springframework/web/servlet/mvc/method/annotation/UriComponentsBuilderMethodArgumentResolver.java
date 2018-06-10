@@ -38,18 +38,18 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 public class UriComponentsBuilderMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		Class<?> type = parameter.getParameterType();
-		return (UriComponentsBuilder.class == type || ServletUriComponentsBuilder.class == type);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        Class<?> type = parameter.getParameterType();
+        return (UriComponentsBuilder.class == type || ServletUriComponentsBuilder.class == type);
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-		return ServletUriComponentsBuilder.fromServletMapping(request);
-	}
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        return ServletUriComponentsBuilder.fromServletMapping(request);
+    }
 
 }

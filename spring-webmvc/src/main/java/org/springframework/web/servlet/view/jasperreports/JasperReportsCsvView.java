@@ -33,18 +33,18 @@ import net.sf.jasperreports.engine.export.JRCsvExporter;
 @SuppressWarnings({"deprecation", "rawtypes"})
 public class JasperReportsCsvView extends AbstractJasperReportsSingleFormatView {
 
-	public JasperReportsCsvView() {
-		setContentType("text/csv");
-	}
+    public JasperReportsCsvView() {
+        setContentType("text/csv");
+    }
 
-	@Override
-	protected net.sf.jasperreports.engine.JRExporter createExporter() {
-		return new JRCsvExporter();
-	}
+    @Override
+    protected net.sf.jasperreports.engine.JRExporter createExporter() {
+        return new JRCsvExporter();
+    }
 
-	@Override
-	protected boolean useWriter() {
-		return true;
-	}
+    @Override
+    protected boolean useWriter() {
+        return true;
+    }
 
 }

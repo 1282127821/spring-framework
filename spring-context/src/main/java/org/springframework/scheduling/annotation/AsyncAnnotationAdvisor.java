@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.aopalliance.aop.Advice;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
@@ -55,118 +54,115 @@ import org.springframework.util.ClassUtils;
 @SuppressWarnings("serial")
 public class AsyncAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
-	private AsyncUncaughtExceptionHandler exceptionHandler;
+    private AsyncUncaughtExceptionHandler exceptionHandler;
 
-	private Advice advice;
+    private Advice advice;
 
-	private Pointcut pointcut;
-
-
-	/**
-	 * Create a new {@code AsyncAnnotationAdvisor} for bean-style configuration.
-	 */
-	public AsyncAnnotationAdvisor() {
-		this(null, null);
-	}
-
-	/**
-	 * Create a new {@code AsyncAnnotationAdvisor} for the given task executor.
-	 * @param executor the task executor to use for asynchronous methods
-	 * (can be {@code null} to trigger default executor resolution)
-	 * @param exceptionHandler the {@link AsyncUncaughtExceptionHandler} to use to
-	 * handle unexpected exception thrown by asynchronous method executions
-	 * @see AnnotationAsyncExecutionInterceptor#getDefaultExecutor(BeanFactory)
-	 */
-	@SuppressWarnings("unchecked")
-	public AsyncAnnotationAdvisor(Executor executor, AsyncUncaughtExceptionHandler exceptionHandler) {
-		Set<Class<? extends Annotation>> asyncAnnotationTypes = new LinkedHashSet<Class<? extends Annotation>>(2);
-		asyncAnnotationTypes.add(Async.class);
-		try {
-			asyncAnnotationTypes.add((Class<? extends Annotation>)
-					ClassUtils.forName("javax.ejb.Asynchronous", AsyncAnnotationAdvisor.class.getClassLoader()));
-		}
-		catch (ClassNotFoundException ex) {
-			// If EJB 3.1 API not present, simply ignore.
-		}
-		if (exceptionHandler != null) {
-			this.exceptionHandler = exceptionHandler;
-		}
-		else {
-			this.exceptionHandler = new SimpleAsyncUncaughtExceptionHandler();
-		}
-		this.advice = buildAdvice(executor, this.exceptionHandler);
-		this.pointcut = buildPointcut(asyncAnnotationTypes);
-	}
+    private Pointcut pointcut;
 
 
-	/**
-	 * Specify the default task executor to use for asynchronous methods.
-	 */
-	public void setTaskExecutor(Executor executor) {
-		this.advice = buildAdvice(executor, this.exceptionHandler);
-	}
+    /**
+     * Create a new {@code AsyncAnnotationAdvisor} for bean-style configuration.
+     */
+    public AsyncAnnotationAdvisor() {
+        this(null, null);
+    }
 
-	/**
-	 * Set the 'async' annotation type.
-	 * <p>The default async annotation type is the {@link Async} annotation, as well
-	 * as the EJB 3.1 {@code javax.ejb.Asynchronous} annotation (if present).
-	 * <p>This setter property exists so that developers can provide their own
-	 * (non-Spring-specific) annotation type to indicate that a method is to
-	 * be executed asynchronously.
-	 * @param asyncAnnotationType the desired annotation type
-	 */
-	public void setAsyncAnnotationType(Class<? extends Annotation> asyncAnnotationType) {
-		Assert.notNull(asyncAnnotationType, "'asyncAnnotationType' must not be null");
-		Set<Class<? extends Annotation>> asyncAnnotationTypes = new HashSet<Class<? extends Annotation>>();
-		asyncAnnotationTypes.add(asyncAnnotationType);
-		this.pointcut = buildPointcut(asyncAnnotationTypes);
-	}
-
-	/**
-	 * Set the {@code BeanFactory} to be used when looking up executors by qualifier.
-	 */
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
-		if (this.advice instanceof BeanFactoryAware) {
-			((BeanFactoryAware) this.advice).setBeanFactory(beanFactory);
-		}
-	}
-
-
-	@Override
-	public Advice getAdvice() {
-		return this.advice;
-	}
-
-	@Override
-	public Pointcut getPointcut() {
-		return this.pointcut;
-	}
+    /**
+     * Create a new {@code AsyncAnnotationAdvisor} for the given task executor.
+     * @param executor the task executor to use for asynchronous methods
+     * (can be {@code null} to trigger default executor resolution)
+     * @param exceptionHandler the {@link AsyncUncaughtExceptionHandler} to use to
+     * handle unexpected exception thrown by asynchronous method executions
+     * @see AnnotationAsyncExecutionInterceptor#getDefaultExecutor(BeanFactory)
+     */
+    @SuppressWarnings("unchecked")
+    public AsyncAnnotationAdvisor(Executor executor, AsyncUncaughtExceptionHandler exceptionHandler) {
+        Set<Class<? extends Annotation>> asyncAnnotationTypes = new LinkedHashSet<Class<? extends Annotation>>(2);
+        asyncAnnotationTypes.add(Async.class);
+        try {
+            asyncAnnotationTypes.add((Class<? extends Annotation>) ClassUtils.forName("javax.ejb.Asynchronous",
+                    AsyncAnnotationAdvisor.class.getClassLoader()));
+        } catch (ClassNotFoundException ex) {
+            // If EJB 3.1 API not present, simply ignore.
+        }
+        if (exceptionHandler != null) {
+            this.exceptionHandler = exceptionHandler;
+        } else {
+            this.exceptionHandler = new SimpleAsyncUncaughtExceptionHandler();
+        }
+        this.advice = buildAdvice(executor, this.exceptionHandler);
+        this.pointcut = buildPointcut(asyncAnnotationTypes);
+    }
 
 
-	protected Advice buildAdvice(Executor executor, AsyncUncaughtExceptionHandler exceptionHandler) {
-		return new AnnotationAsyncExecutionInterceptor(executor, exceptionHandler);
-	}
+    /**
+     * Specify the default task executor to use for asynchronous methods.
+     */
+    public void setTaskExecutor(Executor executor) {
+        this.advice = buildAdvice(executor, this.exceptionHandler);
+    }
 
-	/**
-	 * Calculate a pointcut for the given async annotation types, if any.
-	 * @param asyncAnnotationTypes the async annotation types to introspect
-	 * @return the applicable Pointcut object, or {@code null} if none
-	 */
-	protected Pointcut buildPointcut(Set<Class<? extends Annotation>> asyncAnnotationTypes) {
-		ComposablePointcut result = null;
-		for (Class<? extends Annotation> asyncAnnotationType : asyncAnnotationTypes) {
-			Pointcut cpc = new AnnotationMatchingPointcut(asyncAnnotationType, true);
-			Pointcut mpc = AnnotationMatchingPointcut.forMethodAnnotation(asyncAnnotationType);
-			if (result == null) {
-				result = new ComposablePointcut(cpc);
-			}
-			else {
-				result.union(cpc);
-			}
-			result = result.union(mpc);
-		}
-		return result;
-	}
+    /**
+     * Set the 'async' annotation type.
+     * <p>The default async annotation type is the {@link Async} annotation, as well
+     * as the EJB 3.1 {@code javax.ejb.Asynchronous} annotation (if present).
+     * <p>This setter property exists so that developers can provide their own
+     * (non-Spring-specific) annotation type to indicate that a method is to
+     * be executed asynchronously.
+     * @param asyncAnnotationType the desired annotation type
+     */
+    public void setAsyncAnnotationType(Class<? extends Annotation> asyncAnnotationType) {
+        Assert.notNull(asyncAnnotationType, "'asyncAnnotationType' must not be null");
+        Set<Class<? extends Annotation>> asyncAnnotationTypes = new HashSet<Class<? extends Annotation>>();
+        asyncAnnotationTypes.add(asyncAnnotationType);
+        this.pointcut = buildPointcut(asyncAnnotationTypes);
+    }
+
+    /**
+     * Set the {@code BeanFactory} to be used when looking up executors by qualifier.
+     */
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        if (this.advice instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) this.advice).setBeanFactory(beanFactory);
+        }
+    }
+
+
+    @Override
+    public Advice getAdvice() {
+        return this.advice;
+    }
+
+    @Override
+    public Pointcut getPointcut() {
+        return this.pointcut;
+    }
+
+
+    protected Advice buildAdvice(Executor executor, AsyncUncaughtExceptionHandler exceptionHandler) {
+        return new AnnotationAsyncExecutionInterceptor(executor, exceptionHandler);
+    }
+
+    /**
+     * Calculate a pointcut for the given async annotation types, if any.
+     * @param asyncAnnotationTypes the async annotation types to introspect
+     * @return the applicable Pointcut object, or {@code null} if none
+     */
+    protected Pointcut buildPointcut(Set<Class<? extends Annotation>> asyncAnnotationTypes) {
+        ComposablePointcut result = null;
+        for (Class<? extends Annotation> asyncAnnotationType : asyncAnnotationTypes) {
+            Pointcut cpc = new AnnotationMatchingPointcut(asyncAnnotationType, true);
+            Pointcut mpc = AnnotationMatchingPointcut.forMethodAnnotation(asyncAnnotationType);
+            if (result == null) {
+                result = new ComposablePointcut(cpc);
+            } else {
+                result.union(cpc);
+            }
+            result = result.union(mpc);
+        }
+        return result;
+    }
 
 }

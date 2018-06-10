@@ -65,11 +65,11 @@ import org.springframework.core.Ordered;
 @Documented
 public @interface Order {
 
-	/**
-	 * The order value.
-	 * <p>Default is {@link Ordered#LOWEST_PRECEDENCE}.
-	 * @see Ordered#getOrder()
-	 */
-	int value() default Ordered.LOWEST_PRECEDENCE;
+    /**
+     * The order value.
+     * <p>Default is {@link Ordered#LOWEST_PRECEDENCE}.
+     * @see Ordered#getOrder()
+     */
+    int value() default Ordered.LOWEST_PRECEDENCE;
 
 }

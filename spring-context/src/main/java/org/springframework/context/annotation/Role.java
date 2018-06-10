@@ -51,12 +51,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 @Documented
 public @interface Role {
 
-	/**
-	 * Set the role hint for the associated bean.
-	 * @see BeanDefinition#ROLE_APPLICATION
-	 * @see BeanDefinition#ROLE_INFRASTRUCTURE
-	 * @see BeanDefinition#ROLE_SUPPORT
-	 */
-	int value();
+    /**
+     * Set the role hint for the associated bean.
+     * @see BeanDefinition#ROLE_APPLICATION
+     * @see BeanDefinition#ROLE_INFRASTRUCTURE
+     * @see BeanDefinition#ROLE_SUPPORT
+     */
+    int value();
 
 }

@@ -30,21 +30,21 @@ import org.springframework.web.servlet.LocaleResolver;
  */
 public abstract class AbstractLocaleResolver implements LocaleResolver {
 
-	private Locale defaultLocale;
+    private Locale defaultLocale;
 
 
-	/**
-	 * Set a default Locale that this resolver will return if no other locale found.
-	 */
-	public void setDefaultLocale(Locale defaultLocale) {
-		this.defaultLocale = defaultLocale;
-	}
+    /**
+     * Set a default Locale that this resolver will return if no other locale found.
+     */
+    public void setDefaultLocale(Locale defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
 
-	/**
-	 * Return the default Locale that this resolver is supposed to fall back to, if any.
-	 */
-	protected Locale getDefaultLocale() {
-		return this.defaultLocale;
-	}
+    /**
+     * Return the default Locale that this resolver is supposed to fall back to, if any.
+     */
+    protected Locale getDefaultLocale() {
+        return this.defaultLocale;
+    }
 
 }

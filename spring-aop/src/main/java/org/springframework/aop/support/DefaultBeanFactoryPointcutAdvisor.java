@@ -35,27 +35,27 @@ import org.springframework.aop.Pointcut;
 @SuppressWarnings("serial")
 public class DefaultBeanFactoryPointcutAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 
-	private Pointcut pointcut = Pointcut.TRUE;
+    private Pointcut pointcut = Pointcut.TRUE;
 
 
-	/**
-	 * Specify the pointcut targeting the advice.
-	 * <p>Default is {@code Pointcut.TRUE}.
-	 * @see #setAdviceBeanName
-	 */
-	public void setPointcut(Pointcut pointcut) {
-		this.pointcut = (pointcut != null ? pointcut : Pointcut.TRUE);
-	}
+    /**
+     * Specify the pointcut targeting the advice.
+     * <p>Default is {@code Pointcut.TRUE}.
+     * @see #setAdviceBeanName
+     */
+    public void setPointcut(Pointcut pointcut) {
+        this.pointcut = (pointcut != null ? pointcut : Pointcut.TRUE);
+    }
 
-	@Override
-	public Pointcut getPointcut() {
-		return this.pointcut;
-	}
+    @Override
+    public Pointcut getPointcut() {
+        return this.pointcut;
+    }
 
 
-	@Override
-	public String toString() {
-		return getClass().getName() + ": pointcut [" + getPointcut() + "]; advice bean '" + getAdviceBeanName() + "'";
-	}
+    @Override
+    public String toString() {
+        return getClass().getName() + ": pointcut [" + getPointcut() + "]; advice bean '" + getAdviceBeanName() + "'";
+    }
 
 }

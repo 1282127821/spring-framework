@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
@@ -43,68 +44,67 @@ import org.springframework.web.util.JavaScriptUtils;
 @SuppressWarnings("serial")
 public class EscapeBodyTag extends HtmlEscapingAwareTag implements BodyTag {
 
-	private boolean javaScriptEscape = false;
+    private boolean javaScriptEscape = false;
 
-	private BodyContent bodyContent;
-
-
-	/**
-	 * Set JavaScript escaping for this tag, as boolean value.
-	 * Default is "false".
-	 */
-	public void setJavaScriptEscape(boolean javaScriptEscape) throws JspException {
-		this.javaScriptEscape = javaScriptEscape;
-	}
+    private BodyContent bodyContent;
 
 
-	@Override
-	protected int doStartTagInternal() {
-		// do nothing
-		return EVAL_BODY_BUFFERED;
-	}
+    /**
+     * Set JavaScript escaping for this tag, as boolean value.
+     * Default is "false".
+     */
+    public void setJavaScriptEscape(boolean javaScriptEscape) throws JspException {
+        this.javaScriptEscape = javaScriptEscape;
+    }
 
-	@Override
-	public void doInitBody() {
-		// do nothing
-	}
 
-	@Override
-	public void setBodyContent(BodyContent bodyContent) {
-		this.bodyContent = bodyContent;
-	}
+    @Override
+    protected int doStartTagInternal() {
+        // do nothing
+        return EVAL_BODY_BUFFERED;
+    }
 
-	@Override
-	public int doAfterBody() throws JspException {
-		try {
-			String content = readBodyContent();
-			// HTML and/or JavaScript escape, if demanded
-			content = htmlEscape(content);
-			content = (this.javaScriptEscape ? JavaScriptUtils.javaScriptEscape(content) : content);
-			writeBodyContent(content);
-		}
-		catch (IOException ex) {
-			throw new JspException("Could not write escaped body", ex);
-		}
-		return (SKIP_BODY);
-	}
+    @Override
+    public void doInitBody() {
+        // do nothing
+    }
 
-	/**
-	 * Read the unescaped body content from the page.
-	 * @return the original content
-	 * @throws IOException if reading failed
-	 */
-	protected String readBodyContent() throws IOException {
-		return this.bodyContent.getString();
-	}
+    @Override
+    public void setBodyContent(BodyContent bodyContent) {
+        this.bodyContent = bodyContent;
+    }
 
-	/**
-	 * Write the escaped body content to the page.
-	 * <p>Can be overridden in subclasses, e.g. for testing purposes.
-	 * @param content the content to write
-	 * @throws IOException if writing failed
-	 */
-	protected void writeBodyContent(String content) throws IOException {
-		this.bodyContent.getEnclosingWriter().print(content);
-	}
+    @Override
+    public int doAfterBody() throws JspException {
+        try {
+            String content = readBodyContent();
+            // HTML and/or JavaScript escape, if demanded
+            content = htmlEscape(content);
+            content = (this.javaScriptEscape ? JavaScriptUtils.javaScriptEscape(content) : content);
+            writeBodyContent(content);
+        } catch (IOException ex) {
+            throw new JspException("Could not write escaped body", ex);
+        }
+        return (SKIP_BODY);
+    }
+
+    /**
+     * Read the unescaped body content from the page.
+     * @return the original content
+     * @throws IOException if reading failed
+     */
+    protected String readBodyContent() throws IOException {
+        return this.bodyContent.getString();
+    }
+
+    /**
+     * Write the escaped body content to the page.
+     * <p>Can be overridden in subclasses, e.g. for testing purposes.
+     * @param content the content to write
+     * @throws IOException if writing failed
+     */
+    protected void writeBodyContent(String content) throws IOException {
+        this.bodyContent.getEnclosingWriter().print(content);
+    }
 
 }

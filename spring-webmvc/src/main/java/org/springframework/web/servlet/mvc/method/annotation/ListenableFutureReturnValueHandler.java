@@ -37,39 +37,40 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Deprecated
 public class ListenableFutureReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return ListenableFuture.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return ListenableFuture.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		return (returnValue != null && returnValue instanceof ListenableFuture);
-	}
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        return (returnValue != null && returnValue instanceof ListenableFuture);
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		final DeferredResult<Object> deferredResult = new DeferredResult<Object>();
-		WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
+        final DeferredResult<Object> deferredResult = new DeferredResult<Object>();
+        WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
 
-		ListenableFuture<?> future = (ListenableFuture<?>) returnValue;
-		future.addCallback(new ListenableFutureCallback<Object>() {
-			@Override
-			public void onSuccess(Object result) {
-				deferredResult.setResult(result);
-			}
-			@Override
-			public void onFailure(Throwable ex) {
-				deferredResult.setErrorResult(ex);
-			}
-		});
-	}
+        ListenableFuture<?> future = (ListenableFuture<?>) returnValue;
+        future.addCallback(new ListenableFutureCallback<Object>() {
+            @Override
+            public void onSuccess(Object result) {
+                deferredResult.setResult(result);
+            }
+
+            @Override
+            public void onFailure(Throwable ex) {
+                deferredResult.setErrorResult(ex);
+            }
+        });
+    }
 
 }

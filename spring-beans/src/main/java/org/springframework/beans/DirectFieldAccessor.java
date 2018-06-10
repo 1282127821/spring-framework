@@ -46,104 +46,102 @@ import org.springframework.util.ReflectionUtils;
  */
 public class DirectFieldAccessor extends AbstractNestablePropertyAccessor {
 
-	private final Map<String, FieldPropertyHandler> fieldMap = new HashMap<String, FieldPropertyHandler>();
+    private final Map<String, FieldPropertyHandler> fieldMap = new HashMap<String, FieldPropertyHandler>();
 
 
-	/**
-	 * Create a new DirectFieldAccessor for the given object.
-	 * @param object object wrapped by this DirectFieldAccessor
-	 */
-	public DirectFieldAccessor(Object object) {
-		super(object);
-	}
+    /**
+     * Create a new DirectFieldAccessor for the given object.
+     * @param object object wrapped by this DirectFieldAccessor
+     */
+    public DirectFieldAccessor(Object object) {
+        super(object);
+    }
 
-	/**
-	 * Create a new DirectFieldAccessor for the given object,
-	 * registering a nested path that the object is in.
-	 * @param object object wrapped by this DirectFieldAccessor
-	 * @param nestedPath the nested path of the object
-	 * @param parent the containing DirectFieldAccessor (must not be {@code null})
-	 */
-	protected DirectFieldAccessor(Object object, String nestedPath, DirectFieldAccessor parent) {
-		super(object, nestedPath, parent);
-	}
-
-
-	@Override
-	protected FieldPropertyHandler getLocalPropertyHandler(String propertyName) {
-		FieldPropertyHandler propertyHandler = this.fieldMap.get(propertyName);
-		if (propertyHandler == null) {
-			Field field = ReflectionUtils.findField(getWrappedClass(), propertyName);
-			if (field != null) {
-				propertyHandler = new FieldPropertyHandler(field);
-			}
-			this.fieldMap.put(propertyName, propertyHandler);
-		}
-		return propertyHandler;
-	}
-
-	@Override
-	protected DirectFieldAccessor newNestedPropertyAccessor(Object object, String nestedPath) {
-		return new DirectFieldAccessor(object, nestedPath, this);
-	}
-
-	@Override
-	protected NotWritablePropertyException createNotWritablePropertyException(String propertyName) {
-		PropertyMatches matches = PropertyMatches.forField(propertyName, getRootClass());
-		throw new NotWritablePropertyException(
-				getRootClass(), getNestedPath() + propertyName,
-				matches.buildErrorMessage(), matches.getPossibleMatches());
-	}
+    /**
+     * Create a new DirectFieldAccessor for the given object,
+     * registering a nested path that the object is in.
+     * @param object object wrapped by this DirectFieldAccessor
+     * @param nestedPath the nested path of the object
+     * @param parent the containing DirectFieldAccessor (must not be {@code null})
+     */
+    protected DirectFieldAccessor(Object object, String nestedPath, DirectFieldAccessor parent) {
+        super(object, nestedPath, parent);
+    }
 
 
-	private class FieldPropertyHandler extends PropertyHandler {
+    @Override
+    protected FieldPropertyHandler getLocalPropertyHandler(String propertyName) {
+        FieldPropertyHandler propertyHandler = this.fieldMap.get(propertyName);
+        if (propertyHandler == null) {
+            Field field = ReflectionUtils.findField(getWrappedClass(), propertyName);
+            if (field != null) {
+                propertyHandler = new FieldPropertyHandler(field);
+            }
+            this.fieldMap.put(propertyName, propertyHandler);
+        }
+        return propertyHandler;
+    }
 
-		private final Field field;
+    @Override
+    protected DirectFieldAccessor newNestedPropertyAccessor(Object object, String nestedPath) {
+        return new DirectFieldAccessor(object, nestedPath, this);
+    }
 
-		public FieldPropertyHandler(Field field) {
-			super(field.getType(), true, true);
-			this.field = field;
-		}
+    @Override
+    protected NotWritablePropertyException createNotWritablePropertyException(String propertyName) {
+        PropertyMatches matches = PropertyMatches.forField(propertyName, getRootClass());
+        throw new NotWritablePropertyException(getRootClass(), getNestedPath() + propertyName,
+                matches.buildErrorMessage(), matches.getPossibleMatches());
+    }
 
-		@Override
-		public TypeDescriptor toTypeDescriptor() {
-			return new TypeDescriptor(this.field);
-		}
 
-		@Override
-		public ResolvableType getResolvableType() {
-			return ResolvableType.forField(this.field);
-		}
+    private class FieldPropertyHandler extends PropertyHandler {
 
-		@Override
-		public TypeDescriptor nested(int level) {
-			return TypeDescriptor.nested(this.field, level);
-		}
+        private final Field field;
 
-		@Override
-		public Object getValue() throws Exception {
-			try {
-				ReflectionUtils.makeAccessible(this.field);
-				return this.field.get(getWrappedInstance());
-			}
+        public FieldPropertyHandler(Field field) {
+            super(field.getType(), true, true);
+            this.field = field;
+        }
 
-			catch (IllegalAccessException ex) {
-				throw new InvalidPropertyException(getWrappedClass(),
-						this.field.getName(), "Field is not accessible", ex);
-			}
-		}
+        @Override
+        public TypeDescriptor toTypeDescriptor() {
+            return new TypeDescriptor(this.field);
+        }
 
-		@Override
-		public void setValue(Object object, Object value) throws Exception {
-			try {
-				ReflectionUtils.makeAccessible(this.field);
-				this.field.set(object, value);
-			}
-			catch (IllegalAccessException ex) {
-				throw new InvalidPropertyException(getWrappedClass(), this.field.getName(),
-						"Field is not accessible", ex);
-			}
-		}
-	}
+        @Override
+        public ResolvableType getResolvableType() {
+            return ResolvableType.forField(this.field);
+        }
+
+        @Override
+        public TypeDescriptor nested(int level) {
+            return TypeDescriptor.nested(this.field, level);
+        }
+
+        @Override
+        public Object getValue() throws Exception {
+            try {
+                ReflectionUtils.makeAccessible(this.field);
+                return this.field.get(getWrappedInstance());
+            }
+
+            catch (IllegalAccessException ex) {
+                throw new InvalidPropertyException(getWrappedClass(), this.field.getName(), "Field is not accessible",
+                        ex);
+            }
+        }
+
+        @Override
+        public void setValue(Object object, Object value) throws Exception {
+            try {
+                ReflectionUtils.makeAccessible(this.field);
+                this.field.set(object, value);
+            } catch (IllegalAccessException ex) {
+                throw new InvalidPropertyException(getWrappedClass(), this.field.getName(), "Field is not accessible",
+                        ex);
+            }
+        }
+    }
 
 }

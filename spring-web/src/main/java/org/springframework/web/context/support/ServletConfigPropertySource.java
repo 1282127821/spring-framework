@@ -31,18 +31,18 @@ import org.springframework.util.StringUtils;
  */
 public class ServletConfigPropertySource extends EnumerablePropertySource<ServletConfig> {
 
-	public ServletConfigPropertySource(String name, ServletConfig servletConfig) {
-		super(name, servletConfig);
-	}
+    public ServletConfigPropertySource(String name, ServletConfig servletConfig) {
+        super(name, servletConfig);
+    }
 
-	@Override
-	public String[] getPropertyNames() {
-		return StringUtils.toStringArray(this.source.getInitParameterNames());
-	}
+    @Override
+    public String[] getPropertyNames() {
+        return StringUtils.toStringArray(this.source.getInitParameterNames());
+    }
 
-	@Override
-	public String getProperty(String name) {
-		return this.source.getInitParameter(name);
-	}
+    @Override
+    public String getProperty(String name) {
+        return this.source.getInitParameter(name);
+    }
 
 }

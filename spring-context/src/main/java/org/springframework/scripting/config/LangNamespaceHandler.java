@@ -39,17 +39,17 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class LangNamespaceHandler extends NamespaceHandlerSupport {
 
-	@Override
-	public void init() {
-		registerScriptBeanDefinitionParser("groovy", "org.springframework.scripting.groovy.GroovyScriptFactory");
-		registerScriptBeanDefinitionParser("jruby", "org.springframework.scripting.jruby.JRubyScriptFactory");
-		registerScriptBeanDefinitionParser("bsh", "org.springframework.scripting.bsh.BshScriptFactory");
-		registerScriptBeanDefinitionParser("std", "org.springframework.scripting.support.StandardScriptFactory");
-		registerBeanDefinitionParser("defaults", new ScriptingDefaultsParser());
-	}
+    @Override
+    public void init() {
+        registerScriptBeanDefinitionParser("groovy", "org.springframework.scripting.groovy.GroovyScriptFactory");
+        registerScriptBeanDefinitionParser("jruby", "org.springframework.scripting.jruby.JRubyScriptFactory");
+        registerScriptBeanDefinitionParser("bsh", "org.springframework.scripting.bsh.BshScriptFactory");
+        registerScriptBeanDefinitionParser("std", "org.springframework.scripting.support.StandardScriptFactory");
+        registerBeanDefinitionParser("defaults", new ScriptingDefaultsParser());
+    }
 
-	private void registerScriptBeanDefinitionParser(String key, String scriptFactoryClassName) {
-		registerBeanDefinitionParser(key, new ScriptBeanDefinitionParser(scriptFactoryClassName));
-	}
+    private void registerScriptBeanDefinitionParser(String key, String scriptFactoryClassName) {
+        registerBeanDefinitionParser(key, new ScriptBeanDefinitionParser(scriptFactoryClassName));
+    }
 
 }

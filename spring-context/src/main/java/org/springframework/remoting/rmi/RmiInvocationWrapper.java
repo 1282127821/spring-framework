@@ -35,43 +35,43 @@ import org.springframework.util.Assert;
  */
 class RmiInvocationWrapper implements RmiInvocationHandler {
 
-	private final Object wrappedObject;
+    private final Object wrappedObject;
 
-	private final RmiBasedExporter rmiExporter;
-
-
-	/**
-	 * Create a new RmiInvocationWrapper for the given object
-	 * @param wrappedObject the object to wrap with an RmiInvocationHandler
-	 * @param rmiExporter the RMI exporter to handle the actual invocation
-	 */
-	public RmiInvocationWrapper(Object wrappedObject, RmiBasedExporter rmiExporter) {
-		Assert.notNull(wrappedObject, "Object to wrap is required");
-		Assert.notNull(rmiExporter, "RMI exporter is required");
-		this.wrappedObject = wrappedObject;
-		this.rmiExporter = rmiExporter;
-	}
+    private final RmiBasedExporter rmiExporter;
 
 
-	/**
-	 * Exposes the exporter's service interface, if any, as target interface.
-	 * @see RmiBasedExporter#getServiceInterface()
-	 */
-	@Override
-	public String getTargetInterfaceName() {
-		Class<?> ifc = this.rmiExporter.getServiceInterface();
-		return (ifc != null ? ifc.getName() : null);
-	}
+    /**
+     * Create a new RmiInvocationWrapper for the given object
+     * @param wrappedObject the object to wrap with an RmiInvocationHandler
+     * @param rmiExporter the RMI exporter to handle the actual invocation
+     */
+    public RmiInvocationWrapper(Object wrappedObject, RmiBasedExporter rmiExporter) {
+        Assert.notNull(wrappedObject, "Object to wrap is required");
+        Assert.notNull(rmiExporter, "RMI exporter is required");
+        this.wrappedObject = wrappedObject;
+        this.rmiExporter = rmiExporter;
+    }
 
-	/**
-	 * Delegates the actual invocation handling to the RMI exporter.
-	 * @see RmiBasedExporter#invoke(org.springframework.remoting.support.RemoteInvocation, Object)
-	 */
-	@Override
-	public Object invoke(RemoteInvocation invocation)
-		throws RemoteException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
-		return this.rmiExporter.invoke(invocation, this.wrappedObject);
-	}
+    /**
+     * Exposes the exporter's service interface, if any, as target interface.
+     * @see RmiBasedExporter#getServiceInterface()
+     */
+    @Override
+    public String getTargetInterfaceName() {
+        Class<?> ifc = this.rmiExporter.getServiceInterface();
+        return (ifc != null ? ifc.getName() : null);
+    }
+
+    /**
+     * Delegates the actual invocation handling to the RMI exporter.
+     * @see RmiBasedExporter#invoke(org.springframework.remoting.support.RemoteInvocation, Object)
+     */
+    @Override
+    public Object invoke(RemoteInvocation invocation)
+            throws RemoteException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+        return this.rmiExporter.invoke(invocation, this.wrappedObject);
+    }
 
 }

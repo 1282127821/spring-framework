@@ -41,50 +41,49 @@ import org.springframework.util.ClassUtils;
  */
 public class JBossLoadTimeWeaver implements LoadTimeWeaver {
 
-	private final JBossClassLoaderAdapter adapter;
+    private final JBossClassLoaderAdapter adapter;
 
 
-	/**
-	 * Create a new instance of the {@link JBossLoadTimeWeaver} class using
-	 * the default {@link ClassLoader class loader}.
-	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
-	 */
-	public JBossLoadTimeWeaver() {
-		this(ClassUtils.getDefaultClassLoader());
-	}
+    /**
+     * Create a new instance of the {@link JBossLoadTimeWeaver} class using
+     * the default {@link ClassLoader class loader}.
+     * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
+     */
+    public JBossLoadTimeWeaver() {
+        this(ClassUtils.getDefaultClassLoader());
+    }
 
-	/**
-	 * Create a new instance of the {@link JBossLoadTimeWeaver} class using
-	 * the supplied {@link ClassLoader}.
-	 * @param classLoader the {@code ClassLoader} to delegate to for weaving
-	 * (must not be {@code null})
-	 */
-	public JBossLoadTimeWeaver(ClassLoader classLoader) {
-		Assert.notNull(classLoader, "ClassLoader must not be null");
-		if (classLoader.getClass().getName().startsWith("org.jboss.modules")) {
-			// JBoss AS 7 or WildFly
-			this.adapter = new JBossModulesAdapter(classLoader);
-		}
-		else {
-			// JBoss AS 6
-			this.adapter = new JBossMCAdapter(classLoader);
-		}
-	}
+    /**
+     * Create a new instance of the {@link JBossLoadTimeWeaver} class using
+     * the supplied {@link ClassLoader}.
+     * @param classLoader the {@code ClassLoader} to delegate to for weaving
+     * (must not be {@code null})
+     */
+    public JBossLoadTimeWeaver(ClassLoader classLoader) {
+        Assert.notNull(classLoader, "ClassLoader must not be null");
+        if (classLoader.getClass().getName().startsWith("org.jboss.modules")) {
+            // JBoss AS 7 or WildFly
+            this.adapter = new JBossModulesAdapter(classLoader);
+        } else {
+            // JBoss AS 6
+            this.adapter = new JBossMCAdapter(classLoader);
+        }
+    }
 
 
-	@Override
-	public void addTransformer(ClassFileTransformer transformer) {
-		this.adapter.addTransformer(transformer);
-	}
+    @Override
+    public void addTransformer(ClassFileTransformer transformer) {
+        this.adapter.addTransformer(transformer);
+    }
 
-	@Override
-	public ClassLoader getInstrumentableClassLoader() {
-		return this.adapter.getInstrumentableClassLoader();
-	}
+    @Override
+    public ClassLoader getInstrumentableClassLoader() {
+        return this.adapter.getInstrumentableClassLoader();
+    }
 
-	@Override
-	public ClassLoader getThrowawayClassLoader() {
-		return new SimpleThrowawayClassLoader(getInstrumentableClassLoader());
-	}
+    @Override
+    public ClassLoader getThrowawayClassLoader() {
+        return new SimpleThrowawayClassLoader(getInstrumentableClassLoader());
+    }
 
 }

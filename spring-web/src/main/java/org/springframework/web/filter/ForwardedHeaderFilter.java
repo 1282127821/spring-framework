@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -63,273 +64,270 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public class ForwardedHeaderFilter extends OncePerRequestFilter {
 
-	private static final Set<String> FORWARDED_HEADER_NAMES =
-			Collections.newSetFromMap(new LinkedCaseInsensitiveMap<Boolean>(5, Locale.ENGLISH));
+    private static final Set<String> FORWARDED_HEADER_NAMES =
+            Collections.newSetFromMap(new LinkedCaseInsensitiveMap<Boolean>(5, Locale.ENGLISH));
 
-	static {
-		FORWARDED_HEADER_NAMES.add("Forwarded");
-		FORWARDED_HEADER_NAMES.add("X-Forwarded-Host");
-		FORWARDED_HEADER_NAMES.add("X-Forwarded-Port");
-		FORWARDED_HEADER_NAMES.add("X-Forwarded-Proto");
-		FORWARDED_HEADER_NAMES.add("X-Forwarded-Prefix");
-	}
-
-
-	private final UrlPathHelper pathHelper;
-
-	private boolean removeOnly;
-
-	private boolean relativeRedirects;
+    static {
+        FORWARDED_HEADER_NAMES.add("Forwarded");
+        FORWARDED_HEADER_NAMES.add("X-Forwarded-Host");
+        FORWARDED_HEADER_NAMES.add("X-Forwarded-Port");
+        FORWARDED_HEADER_NAMES.add("X-Forwarded-Proto");
+        FORWARDED_HEADER_NAMES.add("X-Forwarded-Prefix");
+    }
 
 
-	public ForwardedHeaderFilter() {
-		this.pathHelper = new UrlPathHelper();
-		this.pathHelper.setUrlDecode(false);
-		this.pathHelper.setRemoveSemicolonContent(false);
-	}
+    private final UrlPathHelper pathHelper;
+
+    private boolean removeOnly;
+
+    private boolean relativeRedirects;
 
 
-	/**
-	 * Enables mode in which any "Forwarded" or "X-Forwarded-*" headers are
-	 * removed only and the information in them ignored.
-	 * @param removeOnly whether to discard and ignore forwarded headers
-	 * @since 4.3.9
-	 */
-	public void setRemoveOnly(boolean removeOnly) {
-		this.removeOnly = removeOnly;
-	}
-
-	/**
-	 * Use this property to enable relative redirects as explained in and also
-	 * using the same response wrapper as {@link RelativeRedirectFilter} does.
-	 * Or if both filters are used, only one will wrap the response.
-	 * <p>By default, if this property is set to false, in which case calls to
-	 * {@link HttpServletResponse#sendRedirect(String)} are overridden in order
-	 * to turn relative into absolute URLs since (which Servlet containers are
-	 * also required to do) also taking forwarded headers into consideration.
-	 * @param relativeRedirects whether to use relative redirects
-	 * @since 4.3.10
-	 */
-	public void setRelativeRedirects(boolean relativeRedirects) {
-		this.relativeRedirects = relativeRedirects;
-	}
+    public ForwardedHeaderFilter() {
+        this.pathHelper = new UrlPathHelper();
+        this.pathHelper.setUrlDecode(false);
+        this.pathHelper.setRemoveSemicolonContent(false);
+    }
 
 
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		Enumeration<String> names = request.getHeaderNames();
-		while (names.hasMoreElements()) {
-			String name = names.nextElement();
-			if (FORWARDED_HEADER_NAMES.contains(name)) {
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * Enables mode in which any "Forwarded" or "X-Forwarded-*" headers are
+     * removed only and the information in them ignored.
+     * @param removeOnly whether to discard and ignore forwarded headers
+     * @since 4.3.9
+     */
+    public void setRemoveOnly(boolean removeOnly) {
+        this.removeOnly = removeOnly;
+    }
 
-	@Override
-	protected boolean shouldNotFilterAsyncDispatch() {
-		return false;
-	}
-
-	@Override
-	protected boolean shouldNotFilterErrorDispatch() {
-		return false;
-	}
-
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
-
-		if (this.removeOnly) {
-			ForwardedHeaderRemovingRequest theRequest = new ForwardedHeaderRemovingRequest(request);
-			filterChain.doFilter(theRequest, response);
-		}
-		else {
-			HttpServletRequest theRequest = new ForwardedHeaderExtractingRequest(request, this.pathHelper);
-			HttpServletResponse theResponse = (this.relativeRedirects ?
-					RelativeRedirectResponseWrapper.wrapIfNecessary(response, HttpStatus.SEE_OTHER) :
-					new ForwardedHeaderExtractingResponse(response, theRequest));
-			filterChain.doFilter(theRequest, theResponse);
-		}
-	}
+    /**
+     * Use this property to enable relative redirects as explained in and also
+     * using the same response wrapper as {@link RelativeRedirectFilter} does.
+     * Or if both filters are used, only one will wrap the response.
+     * <p>By default, if this property is set to false, in which case calls to
+     * {@link HttpServletResponse#sendRedirect(String)} are overridden in order
+     * to turn relative into absolute URLs since (which Servlet containers are
+     * also required to do) also taking forwarded headers into consideration.
+     * @param relativeRedirects whether to use relative redirects
+     * @since 4.3.10
+     */
+    public void setRelativeRedirects(boolean relativeRedirects) {
+        this.relativeRedirects = relativeRedirects;
+    }
 
 
-	/**
-	 * Hide "Forwarded" or "X-Forwarded-*" headers.
-	 */
-	private static class ForwardedHeaderRemovingRequest extends HttpServletRequestWrapper {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        Enumeration<String> names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            if (FORWARDED_HEADER_NAMES.contains(name)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-		private final Map<String, List<String>> headers;
+    @Override
+    protected boolean shouldNotFilterAsyncDispatch() {
+        return false;
+    }
 
-		public ForwardedHeaderRemovingRequest(HttpServletRequest request) {
-			super(request);
-			this.headers = initHeaders(request);
-		}
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false;
+    }
 
-		private static Map<String, List<String>> initHeaders(HttpServletRequest request) {
-			Map<String, List<String>> headers = new LinkedCaseInsensitiveMap<List<String>>(Locale.ENGLISH);
-			Enumeration<String> names = request.getHeaderNames();
-			while (names.hasMoreElements()) {
-				String name = names.nextElement();
-				if (!FORWARDED_HEADER_NAMES.contains(name)) {
-					headers.put(name, Collections.list(request.getHeaders(name)));
-				}
-			}
-			return headers;
-		}
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-		// Override header accessors to not expose forwarded headers
-
-		@Override
-		public String getHeader(String name) {
-			List<String> value = this.headers.get(name);
-			return (CollectionUtils.isEmpty(value) ? null : value.get(0));
-		}
-
-		@Override
-		public Enumeration<String> getHeaders(String name) {
-			List<String> value = this.headers.get(name);
-			return (Collections.enumeration(value != null ? value : Collections.<String>emptySet()));
-		}
-
-		@Override
-		public Enumeration<String> getHeaderNames() {
-			return Collections.enumeration(this.headers.keySet());
-		}
-	}
+        if (this.removeOnly) {
+            ForwardedHeaderRemovingRequest theRequest = new ForwardedHeaderRemovingRequest(request);
+            filterChain.doFilter(theRequest, response);
+        } else {
+            HttpServletRequest theRequest = new ForwardedHeaderExtractingRequest(request, this.pathHelper);
+            HttpServletResponse theResponse = (this.relativeRedirects
+                    ? RelativeRedirectResponseWrapper.wrapIfNecessary(response, HttpStatus.SEE_OTHER)
+                    : new ForwardedHeaderExtractingResponse(response, theRequest));
+            filterChain.doFilter(theRequest, theResponse);
+        }
+    }
 
 
-	/**
-	 * Extract and use "Forwarded" or "X-Forwarded-*" headers.
-	 */
-	private static class ForwardedHeaderExtractingRequest extends ForwardedHeaderRemovingRequest {
+    /**
+     * Hide "Forwarded" or "X-Forwarded-*" headers.
+     */
+    private static class ForwardedHeaderRemovingRequest extends HttpServletRequestWrapper {
 
-		private final String scheme;
+        private final Map<String, List<String>> headers;
 
-		private final boolean secure;
+        public ForwardedHeaderRemovingRequest(HttpServletRequest request) {
+            super(request);
+            this.headers = initHeaders(request);
+        }
 
-		private final String host;
+        private static Map<String, List<String>> initHeaders(HttpServletRequest request) {
+            Map<String, List<String>> headers = new LinkedCaseInsensitiveMap<List<String>>(Locale.ENGLISH);
+            Enumeration<String> names = request.getHeaderNames();
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                if (!FORWARDED_HEADER_NAMES.contains(name)) {
+                    headers.put(name, Collections.list(request.getHeaders(name)));
+                }
+            }
+            return headers;
+        }
 
-		private final int port;
+        // Override header accessors to not expose forwarded headers
 
-		private final String contextPath;
+        @Override
+        public String getHeader(String name) {
+            List<String> value = this.headers.get(name);
+            return (CollectionUtils.isEmpty(value) ? null : value.get(0));
+        }
 
-		private final String requestUri;
+        @Override
+        public Enumeration<String> getHeaders(String name) {
+            List<String> value = this.headers.get(name);
+            return (Collections.enumeration(value != null ? value : Collections.<String>emptySet()));
+        }
 
-		private final String requestUrl;
-
-		public ForwardedHeaderExtractingRequest(HttpServletRequest request, UrlPathHelper pathHelper) {
-			super(request);
-
-			HttpRequest httpRequest = new ServletServerHttpRequest(request);
-			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(httpRequest).build();
-			int port = uriComponents.getPort();
-
-			this.scheme = uriComponents.getScheme();
-			this.secure = "https".equals(scheme);
-			this.host = uriComponents.getHost();
-			this.port = (port == -1 ? (this.secure ? 443 : 80) : port);
-
-			String prefix = getForwardedPrefix(request);
-			this.contextPath = (prefix != null ? prefix : request.getContextPath());
-			this.requestUri = this.contextPath + pathHelper.getPathWithinApplication(request);
-			this.requestUrl = this.scheme + "://" + this.host + (port == -1 ? "" : ":" + port) + this.requestUri;
-		}
-
-		private static String getForwardedPrefix(HttpServletRequest request) {
-			String prefix = null;
-			Enumeration<String> names = request.getHeaderNames();
-			while (names.hasMoreElements()) {
-				String name = names.nextElement();
-				if ("X-Forwarded-Prefix".equalsIgnoreCase(name)) {
-					prefix = request.getHeader(name);
-				}
-			}
-			if (prefix != null) {
-				while (prefix.endsWith("/")) {
-					prefix = prefix.substring(0, prefix.length() - 1);
-				}
-			}
-			return prefix;
-		}
-
-		@Override
-		public String getScheme() {
-			return this.scheme;
-		}
-
-		@Override
-		public String getServerName() {
-			return this.host;
-		}
-
-		@Override
-		public int getServerPort() {
-			return this.port;
-		}
-
-		@Override
-		public boolean isSecure() {
-			return this.secure;
-		}
-
-		@Override
-		public String getContextPath() {
-			return this.contextPath;
-		}
-
-		@Override
-		public String getRequestURI() {
-			return this.requestUri;
-		}
-
-		@Override
-		public StringBuffer getRequestURL() {
-			return new StringBuffer(this.requestUrl);
-		}
-	}
+        @Override
+        public Enumeration<String> getHeaderNames() {
+            return Collections.enumeration(this.headers.keySet());
+        }
+    }
 
 
-	private static class ForwardedHeaderExtractingResponse extends HttpServletResponseWrapper {
+    /**
+     * Extract and use "Forwarded" or "X-Forwarded-*" headers.
+     */
+    private static class ForwardedHeaderExtractingRequest extends ForwardedHeaderRemovingRequest {
 
-		private static final String FOLDER_SEPARATOR = "/";
+        private final String scheme;
 
-		private final HttpServletRequest request;
+        private final boolean secure;
 
-		public ForwardedHeaderExtractingResponse(HttpServletResponse response, HttpServletRequest request) {
-			super(response);
-			this.request = request;
-		}
+        private final String host;
 
-		@Override
-		public void sendRedirect(String location) throws IOException {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(location);
+        private final int port;
 
-			// Absolute location
-			if (builder.build().getScheme() != null) {
-				super.sendRedirect(location);
-				return;
-			}
+        private final String contextPath;
 
-			// Network-path reference
-			if (location.startsWith("//")) {
-				String scheme = this.request.getScheme();
-				super.sendRedirect(builder.scheme(scheme).toUriString());
-				return;
-			}
+        private final String requestUri;
 
-			// Relative to Servlet container root or to current request
-			String path = (location.startsWith(FOLDER_SEPARATOR) ? location :
-					StringUtils.applyRelativePath(this.request.getRequestURI(), location));
+        private final String requestUrl;
 
-			String result = UriComponentsBuilder
-					.fromHttpRequest(new ServletServerHttpRequest(this.request))
-					.replacePath(path)
-					.build().normalize().toUriString();
+        public ForwardedHeaderExtractingRequest(HttpServletRequest request, UrlPathHelper pathHelper) {
+            super(request);
 
-			super.sendRedirect(result);
-		}
-	}
+            HttpRequest httpRequest = new ServletServerHttpRequest(request);
+            UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(httpRequest).build();
+            int port = uriComponents.getPort();
+
+            this.scheme = uriComponents.getScheme();
+            this.secure = "https".equals(scheme);
+            this.host = uriComponents.getHost();
+            this.port = (port == -1 ? (this.secure ? 443 : 80) : port);
+
+            String prefix = getForwardedPrefix(request);
+            this.contextPath = (prefix != null ? prefix : request.getContextPath());
+            this.requestUri = this.contextPath + pathHelper.getPathWithinApplication(request);
+            this.requestUrl = this.scheme + "://" + this.host + (port == -1 ? "" : ":" + port) + this.requestUri;
+        }
+
+        private static String getForwardedPrefix(HttpServletRequest request) {
+            String prefix = null;
+            Enumeration<String> names = request.getHeaderNames();
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                if ("X-Forwarded-Prefix".equalsIgnoreCase(name)) {
+                    prefix = request.getHeader(name);
+                }
+            }
+            if (prefix != null) {
+                while (prefix.endsWith("/")) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                }
+            }
+            return prefix;
+        }
+
+        @Override
+        public String getScheme() {
+            return this.scheme;
+        }
+
+        @Override
+        public String getServerName() {
+            return this.host;
+        }
+
+        @Override
+        public int getServerPort() {
+            return this.port;
+        }
+
+        @Override
+        public boolean isSecure() {
+            return this.secure;
+        }
+
+        @Override
+        public String getContextPath() {
+            return this.contextPath;
+        }
+
+        @Override
+        public String getRequestURI() {
+            return this.requestUri;
+        }
+
+        @Override
+        public StringBuffer getRequestURL() {
+            return new StringBuffer(this.requestUrl);
+        }
+    }
+
+
+    private static class ForwardedHeaderExtractingResponse extends HttpServletResponseWrapper {
+
+        private static final String FOLDER_SEPARATOR = "/";
+
+        private final HttpServletRequest request;
+
+        public ForwardedHeaderExtractingResponse(HttpServletResponse response, HttpServletRequest request) {
+            super(response);
+            this.request = request;
+        }
+
+        @Override
+        public void sendRedirect(String location) throws IOException {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(location);
+
+            // Absolute location
+            if (builder.build().getScheme() != null) {
+                super.sendRedirect(location);
+                return;
+            }
+
+            // Network-path reference
+            if (location.startsWith("//")) {
+                String scheme = this.request.getScheme();
+                super.sendRedirect(builder.scheme(scheme).toUriString());
+                return;
+            }
+
+            // Relative to Servlet container root or to current request
+            String path = (location.startsWith(FOLDER_SEPARATOR) ? location
+                    : StringUtils.applyRelativePath(this.request.getRequestURI(), location));
+
+            String result = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(this.request))
+                    .replacePath(path).build().normalize().toUriString();
+
+            super.sendRedirect(result);
+        }
+    }
 
 }

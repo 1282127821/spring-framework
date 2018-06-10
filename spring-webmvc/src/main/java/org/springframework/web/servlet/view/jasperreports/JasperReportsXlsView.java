@@ -33,18 +33,18 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 @SuppressWarnings({"deprecation", "rawtypes"})
 public class JasperReportsXlsView extends AbstractJasperReportsSingleFormatView {
 
-	public JasperReportsXlsView() {
-		setContentType("application/vnd.ms-excel");
-	}
+    public JasperReportsXlsView() {
+        setContentType("application/vnd.ms-excel");
+    }
 
-	@Override
-	protected net.sf.jasperreports.engine.JRExporter createExporter() {
-		return new JRXlsExporter();
-	}
+    @Override
+    protected net.sf.jasperreports.engine.JRExporter createExporter() {
+        return new JRXlsExporter();
+    }
 
-	@Override
-	protected boolean useWriter() {
-		return false;
-	}
+    @Override
+    protected boolean useWriter() {
+        return false;
+    }
 
 }

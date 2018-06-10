@@ -28,54 +28,54 @@ import org.springframework.util.Assert;
  */
 public class AliasDefinition implements BeanMetadataElement {
 
-	private final String beanName;
+    private final String beanName;
 
-	private final String alias;
+    private final String alias;
 
-	private final Object source;
-
-
-	/**
-	 * Create a new AliasDefinition.
-	 * @param beanName the canonical name of the bean
-	 * @param alias the alias registered for the bean
-	 */
-	public AliasDefinition(String beanName, String alias) {
-		this(beanName, alias, null);
-	}
-
-	/**
-	 * Create a new AliasDefinition.
-	 * @param beanName the canonical name of the bean
-	 * @param alias the alias registered for the bean
-	 * @param source the source object (may be {@code null})
-	 */
-	public AliasDefinition(String beanName, String alias, Object source) {
-		Assert.notNull(beanName, "Bean name must not be null");
-		Assert.notNull(alias, "Alias must not be null");
-		this.beanName = beanName;
-		this.alias = alias;
-		this.source = source;
-	}
+    private final Object source;
 
 
-	/**
-	 * Return the canonical name of the bean.
-	 */
-	public final String getBeanName() {
-		return this.beanName;
-	}
+    /**
+     * Create a new AliasDefinition.
+     * @param beanName the canonical name of the bean
+     * @param alias the alias registered for the bean
+     */
+    public AliasDefinition(String beanName, String alias) {
+        this(beanName, alias, null);
+    }
 
-	/**
-	 * Return the alias registered for the bean.
-	 */
-	public final String getAlias() {
-		return this.alias;
-	}
+    /**
+     * Create a new AliasDefinition.
+     * @param beanName the canonical name of the bean
+     * @param alias the alias registered for the bean
+     * @param source the source object (may be {@code null})
+     */
+    public AliasDefinition(String beanName, String alias, Object source) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        Assert.notNull(alias, "Alias must not be null");
+        this.beanName = beanName;
+        this.alias = alias;
+        this.source = source;
+    }
 
-	@Override
-	public final Object getSource() {
-		return this.source;
-	}
+
+    /**
+     * Return the canonical name of the bean.
+     */
+    public final String getBeanName() {
+        return this.beanName;
+    }
+
+    /**
+     * Return the alias registered for the bean.
+     */
+    public final String getAlias() {
+        return this.alias;
+    }
+
+    @Override
+    public final Object getSource() {
+        return this.source;
+    }
 
 }

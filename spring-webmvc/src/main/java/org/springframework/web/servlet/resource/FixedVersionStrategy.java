@@ -33,22 +33,22 @@ import org.springframework.core.io.Resource;
  */
 public class FixedVersionStrategy extends AbstractVersionStrategy {
 
-	private final String version;
+    private final String version;
 
 
-	/**
-	 * Create a new FixedVersionStrategy with the given version string.
-	 * @param version the fixed version string to use
-	 */
-	public FixedVersionStrategy(String version) {
-		super(new PrefixVersionPathStrategy(version));
-		this.version = version;
-	}
+    /**
+     * Create a new FixedVersionStrategy with the given version string.
+     * @param version the fixed version string to use
+     */
+    public FixedVersionStrategy(String version) {
+        super(new PrefixVersionPathStrategy(version));
+        this.version = version;
+    }
 
 
-	@Override
-	public String getResourceVersion(Resource resource) {
-		return this.version;
-	}
+    @Override
+    public String getResourceVersion(Resource resource) {
+        return this.version;
+    }
 
 }

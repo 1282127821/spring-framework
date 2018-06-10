@@ -43,107 +43,108 @@ import org.springframework.util.ErrorHandler;
  */
 class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledFuture<Object> {
 
-	private final Trigger trigger;
+    private final Trigger trigger;
 
-	private final SimpleTriggerContext triggerContext = new SimpleTriggerContext();
+    private final SimpleTriggerContext triggerContext = new SimpleTriggerContext();
 
-	private final ScheduledExecutorService executor;
+    private final ScheduledExecutorService executor;
 
-	private ScheduledFuture<?> currentFuture;
+    private ScheduledFuture<?> currentFuture;
 
-	private Date scheduledExecutionTime;
+    private Date scheduledExecutionTime;
 
-	private final Object triggerContextMonitor = new Object();
-
-
-	public ReschedulingRunnable(Runnable delegate, Trigger trigger, ScheduledExecutorService executor, ErrorHandler errorHandler) {
-		super(delegate, errorHandler);
-		this.trigger = trigger;
-		this.executor = executor;
-	}
+    private final Object triggerContextMonitor = new Object();
 
 
-	public ScheduledFuture<?> schedule() {
-		synchronized (this.triggerContextMonitor) {
-			this.scheduledExecutionTime = this.trigger.nextExecutionTime(this.triggerContext);
-			if (this.scheduledExecutionTime == null) {
-				return null;
-			}
-			long initialDelay = this.scheduledExecutionTime.getTime() - System.currentTimeMillis();
-			this.currentFuture = this.executor.schedule(this, initialDelay, TimeUnit.MILLISECONDS);
-			return this;
-		}
-	}
-
-	@Override
-	public void run() {
-		Date actualExecutionTime = new Date();
-		super.run();
-		Date completionTime = new Date();
-		synchronized (this.triggerContextMonitor) {
-			this.triggerContext.update(this.scheduledExecutionTime, actualExecutionTime, completionTime);
-			if (!this.currentFuture.isCancelled()) {
-				schedule();
-			}
-		}
-	}
+    public ReschedulingRunnable(Runnable delegate, Trigger trigger, ScheduledExecutorService executor,
+            ErrorHandler errorHandler) {
+        super(delegate, errorHandler);
+        this.trigger = trigger;
+        this.executor = executor;
+    }
 
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		synchronized (this.triggerContextMonitor) {
-			return this.currentFuture.cancel(mayInterruptIfRunning);
-		}
-	}
+    public ScheduledFuture<?> schedule() {
+        synchronized (this.triggerContextMonitor) {
+            this.scheduledExecutionTime = this.trigger.nextExecutionTime(this.triggerContext);
+            if (this.scheduledExecutionTime == null) {
+                return null;
+            }
+            long initialDelay = this.scheduledExecutionTime.getTime() - System.currentTimeMillis();
+            this.currentFuture = this.executor.schedule(this, initialDelay, TimeUnit.MILLISECONDS);
+            return this;
+        }
+    }
 
-	@Override
-	public boolean isCancelled() {
-		synchronized (this.triggerContextMonitor) {
-			return this.currentFuture.isCancelled();
-		}
-	}
+    @Override
+    public void run() {
+        Date actualExecutionTime = new Date();
+        super.run();
+        Date completionTime = new Date();
+        synchronized (this.triggerContextMonitor) {
+            this.triggerContext.update(this.scheduledExecutionTime, actualExecutionTime, completionTime);
+            if (!this.currentFuture.isCancelled()) {
+                schedule();
+            }
+        }
+    }
 
-	@Override
-	public boolean isDone() {
-		synchronized (this.triggerContextMonitor) {
-			return this.currentFuture.isDone();
-		}
-	}
 
-	@Override
-	public Object get() throws InterruptedException, ExecutionException {
-		ScheduledFuture<?> curr;
-		synchronized (this.triggerContextMonitor) {
-			curr = this.currentFuture;
-		}
-		return curr.get();
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        synchronized (this.triggerContextMonitor) {
+            return this.currentFuture.cancel(mayInterruptIfRunning);
+        }
+    }
 
-	@Override
-	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		ScheduledFuture<?> curr;
-		synchronized (this.triggerContextMonitor) {
-			curr = this.currentFuture;
-		}
-		return curr.get(timeout, unit);
-	}
+    @Override
+    public boolean isCancelled() {
+        synchronized (this.triggerContextMonitor) {
+            return this.currentFuture.isCancelled();
+        }
+    }
 
-	@Override
-	public long getDelay(TimeUnit unit) {
-		ScheduledFuture<?> curr;
-		synchronized (this.triggerContextMonitor) {
-			curr = this.currentFuture;
-		}
-		return curr.getDelay(unit);
-	}
+    @Override
+    public boolean isDone() {
+        synchronized (this.triggerContextMonitor) {
+            return this.currentFuture.isDone();
+        }
+    }
 
-	@Override
-	public int compareTo(Delayed other) {
-		if (this == other) {
-			return 0;
-		}
-		long diff = getDelay(TimeUnit.MILLISECONDS) - other.getDelay(TimeUnit.MILLISECONDS);
-		return (diff == 0 ? 0 : ((diff < 0)? -1 : 1));
-	}
+    @Override
+    public Object get() throws InterruptedException, ExecutionException {
+        ScheduledFuture<?> curr;
+        synchronized (this.triggerContextMonitor) {
+            curr = this.currentFuture;
+        }
+        return curr.get();
+    }
+
+    @Override
+    public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        ScheduledFuture<?> curr;
+        synchronized (this.triggerContextMonitor) {
+            curr = this.currentFuture;
+        }
+        return curr.get(timeout, unit);
+    }
+
+    @Override
+    public long getDelay(TimeUnit unit) {
+        ScheduledFuture<?> curr;
+        synchronized (this.triggerContextMonitor) {
+            curr = this.currentFuture;
+        }
+        return curr.getDelay(unit);
+    }
+
+    @Override
+    public int compareTo(Delayed other) {
+        if (this == other) {
+            return 0;
+        }
+        long diff = getDelay(TimeUnit.MILLISECONDS) - other.getDelay(TimeUnit.MILLISECONDS);
+        return (diff == 0 ? 0 : ((diff < 0) ? -1 : 1));
+    }
 
 }

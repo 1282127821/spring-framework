@@ -38,24 +38,24 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
-	@Override
-	public boolean supports(Object handler) {
-		return (handler instanceof Controller);
-	}
+    @Override
+    public boolean supports(Object handler) {
+        return (handler instanceof Controller);
+    }
 
-	@Override
-	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    @Override
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-		return ((Controller) handler).handleRequest(request, response);
-	}
+        return ((Controller) handler).handleRequest(request, response);
+    }
 
-	@Override
-	public long getLastModified(HttpServletRequest request, Object handler) {
-		if (handler instanceof LastModified) {
-			return ((LastModified) handler).getLastModified(request);
-		}
-		return -1L;
-	}
+    @Override
+    public long getLastModified(HttpServletRequest request, Object handler) {
+        if (handler instanceof LastModified) {
+            return ((LastModified) handler).getLastModified(request);
+        }
+        return -1L;
+    }
 
 }

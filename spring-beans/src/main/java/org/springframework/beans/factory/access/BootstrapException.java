@@ -27,22 +27,22 @@ import org.springframework.beans.FatalBeanException;
 @SuppressWarnings("serial")
 public class BootstrapException extends FatalBeanException {
 
-	/**
-	 * Create a new BootstrapException with the specified message.
-	 * @param msg the detail message
-	 */
-	public BootstrapException(String msg) {
-		super(msg);
-	}
+    /**
+     * Create a new BootstrapException with the specified message.
+     * @param msg the detail message
+     */
+    public BootstrapException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Create a new BootstrapException with the specified message
-	 * and root cause.
-	 * @param msg the detail message
-	 * @param cause the root cause
-	 */
-	public BootstrapException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Create a new BootstrapException with the specified message
+     * and root cause.
+     * @param msg the detail message
+     * @param cause the root cause
+     */
+    public BootstrapException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

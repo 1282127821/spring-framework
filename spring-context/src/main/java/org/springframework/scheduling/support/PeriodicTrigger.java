@@ -45,84 +45,83 @@ import org.springframework.util.Assert;
  */
 public class PeriodicTrigger implements Trigger {
 
-	private final long period;
+    private final long period;
 
-	private final TimeUnit timeUnit;
+    private final TimeUnit timeUnit;
 
-	private volatile long initialDelay = 0;
+    private volatile long initialDelay = 0;
 
-	private volatile boolean fixedRate = false;
-
-
-	/**
-	 * Create a trigger with the given period in milliseconds.
-	 */
-	public PeriodicTrigger(long period) {
-		this(period, null);
-	}
-
-	/**
-	 * Create a trigger with the given period and time unit. The time unit will
-	 * apply not only to the period but also to any 'initialDelay' value, if
-	 * configured on this Trigger later via {@link #setInitialDelay(long)}.
-	 */
-	public PeriodicTrigger(long period, TimeUnit timeUnit) {
-		Assert.isTrue(period >= 0, "period must not be negative");
-		this.timeUnit = (timeUnit != null ? timeUnit : TimeUnit.MILLISECONDS);
-		this.period = this.timeUnit.toMillis(period);
-	}
+    private volatile boolean fixedRate = false;
 
 
-	/**
-	 * Specify the delay for the initial execution. It will be evaluated in
-	 * terms of this trigger's {@link TimeUnit}. If no time unit was explicitly
-	 * provided upon instantiation, the default is milliseconds.
-	 */
-	public void setInitialDelay(long initialDelay) {
-		this.initialDelay = this.timeUnit.toMillis(initialDelay);
-	}
+    /**
+     * Create a trigger with the given period in milliseconds.
+     */
+    public PeriodicTrigger(long period) {
+        this(period, null);
+    }
 
-	/**
-	 * Specify whether the periodic interval should be measured between the
-	 * scheduled start times rather than between actual completion times.
-	 * The latter, "fixed delay" behavior, is the default.
-	 */
-	public void setFixedRate(boolean fixedRate) {
-		this.fixedRate = fixedRate;
-	}
-
-
-	/**
-	 * Returns the time after which a task should run again.
-	 */
-	@Override
-	public Date nextExecutionTime(TriggerContext triggerContext) {
-		if (triggerContext.lastScheduledExecutionTime() == null) {
-			return new Date(System.currentTimeMillis() + this.initialDelay);
-		}
-		else if (this.fixedRate) {
-			return new Date(triggerContext.lastScheduledExecutionTime().getTime() + this.period);
-		}
-		return new Date(triggerContext.lastCompletionTime().getTime() + this.period);
-	}
+    /**
+     * Create a trigger with the given period and time unit. The time unit will
+     * apply not only to the period but also to any 'initialDelay' value, if
+     * configured on this Trigger later via {@link #setInitialDelay(long)}.
+     */
+    public PeriodicTrigger(long period, TimeUnit timeUnit) {
+        Assert.isTrue(period >= 0, "period must not be negative");
+        this.timeUnit = (timeUnit != null ? timeUnit : TimeUnit.MILLISECONDS);
+        this.period = this.timeUnit.toMillis(period);
+    }
 
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof PeriodicTrigger)) {
-			return false;
-		}
-		PeriodicTrigger other = (PeriodicTrigger) obj;
-		return (this.fixedRate == other.fixedRate && this.initialDelay == other.initialDelay &&
-				this.period == other.period);
-	}
+    /**
+     * Specify the delay for the initial execution. It will be evaluated in
+     * terms of this trigger's {@link TimeUnit}. If no time unit was explicitly
+     * provided upon instantiation, the default is milliseconds.
+     */
+    public void setInitialDelay(long initialDelay) {
+        this.initialDelay = this.timeUnit.toMillis(initialDelay);
+    }
 
-	@Override
-	public int hashCode() {
-		return (this.fixedRate ? 17 : 29) + (int) (37 * this.period) + (int) (41 * this.initialDelay);
-	}
+    /**
+     * Specify whether the periodic interval should be measured between the
+     * scheduled start times rather than between actual completion times.
+     * The latter, "fixed delay" behavior, is the default.
+     */
+    public void setFixedRate(boolean fixedRate) {
+        this.fixedRate = fixedRate;
+    }
+
+
+    /**
+     * Returns the time after which a task should run again.
+     */
+    @Override
+    public Date nextExecutionTime(TriggerContext triggerContext) {
+        if (triggerContext.lastScheduledExecutionTime() == null) {
+            return new Date(System.currentTimeMillis() + this.initialDelay);
+        } else if (this.fixedRate) {
+            return new Date(triggerContext.lastScheduledExecutionTime().getTime() + this.period);
+        }
+        return new Date(triggerContext.lastCompletionTime().getTime() + this.period);
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof PeriodicTrigger)) {
+            return false;
+        }
+        PeriodicTrigger other = (PeriodicTrigger) obj;
+        return (this.fixedRate == other.fixedRate && this.initialDelay == other.initialDelay
+                && this.period == other.period);
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.fixedRate ? 17 : 29) + (int) (37 * this.period) + (int) (41 * this.initialDelay);
+    }
 
 }

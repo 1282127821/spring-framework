@@ -47,47 +47,41 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 public final class TemporalAccessorParser implements Parser<TemporalAccessor> {
 
-	private final Class<? extends TemporalAccessor> temporalAccessorType;
+    private final Class<? extends TemporalAccessor> temporalAccessorType;
 
-	private final DateTimeFormatter formatter;
-
-
-	/**
-	 * Create a new TemporalAccessorParser for the given TemporalAccessor type.
-	 * @param temporalAccessorType the specific TemporalAccessor class
-	 * (LocalDate, LocalTime, LocalDateTime, ZonedDateTime, OffsetDateTime, OffsetTime)
-	 * @param formatter the base DateTimeFormatter instance
-	 */
-	public TemporalAccessorParser(Class<? extends TemporalAccessor> temporalAccessorType, DateTimeFormatter formatter) {
-		this.temporalAccessorType = temporalAccessorType;
-		this.formatter = formatter;
-	}
+    private final DateTimeFormatter formatter;
 
 
-	@Override
-	public TemporalAccessor parse(String text, Locale locale) throws ParseException {
-		DateTimeFormatter formatterToUse = DateTimeContextHolder.getFormatter(this.formatter, locale);
-		if (LocalDate.class == this.temporalAccessorType) {
-			return LocalDate.parse(text, formatterToUse);
-		}
-		else if (LocalTime.class == this.temporalAccessorType) {
-			return LocalTime.parse(text, formatterToUse);
-		}
-		else if (LocalDateTime.class == this.temporalAccessorType) {
-			return LocalDateTime.parse(text, formatterToUse);
-		}
-		else if (ZonedDateTime.class == this.temporalAccessorType) {
-			return ZonedDateTime.parse(text, formatterToUse);
-		}
-		else if (OffsetDateTime.class == this.temporalAccessorType) {
-			return OffsetDateTime.parse(text, formatterToUse);
-		}
-		else if (OffsetTime.class == this.temporalAccessorType) {
-			return OffsetTime.parse(text, formatterToUse);
-		}
-		else {
-			throw new IllegalStateException("Unsupported TemporalAccessor type: " + this.temporalAccessorType);
-		}
-	}
+    /**
+     * Create a new TemporalAccessorParser for the given TemporalAccessor type.
+     * @param temporalAccessorType the specific TemporalAccessor class
+     * (LocalDate, LocalTime, LocalDateTime, ZonedDateTime, OffsetDateTime, OffsetTime)
+     * @param formatter the base DateTimeFormatter instance
+     */
+    public TemporalAccessorParser(Class<? extends TemporalAccessor> temporalAccessorType, DateTimeFormatter formatter) {
+        this.temporalAccessorType = temporalAccessorType;
+        this.formatter = formatter;
+    }
+
+
+    @Override
+    public TemporalAccessor parse(String text, Locale locale) throws ParseException {
+        DateTimeFormatter formatterToUse = DateTimeContextHolder.getFormatter(this.formatter, locale);
+        if (LocalDate.class == this.temporalAccessorType) {
+            return LocalDate.parse(text, formatterToUse);
+        } else if (LocalTime.class == this.temporalAccessorType) {
+            return LocalTime.parse(text, formatterToUse);
+        } else if (LocalDateTime.class == this.temporalAccessorType) {
+            return LocalDateTime.parse(text, formatterToUse);
+        } else if (ZonedDateTime.class == this.temporalAccessorType) {
+            return ZonedDateTime.parse(text, formatterToUse);
+        } else if (OffsetDateTime.class == this.temporalAccessorType) {
+            return OffsetDateTime.parse(text, formatterToUse);
+        } else if (OffsetTime.class == this.temporalAccessorType) {
+            return OffsetTime.parse(text, formatterToUse);
+        } else {
+            throw new IllegalStateException("Unsupported TemporalAccessor type: " + this.temporalAccessorType);
+        }
+    }
 
 }

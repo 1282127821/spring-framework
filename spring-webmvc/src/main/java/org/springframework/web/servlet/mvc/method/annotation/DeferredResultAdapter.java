@@ -33,11 +33,11 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Deprecated
 public interface DeferredResultAdapter {
 
-	/**
-	 * Create a {@code DeferredResult} for the given return value.
-	 * @param returnValue the return value (never {@code null})
-	 * @return the DeferredResult
-	 */
-	DeferredResult<?> adaptToDeferredResult(Object returnValue);
+    /**
+     * Create a {@code DeferredResult} for the given return value.
+     * @param returnValue the return value (never {@code null})
+     * @return the DeferredResult
+     */
+    DeferredResult<?> adaptToDeferredResult(Object returnValue);
 
 }

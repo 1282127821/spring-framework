@@ -47,29 +47,29 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public class ScannedGenericBeanDefinition extends GenericBeanDefinition implements AnnotatedBeanDefinition {
 
-	private final AnnotationMetadata metadata;
+    private final AnnotationMetadata metadata;
 
 
-	/**
-	 * Create a new ScannedGenericBeanDefinition for the class that the
-	 * given MetadataReader describes.
-	 * @param metadataReader the MetadataReader for the scanned target class
-	 */
-	public ScannedGenericBeanDefinition(MetadataReader metadataReader) {
-		Assert.notNull(metadataReader, "MetadataReader must not be null");
-		this.metadata = metadataReader.getAnnotationMetadata();
-		setBeanClassName(this.metadata.getClassName());
-	}
+    /**
+     * Create a new ScannedGenericBeanDefinition for the class that the
+     * given MetadataReader describes.
+     * @param metadataReader the MetadataReader for the scanned target class
+     */
+    public ScannedGenericBeanDefinition(MetadataReader metadataReader) {
+        Assert.notNull(metadataReader, "MetadataReader must not be null");
+        this.metadata = metadataReader.getAnnotationMetadata();
+        setBeanClassName(this.metadata.getClassName());
+    }
 
 
-	@Override
-	public final AnnotationMetadata getMetadata() {
-		return this.metadata;
-	}
+    @Override
+    public final AnnotationMetadata getMetadata() {
+        return this.metadata;
+    }
 
-	@Override
-	public MethodMetadata getFactoryMethodMetadata() {
-		return null;
-	}
+    @Override
+    public MethodMetadata getFactoryMethodMetadata() {
+        return null;
+    }
 
 }

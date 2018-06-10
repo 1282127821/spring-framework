@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.mvc.method.annotation;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.core.MethodParameter;
@@ -66,108 +67,103 @@ import org.springframework.web.multipart.support.RequestPartServletServerHttpReq
  */
 public class RequestPartMethodArgumentResolver extends AbstractMessageConverterMethodArgumentResolver {
 
-	/**
-	 * Basic constructor with converters only.
-	 */
-	public RequestPartMethodArgumentResolver(List<HttpMessageConverter<?>> messageConverters) {
-		super(messageConverters);
-	}
+    /**
+     * Basic constructor with converters only.
+     */
+    public RequestPartMethodArgumentResolver(List<HttpMessageConverter<?>> messageConverters) {
+        super(messageConverters);
+    }
 
-	/**
-	 * Constructor with converters and {@code Request~} and
-	 * {@code ResponseBodyAdvice}.
-	 */
-	public RequestPartMethodArgumentResolver(List<HttpMessageConverter<?>> messageConverters,
-			List<Object> requestResponseBodyAdvice) {
+    /**
+     * Constructor with converters and {@code Request~} and
+     * {@code ResponseBodyAdvice}.
+     */
+    public RequestPartMethodArgumentResolver(List<HttpMessageConverter<?>> messageConverters,
+            List<Object> requestResponseBodyAdvice) {
 
-		super(messageConverters, requestResponseBodyAdvice);
-	}
+        super(messageConverters, requestResponseBodyAdvice);
+    }
 
 
-	/**
-	 * Supports the following:
-	 * <ul>
-	 * <li>annotated with {@code @RequestPart}
-	 * <li>of type {@link MultipartFile} unless annotated with {@code @RequestParam}
-	 * <li>of type {@code javax.servlet.http.Part} unless annotated with {@code @RequestParam}
-	 * </ul>
-	 */
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		if (parameter.hasParameterAnnotation(RequestPart.class)) {
-			return true;
-		}
-		else {
-			if (parameter.hasParameterAnnotation(RequestParam.class)) {
-				return false;
-			}
-			return MultipartResolutionDelegate.isMultipartArgument(parameter.nestedIfOptional());
-		}
-	}
+    /**
+     * Supports the following:
+     * <ul>
+     * <li>annotated with {@code @RequestPart}
+     * <li>of type {@link MultipartFile} unless annotated with {@code @RequestParam}
+     * <li>of type {@code javax.servlet.http.Part} unless annotated with {@code @RequestParam}
+     * </ul>
+     */
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        if (parameter.hasParameterAnnotation(RequestPart.class)) {
+            return true;
+        } else {
+            if (parameter.hasParameterAnnotation(RequestParam.class)) {
+                return false;
+            }
+            return MultipartResolutionDelegate.isMultipartArgument(parameter.nestedIfOptional());
+        }
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
 
-		HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-		RequestPart requestPart = parameter.getParameterAnnotation(RequestPart.class);
-		boolean isRequired = ((requestPart == null || requestPart.required()) && !parameter.isOptional());
+        HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
+        RequestPart requestPart = parameter.getParameterAnnotation(RequestPart.class);
+        boolean isRequired = ((requestPart == null || requestPart.required()) && !parameter.isOptional());
 
-		String name = getPartName(parameter, requestPart);
-		parameter = parameter.nestedIfOptional();
-		Object arg = null;
+        String name = getPartName(parameter, requestPart);
+        parameter = parameter.nestedIfOptional();
+        Object arg = null;
 
-		Object mpArg = MultipartResolutionDelegate.resolveMultipartArgument(name, parameter, servletRequest);
-		if (mpArg != MultipartResolutionDelegate.UNRESOLVABLE) {
-			arg = mpArg;
-		}
-		else {
-			try {
-				HttpInputMessage inputMessage = new RequestPartServletServerHttpRequest(servletRequest, name);
-				arg = readWithMessageConverters(inputMessage, parameter, parameter.getNestedGenericParameterType());
-				WebDataBinder binder = binderFactory.createBinder(request, arg, name);
-				if (arg != null) {
-					validateIfApplicable(binder, parameter);
-					if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
-						throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
-					}
-				}
-				mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
-			}
-			catch (MissingServletRequestPartException ex) {
-				if (isRequired) {
-					throw ex;
-				}
-			}
-			catch (MultipartException ex) {
-				if (isRequired) {
-					throw ex;
-				}
-			}
-		}
+        Object mpArg = MultipartResolutionDelegate.resolveMultipartArgument(name, parameter, servletRequest);
+        if (mpArg != MultipartResolutionDelegate.UNRESOLVABLE) {
+            arg = mpArg;
+        } else {
+            try {
+                HttpInputMessage inputMessage = new RequestPartServletServerHttpRequest(servletRequest, name);
+                arg = readWithMessageConverters(inputMessage, parameter, parameter.getNestedGenericParameterType());
+                WebDataBinder binder = binderFactory.createBinder(request, arg, name);
+                if (arg != null) {
+                    validateIfApplicable(binder, parameter);
+                    if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
+                        throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
+                    }
+                }
+                mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
+            } catch (MissingServletRequestPartException ex) {
+                if (isRequired) {
+                    throw ex;
+                }
+            } catch (MultipartException ex) {
+                if (isRequired) {
+                    throw ex;
+                }
+            }
+        }
 
-		if (arg == null && isRequired) {
-			if (!MultipartResolutionDelegate.isMultipartRequest(servletRequest)) {
-				throw new MultipartException("Current request is not a multipart request");
-			}
-			else {
-				throw new MissingServletRequestPartException(name);
-			}
-		}
-		return adaptArgumentIfNecessary(arg, parameter);
-	}
+        if (arg == null && isRequired) {
+            if (!MultipartResolutionDelegate.isMultipartRequest(servletRequest)) {
+                throw new MultipartException("Current request is not a multipart request");
+            } else {
+                throw new MissingServletRequestPartException(name);
+            }
+        }
+        return adaptArgumentIfNecessary(arg, parameter);
+    }
 
-	private String getPartName(MethodParameter methodParam, RequestPart requestPart) {
-		String partName = (requestPart != null ? requestPart.name() : "");
-		if (partName.isEmpty()) {
-			partName = methodParam.getParameterName();
-			if (partName == null) {
-				throw new IllegalArgumentException("Request part name for argument type [" +
-						methodParam.getNestedParameterType().getName() +
-						"] not specified, and parameter name information not found in class file either.");
-			}
-		}
-		return partName;
-	}
+    private String getPartName(MethodParameter methodParam, RequestPart requestPart) {
+        String partName = (requestPart != null ? requestPart.name() : "");
+        if (partName.isEmpty()) {
+            partName = methodParam.getParameterName();
+            if (partName == null) {
+                throw new IllegalArgumentException(
+                        "Request part name for argument type [" + methodParam.getNestedParameterType().getName()
+                                + "] not specified, and parameter name information not found in class file either.");
+            }
+        }
+        return partName;
+    }
 
 }

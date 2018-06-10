@@ -33,17 +33,17 @@ import org.springframework.aop.aspectj.AspectInstanceFactory;
  */
 public interface MetadataAwareAspectInstanceFactory extends AspectInstanceFactory {
 
-	/**
-	 * Return the AspectJ AspectMetadata for this factory's aspect.
-	 * @return the aspect metadata
-	 */
-	AspectMetadata getAspectMetadata();
+    /**
+     * Return the AspectJ AspectMetadata for this factory's aspect.
+     * @return the aspect metadata
+     */
+    AspectMetadata getAspectMetadata();
 
-	/**
-	 * Return the best possible creation mutex for this factory.
-	 * @return the mutex object (may be {@code null} for no mutex to use)
-	 * @since 4.3
-	 */
-	Object getAspectCreationMutex();
+    /**
+     * Return the best possible creation mutex for this factory.
+     * @return the mutex object (may be {@code null} for no mutex to use)
+     * @since 4.3
+     */
+    Object getAspectCreationMutex();
 
 }

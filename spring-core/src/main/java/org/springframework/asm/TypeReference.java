@@ -217,8 +217,7 @@ public class TypeReference {
      *            the type parameter index.
      * @return a reference to the given generic class or method type parameter.
      */
-    public static TypeReference newTypeParameterReference(int sort,
-            int paramIndex) {
+    public static TypeReference newTypeParameterReference(int sort, int paramIndex) {
         return new TypeReference((sort << 24) | (paramIndex << 16));
     }
 
@@ -236,10 +235,8 @@ public class TypeReference {
      * @return a reference to the given generic class or method type parameter
      *         bound.
      */
-    public static TypeReference newTypeParameterBoundReference(int sort,
-            int paramIndex, int boundIndex) {
-        return new TypeReference((sort << 24) | (paramIndex << 16)
-                | (boundIndex << 8));
+    public static TypeReference newTypeParameterBoundReference(int sort, int paramIndex, int boundIndex) {
+        return new TypeReference((sort << 24) | (paramIndex << 16) | (boundIndex << 8));
     }
 
     /**
@@ -265,8 +262,7 @@ public class TypeReference {
      * @return a reference to the type of the given method formal parameter.
      */
     public static TypeReference newFormalParameterReference(int paramIndex) {
-        return new TypeReference((METHOD_FORMAL_PARAMETER << 24)
-                | (paramIndex << 16));
+        return new TypeReference((METHOD_FORMAL_PARAMETER << 24) | (paramIndex << 16));
     }
 
     /**
@@ -293,8 +289,7 @@ public class TypeReference {
      * @return a reference to the type of the given exception.
      */
     public static TypeReference newTryCatchReference(int tryCatchBlockIndex) {
-        return new TypeReference((EXCEPTION_PARAMETER << 24)
-                | (tryCatchBlockIndex << 8));
+        return new TypeReference((EXCEPTION_PARAMETER << 24) | (tryCatchBlockIndex << 8));
     }
 
     /**

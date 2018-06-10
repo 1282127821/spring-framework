@@ -61,9 +61,9 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Lazy {
 
-	/**
-	 * Whether lazy initialization should occur.
-	 */
-	boolean value() default true;
+    /**
+     * Whether lazy initialization should occur.
+     */
+    boolean value() default true;
 
 }

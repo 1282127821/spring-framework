@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -54,166 +54,163 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public class PathExtensionContentNegotiationStrategy extends AbstractMappingContentNegotiationStrategy {
 
-	private static final boolean JAF_PRESENT = ClassUtils.isPresent("javax.activation.FileTypeMap",
-			PathExtensionContentNegotiationStrategy.class.getClassLoader());
+    private static final boolean JAF_PRESENT = ClassUtils.isPresent("javax.activation.FileTypeMap",
+            PathExtensionContentNegotiationStrategy.class.getClassLoader());
 
-	private static final Log logger = LogFactory.getLog(PathExtensionContentNegotiationStrategy.class);
+    private static final Log logger = LogFactory.getLog(PathExtensionContentNegotiationStrategy.class);
 
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
+    private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-	private boolean useJaf = true;
+    private boolean useJaf = true;
 
-	private boolean ignoreUnknownExtensions = true;
-
-
-	/**
-	 * Create an instance without any mappings to start with. Mappings may be added
-	 * later on if any extensions are resolved through the Java Activation framework.
-	 */
-	public PathExtensionContentNegotiationStrategy() {
-		this(null);
-	}
-
-	/**
-	 * Create an instance with the given map of file extensions and media types.
-	 */
-	public PathExtensionContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
-		super(mediaTypes);
-		this.urlPathHelper.setUrlDecode(false);
-	}
+    private boolean ignoreUnknownExtensions = true;
 
 
-	/**
-	 * Configure a {@code UrlPathHelper} to use in {@link #getMediaTypeKey}
-	 * in order to derive the lookup path for a target request URL path.
-	 * @since 4.2.8
-	 */
-	public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
-		this.urlPathHelper = urlPathHelper;
-	}
+    /**
+     * Create an instance without any mappings to start with. Mappings may be added
+     * later on if any extensions are resolved through the Java Activation framework.
+     */
+    public PathExtensionContentNegotiationStrategy() {
+        this(null);
+    }
 
-	/**
-	 * Whether to use the Java Activation Framework to look up file extensions.
-	 * <p>By default this is set to "true" but depends on JAF being present.
-	 */
-	public void setUseJaf(boolean useJaf) {
-		this.useJaf = useJaf;
-	}
-
-	/**
-	 * Whether to ignore requests with unknown file extension. Setting this to
-	 * {@code false} results in {@code HttpMediaTypeNotAcceptableException}.
-	 * <p>By default this is set to {@code true}.
-	 */
-	public void setIgnoreUnknownExtensions(boolean ignoreUnknownExtensions) {
-		this.ignoreUnknownExtensions = ignoreUnknownExtensions;
-	}
+    /**
+     * Create an instance with the given map of file extensions and media types.
+     */
+    public PathExtensionContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
+        super(mediaTypes);
+        this.urlPathHelper.setUrlDecode(false);
+    }
 
 
-	@Override
-	protected String getMediaTypeKey(NativeWebRequest webRequest) {
-		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-		if (request == null) {
-			logger.warn("An HttpServletRequest is required to determine the media type key");
-			return null;
-		}
-		String path = this.urlPathHelper.getLookupPathForRequest(request);
-		String extension = UriUtils.extractFileExtension(path);
-		return (StringUtils.hasText(extension) ? extension.toLowerCase(Locale.ENGLISH) : null);
-	}
+    /**
+     * Configure a {@code UrlPathHelper} to use in {@link #getMediaTypeKey}
+     * in order to derive the lookup path for a target request URL path.
+     * @since 4.2.8
+     */
+    public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
+        this.urlPathHelper = urlPathHelper;
+    }
 
-	@Override
-	protected MediaType handleNoMatch(NativeWebRequest webRequest, String extension)
-			throws HttpMediaTypeNotAcceptableException {
+    /**
+     * Whether to use the Java Activation Framework to look up file extensions.
+     * <p>By default this is set to "true" but depends on JAF being present.
+     */
+    public void setUseJaf(boolean useJaf) {
+        this.useJaf = useJaf;
+    }
 
-		if (this.useJaf && JAF_PRESENT) {
-			MediaType mediaType = ActivationMediaTypeFactory.getMediaType("file." + extension);
-			if (mediaType != null && !MediaType.APPLICATION_OCTET_STREAM.equals(mediaType)) {
-				return mediaType;
-			}
-		}
-		if (this.ignoreUnknownExtensions) {
-			return null;
-		}
-		throw new HttpMediaTypeNotAcceptableException(getAllMediaTypes());
-	}
-
-	/**
-	 * A public method exposing the knowledge of the path extension strategy to
-	 * resolve file extensions to a {@link MediaType} in this case for a given
-	 * {@link Resource}. The method first looks up any explicitly registered
-	 * file extensions first and then falls back on JAF if available.
-	 * @param resource the resource to look up
-	 * @return the MediaType for the extension, or {@code null} if none found
-	 * @since 4.3
-	 */
-	public MediaType getMediaTypeForResource(Resource resource) {
-		Assert.notNull(resource, "Resource must not be null");
-		MediaType mediaType = null;
-		String filename = resource.getFilename();
-		String extension = StringUtils.getFilenameExtension(filename);
-		if (extension != null) {
-			mediaType = lookupMediaType(extension);
-		}
-		if (mediaType == null && JAF_PRESENT) {
-			mediaType = ActivationMediaTypeFactory.getMediaType(filename);
-		}
-		if (MediaType.APPLICATION_OCTET_STREAM.equals(mediaType)) {
-			mediaType = null;
-		}
-		return mediaType;
-	}
+    /**
+     * Whether to ignore requests with unknown file extension. Setting this to
+     * {@code false} results in {@code HttpMediaTypeNotAcceptableException}.
+     * <p>By default this is set to {@code true}.
+     */
+    public void setIgnoreUnknownExtensions(boolean ignoreUnknownExtensions) {
+        this.ignoreUnknownExtensions = ignoreUnknownExtensions;
+    }
 
 
-	/**
-	 * Inner class to avoid hard-coded dependency on JAF.
-	 */
-	private static class ActivationMediaTypeFactory {
+    @Override
+    protected String getMediaTypeKey(NativeWebRequest webRequest) {
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (request == null) {
+            logger.warn("An HttpServletRequest is required to determine the media type key");
+            return null;
+        }
+        String path = this.urlPathHelper.getLookupPathForRequest(request);
+        String extension = UriUtils.extractFileExtension(path);
+        return (StringUtils.hasText(extension) ? extension.toLowerCase(Locale.ENGLISH) : null);
+    }
 
-		private static final FileTypeMap fileTypeMap;
+    @Override
+    protected MediaType handleNoMatch(NativeWebRequest webRequest, String extension)
+            throws HttpMediaTypeNotAcceptableException {
 
-		static {
-			fileTypeMap = initFileTypeMap();
-		}
+        if (this.useJaf && JAF_PRESENT) {
+            MediaType mediaType = ActivationMediaTypeFactory.getMediaType("file." + extension);
+            if (mediaType != null && !MediaType.APPLICATION_OCTET_STREAM.equals(mediaType)) {
+                return mediaType;
+            }
+        }
+        if (this.ignoreUnknownExtensions) {
+            return null;
+        }
+        throw new HttpMediaTypeNotAcceptableException(getAllMediaTypes());
+    }
 
-		/**
-		 * Find extended mime.types from the spring-context-support module.
-		 */
-		private static FileTypeMap initFileTypeMap() {
-			Resource resource = new ClassPathResource("org/springframework/mail/javamail/mime.types");
-			if (resource.exists()) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("Loading JAF FileTypeMap from " + resource);
-				}
-				InputStream inputStream = null;
-				try {
-					inputStream = resource.getInputStream();
-					return new MimetypesFileTypeMap(inputStream);
-				}
-				catch (IOException ex) {
-					// ignore
-				}
-				finally {
-					if (inputStream != null) {
-						try {
-							inputStream.close();
-						}
-						catch (IOException ex) {
-							// ignore
-						}
-					}
-				}
-			}
-			if (logger.isTraceEnabled()) {
-				logger.trace("Loading default Java Activation Framework FileTypeMap");
-			}
-			return FileTypeMap.getDefaultFileTypeMap();
-		}
+    /**
+     * A public method exposing the knowledge of the path extension strategy to
+     * resolve file extensions to a {@link MediaType} in this case for a given
+     * {@link Resource}. The method first looks up any explicitly registered
+     * file extensions first and then falls back on JAF if available.
+     * @param resource the resource to look up
+     * @return the MediaType for the extension, or {@code null} if none found
+     * @since 4.3
+     */
+    public MediaType getMediaTypeForResource(Resource resource) {
+        Assert.notNull(resource, "Resource must not be null");
+        MediaType mediaType = null;
+        String filename = resource.getFilename();
+        String extension = StringUtils.getFilenameExtension(filename);
+        if (extension != null) {
+            mediaType = lookupMediaType(extension);
+        }
+        if (mediaType == null && JAF_PRESENT) {
+            mediaType = ActivationMediaTypeFactory.getMediaType(filename);
+        }
+        if (MediaType.APPLICATION_OCTET_STREAM.equals(mediaType)) {
+            mediaType = null;
+        }
+        return mediaType;
+    }
 
-		public static MediaType getMediaType(String filename) {
-			String mediaType = fileTypeMap.getContentType(filename);
-			return (StringUtils.hasText(mediaType) ? MediaType.parseMediaType(mediaType) : null);
-		}
-	}
+
+    /**
+     * Inner class to avoid hard-coded dependency on JAF.
+     */
+    private static class ActivationMediaTypeFactory {
+
+        private static final FileTypeMap fileTypeMap;
+
+        static {
+            fileTypeMap = initFileTypeMap();
+        }
+
+        /**
+         * Find extended mime.types from the spring-context-support module.
+         */
+        private static FileTypeMap initFileTypeMap() {
+            Resource resource = new ClassPathResource("org/springframework/mail/javamail/mime.types");
+            if (resource.exists()) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Loading JAF FileTypeMap from " + resource);
+                }
+                InputStream inputStream = null;
+                try {
+                    inputStream = resource.getInputStream();
+                    return new MimetypesFileTypeMap(inputStream);
+                } catch (IOException ex) {
+                    // ignore
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException ex) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+            if (logger.isTraceEnabled()) {
+                logger.trace("Loading default Java Activation Framework FileTypeMap");
+            }
+            return FileTypeMap.getDefaultFileTypeMap();
+        }
+
+        public static MediaType getMediaType(String filename) {
+            String mediaType = fileTypeMap.getContentType(filename);
+            return (StringUtils.hasText(mediaType) ? MediaType.parseMediaType(mediaType) : null);
+        }
+    }
 
 }

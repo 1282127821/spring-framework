@@ -31,24 +31,24 @@ import java.util.Map;
  */
 public interface ScriptEvaluator {
 
-	/**
-	 * Evaluate the given script.
-	 * @param script the ScriptSource for the script to evaluate
-	 * @return the return value of the script, if any
-	 * @throws ScriptCompilationException if the evaluator failed to read,
-	 * compile or evaluate the script
-	 */
-	Object evaluate(ScriptSource script) throws ScriptCompilationException;
+    /**
+     * Evaluate the given script.
+     * @param script the ScriptSource for the script to evaluate
+     * @return the return value of the script, if any
+     * @throws ScriptCompilationException if the evaluator failed to read,
+     * compile or evaluate the script
+     */
+    Object evaluate(ScriptSource script) throws ScriptCompilationException;
 
-	/**
-	 * Evaluate the given script with the given arguments.
-	 * @param script the ScriptSource for the script to evaluate
-	 * @param arguments the key-value pairs to expose to the script,
-	 * typically as script variables (may be {@code null} or empty)
-	 * @return the return value of the script, if any
-	 * @throws ScriptCompilationException if the evaluator failed to read,
-	 * compile or evaluate the script
-	 */
-	Object evaluate(ScriptSource script, Map<String, Object> arguments) throws ScriptCompilationException;
+    /**
+     * Evaluate the given script with the given arguments.
+     * @param script the ScriptSource for the script to evaluate
+     * @param arguments the key-value pairs to expose to the script,
+     * typically as script variables (may be {@code null} or empty)
+     * @return the return value of the script, if any
+     * @throws ScriptCompilationException if the evaluator failed to read,
+     * compile or evaluate the script
+     */
+    Object evaluate(ScriptSource script, Map<String, Object> arguments) throws ScriptCompilationException;
 
 }
