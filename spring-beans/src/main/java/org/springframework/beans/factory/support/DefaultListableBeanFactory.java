@@ -778,6 +778,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
             throws BeanDefinitionStoreException {
 
+        logger.debug("Try to register bean definition: " + beanName);
         Assert.hasText(beanName, "Bean name must not be empty");
         Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 
@@ -790,9 +791,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
         }
 
-        BeanDefinition oldBeanDefinition;
-
-        oldBeanDefinition = this.beanDefinitionMap.get(beanName);
+        BeanDefinition oldBeanDefinition = this.beanDefinitionMap.get(beanName);
         if (oldBeanDefinition != null) {
             if (!isAllowBeanDefinitionOverriding()) {
                 throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,
@@ -823,6 +822,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             if (hasBeanCreationStarted()) {
                 // Cannot modify startup-time collection elements anymore (for stable iteration)
                 synchronized (this.beanDefinitionMap) {
+                    logger.debug("Really PUT bean into beanDefinitionMap. beanName: " + beanName);
                     this.beanDefinitionMap.put(beanName, beanDefinition);
                     List<String> updatedDefinitions = new ArrayList<String>(this.beanDefinitionNames.size() + 1);
                     updatedDefinitions.addAll(this.beanDefinitionNames);
@@ -836,6 +836,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 }
             } else {
                 // Still in startup registration phase
+                logger.debug("Really PUT bean into beanDefinitionMap. beanName: " + beanName);
                 this.beanDefinitionMap.put(beanName, beanDefinition);
                 this.beanDefinitionNames.add(beanName);
                 this.manualSingletonNames.remove(beanName);

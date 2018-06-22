@@ -254,8 +254,9 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
      * {@link Configuration} classes.
      */
     public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-        List<BeanDefinitionHolder> configCandidates = new ArrayList<BeanDefinitionHolder>();
+        logger.trace("begin...");
         String[] candidateNames = registry.getBeanDefinitionNames();
+        List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 
         for (String beanName : candidateNames) {
             BeanDefinition beanDef = registry.getBeanDefinition(beanName);
@@ -265,6 +266,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
                     logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
                 }
             } else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+                logger.debug("Add a config candidate. beanName: " + beanName);
                 configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
             }
         }
@@ -296,24 +298,23 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         }
 
         // Parse each @Configuration class
-        ConfigurationClassParser parser = new ConfigurationClassParser(this.metadataReaderFactory, this.problemReporter,
-                this.environment, this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+        ConfigurationClassParser configurationParser =
+                new ConfigurationClassParser(this.metadataReaderFactory, this.problemReporter, this.environment,
+                        this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+        Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 
-        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<BeanDefinitionHolder>(configCandidates);
-        Set<ConfigurationClass> alreadyParsed = new HashSet<ConfigurationClass>(configCandidates.size());
         do {
-            parser.parse(candidates);
-            parser.validate();
-
-            Set<ConfigurationClass> configClasses =
-                    new LinkedHashSet<ConfigurationClass>(parser.getConfigurationClasses());
+            configurationParser.parse(candidates);
+            configurationParser.validate();
+            Set<ConfigurationClass> configClasses = new LinkedHashSet<>(configurationParser.getConfigurationClasses());
             configClasses.removeAll(alreadyParsed);
 
             // Read the model and create bean definitions based on its content
             if (this.reader == null) {
-                this.reader =
-                        new ConfigurationClassBeanDefinitionReader(registry, this.sourceExtractor, this.resourceLoader,
-                                this.environment, this.importBeanNameGenerator, parser.getImportRegistry());
+                this.reader = new ConfigurationClassBeanDefinitionReader(registry, this.sourceExtractor,
+                        this.resourceLoader, this.environment, this.importBeanNameGenerator,
+                        configurationParser.getImportRegistry());
             }
             this.reader.loadBeanDefinitions(configClasses);
             alreadyParsed.addAll(configClasses);
@@ -321,8 +322,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
             candidates.clear();
             if (registry.getBeanDefinitionCount() > candidateNames.length) {
                 String[] newCandidateNames = registry.getBeanDefinitionNames();
-                Set<String> oldCandidateNames = new HashSet<String>(Arrays.asList(candidateNames));
-                Set<String> alreadyParsedClasses = new HashSet<String>();
+                Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
+                Set<String> alreadyParsedClasses = new HashSet<>();
                 for (ConfigurationClass configurationClass : alreadyParsed) {
                     alreadyParsedClasses.add(configurationClass.getMetadata().getClassName());
                 }
@@ -342,7 +343,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         // Register the ImportRegistry as a bean in order to support ImportAware @Configuration classes
         if (sbr != null) {
             if (!sbr.containsSingleton(IMPORT_REGISTRY_BEAN_NAME)) {
-                sbr.registerSingleton(IMPORT_REGISTRY_BEAN_NAME, parser.getImportRegistry());
+                sbr.registerSingleton(IMPORT_REGISTRY_BEAN_NAME, configurationParser.getImportRegistry());
             }
         }
 

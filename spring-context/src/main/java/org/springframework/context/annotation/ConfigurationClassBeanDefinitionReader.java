@@ -110,6 +110,7 @@ class ConfigurationClassBeanDefinitionReader {
      * with the registry based on its contents.
      */
     public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
+        logger.trace("begin...");
         TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
         for (ConfigurationClass configClass : configurationModel) {
             loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
@@ -123,6 +124,7 @@ class ConfigurationClassBeanDefinitionReader {
     private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass,
             TrackedConditionEvaluator trackedConditionEvaluator) {
 
+        logger.trace("begin...");
         if (trackedConditionEvaluator.shouldSkip(configClass)) {
             String beanName = configClass.getBeanName();
             if (StringUtils.hasLength(beanName) && this.registry.containsBeanDefinition(beanName)) {
@@ -169,6 +171,7 @@ class ConfigurationClassBeanDefinitionReader {
      * with the BeanDefinitionRegistry based on its contents.
      */
     private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
+        logger.trace("begin..." + beanMethod);
         ConfigurationClass configClass = beanMethod.getConfigurationClass();
         MethodMetadata metadata = beanMethod.getMetadata();
         String methodName = metadata.getMethodName();
@@ -257,11 +260,8 @@ class ConfigurationClassBeanDefinitionReader {
                     configClass, metadata);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Registering bean definition for @Bean method %s.%s()",
-                    configClass.getMetadata().getClassName(), beanName));
-        }
-
+        logger.debug(String.format("Try to register bean definition for @Bean method %s.%s()",
+                configClass.getMetadata().getClassName(), beanName));
         this.registry.registerBeanDefinition(beanName, beanDefToRegister);
     }
 
