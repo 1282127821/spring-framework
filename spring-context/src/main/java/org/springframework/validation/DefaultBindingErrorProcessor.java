@@ -44,54 +44,52 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultBindingErrorProcessor implements BindingErrorProcessor {
 
-	/**
-	 * Error code that a missing field error (i.e. a required field not
-	 * found in the list of property values) will be registered with:
-	 * "required".
-	 */
-	public static final String MISSING_FIELD_ERROR_CODE = "required";
+    /**
+     * Error code that a missing field error (i.e. a required field not
+     * found in the list of property values) will be registered with:
+     * "required".
+     */
+    public static final String MISSING_FIELD_ERROR_CODE = "required";
 
 
-	@Override
-	public void processMissingFieldError(String missingField, BindingResult bindingResult) {
-		// Create field error with code "required".
-		String fixedField = bindingResult.getNestedPath() + missingField;
-		String[] codes = bindingResult.resolveMessageCodes(MISSING_FIELD_ERROR_CODE, missingField);
-		Object[] arguments = getArgumentsForBindError(bindingResult.getObjectName(), fixedField);
-		bindingResult.addError(new FieldError(
-				bindingResult.getObjectName(), fixedField, "", true,
-				codes, arguments, "Field '" + fixedField + "' is required"));
-	}
+    @Override
+    public void processMissingFieldError(String missingField, BindingResult bindingResult) {
+        // Create field error with code "required".
+        String fixedField = bindingResult.getNestedPath() + missingField;
+        String[] codes = bindingResult.resolveMessageCodes(MISSING_FIELD_ERROR_CODE, missingField);
+        Object[] arguments = getArgumentsForBindError(bindingResult.getObjectName(), fixedField);
+        bindingResult.addError(new FieldError(bindingResult.getObjectName(), fixedField, "", true, codes, arguments,
+                "Field '" + fixedField + "' is required"));
+    }
 
-	@Override
-	public void processPropertyAccessException(PropertyAccessException ex, BindingResult bindingResult) {
-		// Create field error with the exceptions's code, e.g. "typeMismatch".
-		String field = ex.getPropertyName();
-		String[] codes = bindingResult.resolveMessageCodes(ex.getErrorCode(), field);
-		Object[] arguments = getArgumentsForBindError(bindingResult.getObjectName(), field);
-		Object rejectedValue = ex.getValue();
-		if (rejectedValue != null && rejectedValue.getClass().isArray()) {
-			rejectedValue = StringUtils.arrayToCommaDelimitedString(ObjectUtils.toObjectArray(rejectedValue));
-		}
-		bindingResult.addError(new FieldError(
-				bindingResult.getObjectName(), field, rejectedValue, true,
-				codes, arguments, ex.getLocalizedMessage()));
-	}
+    @Override
+    public void processPropertyAccessException(PropertyAccessException ex, BindingResult bindingResult) {
+        // Create field error with the exceptions's code, e.g. "typeMismatch".
+        String field = ex.getPropertyName();
+        String[] codes = bindingResult.resolveMessageCodes(ex.getErrorCode(), field);
+        Object[] arguments = getArgumentsForBindError(bindingResult.getObjectName(), field);
+        Object rejectedValue = ex.getValue();
+        if (rejectedValue != null && rejectedValue.getClass().isArray()) {
+            rejectedValue = StringUtils.arrayToCommaDelimitedString(ObjectUtils.toObjectArray(rejectedValue));
+        }
+        bindingResult.addError(new FieldError(bindingResult.getObjectName(), field, rejectedValue, true, codes,
+                arguments, ex.getLocalizedMessage()));
+    }
 
-	/**
-	 * Return FieldError arguments for a binding error on the given field.
-	 * Invoked for each missing required field and each type mismatch.
-	 * <p>The default implementation returns a single argument indicating the field name
-	 * (of type DefaultMessageSourceResolvable, with "objectName.field" and "field" as codes).
-	 * @param objectName the name of the target object
-	 * @param field the field that caused the binding error
-	 * @return the Object array that represents the FieldError arguments
-	 * @see org.springframework.validation.FieldError#getArguments
-	 * @see org.springframework.context.support.DefaultMessageSourceResolvable
-	 */
-	protected Object[] getArgumentsForBindError(String objectName, String field) {
-		String[] codes = new String[] {objectName + Errors.NESTED_PATH_SEPARATOR + field, field};
-		return new Object[] {new DefaultMessageSourceResolvable(codes, field)};
-	}
+    /**
+     * Return FieldError arguments for a binding error on the given field.
+     * Invoked for each missing required field and each type mismatch.
+     * <p>The default implementation returns a single argument indicating the field name
+     * (of type DefaultMessageSourceResolvable, with "objectName.field" and "field" as codes).
+     * @param objectName the name of the target object
+     * @param field the field that caused the binding error
+     * @return the Object array that represents the FieldError arguments
+     * @see org.springframework.validation.FieldError#getArguments
+     * @see org.springframework.context.support.DefaultMessageSourceResolvable
+     */
+    protected Object[] getArgumentsForBindError(String objectName, String field) {
+        String[] codes = new String[] {objectName + Errors.NESTED_PATH_SEPARATOR + field, field};
+        return new Object[] {new DefaultMessageSourceResolvable(codes, field)};
+    }
 
 }

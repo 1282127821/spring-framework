@@ -43,67 +43,68 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public class BeanPropertyBindingResult extends AbstractPropertyBindingResult implements Serializable {
 
-	private final Object target;
+    private final Object target;
 
-	private final boolean autoGrowNestedPaths;
+    private final boolean autoGrowNestedPaths;
 
-	private final int autoGrowCollectionLimit;
+    private final int autoGrowCollectionLimit;
 
-	private transient BeanWrapper beanWrapper;
-
-
-	/**
-	 * Creates a new instance of the {@link BeanPropertyBindingResult} class.
-	 * @param target the target bean to bind onto
-	 * @param objectName the name of the target object
-	 */
-	public BeanPropertyBindingResult(Object target, String objectName) {
-		this(target, objectName, true, Integer.MAX_VALUE);
-	}
-
-	/**
-	 * Creates a new instance of the {@link BeanPropertyBindingResult} class.
-	 * @param target the target bean to bind onto
-	 * @param objectName the name of the target object
-	 * @param autoGrowNestedPaths whether to "auto-grow" a nested path that contains a null value
-	 * @param autoGrowCollectionLimit the limit for array and collection auto-growing
-	 */
-	public BeanPropertyBindingResult(Object target, String objectName, boolean autoGrowNestedPaths, int autoGrowCollectionLimit) {
-		super(objectName);
-		this.target = target;
-		this.autoGrowNestedPaths = autoGrowNestedPaths;
-		this.autoGrowCollectionLimit = autoGrowCollectionLimit;
-	}
+    private transient BeanWrapper beanWrapper;
 
 
-	@Override
-	public final Object getTarget() {
-		return this.target;
-	}
+    /**
+     * Creates a new instance of the {@link BeanPropertyBindingResult} class.
+     * @param target the target bean to bind onto
+     * @param objectName the name of the target object
+     */
+    public BeanPropertyBindingResult(Object target, String objectName) {
+        this(target, objectName, true, Integer.MAX_VALUE);
+    }
 
-	/**
-	 * Returns the {@link BeanWrapper} that this instance uses.
-	 * Creates a new one if none existed before.
-	 * @see #createBeanWrapper()
-	 */
-	@Override
-	public final ConfigurablePropertyAccessor getPropertyAccessor() {
-		if (this.beanWrapper == null) {
-			this.beanWrapper = createBeanWrapper();
-			this.beanWrapper.setExtractOldValueForEditor(true);
-			this.beanWrapper.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
-			this.beanWrapper.setAutoGrowCollectionLimit(this.autoGrowCollectionLimit);
-		}
-		return this.beanWrapper;
-	}
+    /**
+     * Creates a new instance of the {@link BeanPropertyBindingResult} class.
+     * @param target the target bean to bind onto
+     * @param objectName the name of the target object
+     * @param autoGrowNestedPaths whether to "auto-grow" a nested path that contains a null value
+     * @param autoGrowCollectionLimit the limit for array and collection auto-growing
+     */
+    public BeanPropertyBindingResult(Object target, String objectName, boolean autoGrowNestedPaths,
+            int autoGrowCollectionLimit) {
+        super(objectName);
+        this.target = target;
+        this.autoGrowNestedPaths = autoGrowNestedPaths;
+        this.autoGrowCollectionLimit = autoGrowCollectionLimit;
+    }
 
-	/**
-	 * Create a new {@link BeanWrapper} for the underlying target object.
-	 * @see #getTarget()
-	 */
-	protected BeanWrapper createBeanWrapper() {
-		Assert.state(this.target != null, "Cannot access properties on null bean instance '" + getObjectName() + "'!");
-		return PropertyAccessorFactory.forBeanPropertyAccess(this.target);
-	}
+
+    @Override
+    public final Object getTarget() {
+        return this.target;
+    }
+
+    /**
+     * Returns the {@link BeanWrapper} that this instance uses.
+     * Creates a new one if none existed before.
+     * @see #createBeanWrapper()
+     */
+    @Override
+    public final ConfigurablePropertyAccessor getPropertyAccessor() {
+        if (this.beanWrapper == null) {
+            this.beanWrapper = createBeanWrapper();
+            this.beanWrapper.setExtractOldValueForEditor(true);
+            this.beanWrapper.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
+            this.beanWrapper.setAutoGrowCollectionLimit(this.autoGrowCollectionLimit);
+        }
+        return this.beanWrapper;
+    }
+
+    /**
+     * Create a new {@link BeanWrapper} for the underlying target object.
+     * @see #getTarget()
+     */
+    protected BeanWrapper createBeanWrapper() {
+        Assert.state(this.target != null, "Cannot access properties on null bean instance '" + getObjectName() + "'!");
+        return PropertyAccessorFactory.forBeanPropertyAccess(this.target);
+    }
 
 }

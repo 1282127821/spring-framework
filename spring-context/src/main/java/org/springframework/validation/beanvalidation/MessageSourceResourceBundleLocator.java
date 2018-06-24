@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.util.Assert;
@@ -37,20 +36,20 @@ import org.springframework.util.Assert;
  */
 public class MessageSourceResourceBundleLocator implements ResourceBundleLocator {
 
-	private final MessageSource messageSource;
+    private final MessageSource messageSource;
 
-	/**
-	 * Build a MessageSourceResourceBundleLocator for the given MessageSource.
-	 * @param messageSource the Spring MessageSource to wrap
-	 */
-	public MessageSourceResourceBundleLocator(MessageSource messageSource) {
-		Assert.notNull(messageSource, "MessageSource must not be null");
-		this.messageSource = messageSource;
-	}
+    /**
+     * Build a MessageSourceResourceBundleLocator for the given MessageSource.
+     * @param messageSource the Spring MessageSource to wrap
+     */
+    public MessageSourceResourceBundleLocator(MessageSource messageSource) {
+        Assert.notNull(messageSource, "MessageSource must not be null");
+        this.messageSource = messageSource;
+    }
 
-	@Override
-	public ResourceBundle getResourceBundle(Locale locale) {
-		return new MessageSourceResourceBundle(this.messageSource, locale);
-	}
+    @Override
+    public ResourceBundle getResourceBundle(Locale locale) {
+        return new MessageSourceResourceBundle(this.messageSource, locale);
+    }
 
 }

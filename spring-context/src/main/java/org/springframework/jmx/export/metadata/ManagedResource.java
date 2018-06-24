@@ -29,81 +29,81 @@ package org.springframework.jmx.export.metadata;
  */
 public class ManagedResource extends AbstractJmxAttribute {
 
-	private String objectName;
+    private String objectName;
 
-	private boolean log = false;
+    private boolean log = false;
 
-	private String logFile;
+    private String logFile;
 
-	private String persistPolicy;
+    private String persistPolicy;
 
-	private int persistPeriod = -1;
+    private int persistPeriod = -1;
 
-	private String persistName;
+    private String persistName;
 
-	private String persistLocation;
+    private String persistLocation;
 
 
-	/**
-	 * Set the JMX ObjectName of this managed resource.
-	 */
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
-	}
+    /**
+     * Set the JMX ObjectName of this managed resource.
+     */
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
 
-	/**
-	 * Return the JMX ObjectName of this managed resource.
-	 */
-	public String getObjectName() {
-		return this.objectName;
-	}
+    /**
+     * Return the JMX ObjectName of this managed resource.
+     */
+    public String getObjectName() {
+        return this.objectName;
+    }
 
-	public void setLog(boolean log) {
-		this.log = log;
-	}
+    public void setLog(boolean log) {
+        this.log = log;
+    }
 
-	public boolean isLog() {
-		return this.log;
-	}
+    public boolean isLog() {
+        return this.log;
+    }
 
-	public void setLogFile(String logFile) {
-		this.logFile = logFile;
-	}
+    public void setLogFile(String logFile) {
+        this.logFile = logFile;
+    }
 
-	public String getLogFile() {
-		return this.logFile;
-	}
+    public String getLogFile() {
+        return this.logFile;
+    }
 
-	public void setPersistPolicy(String persistPolicy) {
-		this.persistPolicy = persistPolicy;
-	}
+    public void setPersistPolicy(String persistPolicy) {
+        this.persistPolicy = persistPolicy;
+    }
 
-	public String getPersistPolicy() {
-		return this.persistPolicy;
-	}
+    public String getPersistPolicy() {
+        return this.persistPolicy;
+    }
 
-	public void setPersistPeriod(int persistPeriod) {
-		this.persistPeriod = persistPeriod;
-	}
+    public void setPersistPeriod(int persistPeriod) {
+        this.persistPeriod = persistPeriod;
+    }
 
-	public int getPersistPeriod() {
-		return this.persistPeriod;
-	}
+    public int getPersistPeriod() {
+        return this.persistPeriod;
+    }
 
-	public void setPersistName(String persistName) {
-		this.persistName = persistName;
-	}
+    public void setPersistName(String persistName) {
+        this.persistName = persistName;
+    }
 
-	public String getPersistName() {
-		return this.persistName;
-	}
+    public String getPersistName() {
+        return this.persistName;
+    }
 
-	public void setPersistLocation(String persistLocation) {
-		this.persistLocation = persistLocation;
-	}
+    public void setPersistLocation(String persistLocation) {
+        this.persistLocation = persistLocation;
+    }
 
-	public String getPersistLocation() {
-		return this.persistLocation;
-	}
+    public String getPersistLocation() {
+        return this.persistLocation;
+    }
 
 }

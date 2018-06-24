@@ -41,8 +41,8 @@ import java.lang.annotation.Target;
 @Repeatable(ManagedOperationParameters.class)
 public @interface ManagedOperationParameter {
 
-	String name();
+    String name();
 
-	String description();
+    String description();
 
 }

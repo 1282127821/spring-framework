@@ -33,9 +33,9 @@ import org.springframework.util.StringValueResolver;
  */
 public interface EmbeddedValueResolverAware extends Aware {
 
-	/**
-	 * Set the StringValueResolver to use for resolving embedded definition values.
-	 */
-	void setEmbeddedValueResolver(StringValueResolver resolver);
+    /**
+     * Set the StringValueResolver to use for resolving embedded definition values.
+     */
+    void setEmbeddedValueResolver(StringValueResolver resolver);
 
 }

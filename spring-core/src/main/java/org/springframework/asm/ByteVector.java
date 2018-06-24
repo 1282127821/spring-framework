@@ -274,8 +274,8 @@ public class ByteVector {
         }
         int start = length - i - 2;
         if (start >= 0) {
-          data[start] = (byte) (byteLength >>> 8);
-          data[start + 1] = (byte) byteLength;
+            data[start] = (byte) (byteLength >>> 8);
+            data[start + 1] = (byte) byteLength;
         }
         if (length + byteLength - i > data.length) {
             enlarge(byteLength - i);

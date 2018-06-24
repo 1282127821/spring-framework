@@ -30,11 +30,11 @@ import org.springframework.cache.Cache;
  */
 public interface CacheResolver {
 
-	/**
-	 * Return the cache(s) to use for the specified invocation.
-	 * @param context the context of the particular invocation
-	 * @return the cache(s) to use (never {@code null})
-	 */
-	Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context);
+    /**
+     * Return the cache(s) to use for the specified invocation.
+     * @param context the context of the particular invocation
+     * @return the cache(s) to use (never {@code null})
+     */
+    Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context);
 
 }

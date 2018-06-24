@@ -35,53 +35,53 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class CustomValidatorBean extends SpringValidatorAdapter implements Validator, InitializingBean {
 
-	private ValidatorFactory validatorFactory;
+    private ValidatorFactory validatorFactory;
 
-	private MessageInterpolator messageInterpolator;
+    private MessageInterpolator messageInterpolator;
 
-	private TraversableResolver traversableResolver;
-
-
-	/**
-	 * Set the ValidatorFactory to obtain the target Validator from.
-	 * <p>Default is {@link javax.validation.Validation#buildDefaultValidatorFactory()}.
-	 */
-	public void setValidatorFactory(ValidatorFactory validatorFactory) {
-		this.validatorFactory = validatorFactory;
-	}
-
-	/**
-	 * Specify a custom MessageInterpolator to use for this Validator.
-	 */
-	public void setMessageInterpolator(MessageInterpolator messageInterpolator) {
-		this.messageInterpolator = messageInterpolator;
-	}
-
-	/**
-	 * Specify a custom TraversableResolver to use for this Validator.
-	 */
-	public void setTraversableResolver(TraversableResolver traversableResolver) {
-		this.traversableResolver = traversableResolver;
-	}
+    private TraversableResolver traversableResolver;
 
 
-	@Override
-	public void afterPropertiesSet() {
-		if (this.validatorFactory == null) {
-			this.validatorFactory = Validation.buildDefaultValidatorFactory();
-		}
+    /**
+     * Set the ValidatorFactory to obtain the target Validator from.
+     * <p>Default is {@link javax.validation.Validation#buildDefaultValidatorFactory()}.
+     */
+    public void setValidatorFactory(ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
+    }
 
-		ValidatorContext validatorContext = this.validatorFactory.usingContext();
-		MessageInterpolator targetInterpolator = this.messageInterpolator;
-		if (targetInterpolator == null) {
-			targetInterpolator = this.validatorFactory.getMessageInterpolator();
-		}
-		validatorContext.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
-		if (this.traversableResolver != null) {
-			validatorContext.traversableResolver(this.traversableResolver);
-		}
+    /**
+     * Specify a custom MessageInterpolator to use for this Validator.
+     */
+    public void setMessageInterpolator(MessageInterpolator messageInterpolator) {
+        this.messageInterpolator = messageInterpolator;
+    }
 
-		setTargetValidator(validatorContext.getValidator());
-	}
+    /**
+     * Specify a custom TraversableResolver to use for this Validator.
+     */
+    public void setTraversableResolver(TraversableResolver traversableResolver) {
+        this.traversableResolver = traversableResolver;
+    }
+
+
+    @Override
+    public void afterPropertiesSet() {
+        if (this.validatorFactory == null) {
+            this.validatorFactory = Validation.buildDefaultValidatorFactory();
+        }
+
+        ValidatorContext validatorContext = this.validatorFactory.usingContext();
+        MessageInterpolator targetInterpolator = this.messageInterpolator;
+        if (targetInterpolator == null) {
+            targetInterpolator = this.validatorFactory.getMessageInterpolator();
+        }
+        validatorContext.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
+        if (this.traversableResolver != null) {
+            validatorContext.traversableResolver(this.traversableResolver);
+        }
+
+        setTargetValidator(validatorContext.getValidator());
+    }
 
 }

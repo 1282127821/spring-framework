@@ -36,14 +36,14 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ManagedAttribute {
 
-	String defaultValue() default "";
+    String defaultValue() default "";
 
-	String description() default "";
+    String description() default "";
 
-	int currencyTimeLimit() default -1;
+    int currencyTimeLimit() default -1;
 
-	String persistPolicy() default "";
+    String persistPolicy() default "";
 
-	int persistPeriod() default -1;
+    int persistPeriod() default -1;
 
 }

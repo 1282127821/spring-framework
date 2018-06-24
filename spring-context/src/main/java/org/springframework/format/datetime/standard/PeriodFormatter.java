@@ -34,14 +34,14 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 class PeriodFormatter implements Formatter<Period> {
 
-	@Override
-	public Period parse(String text, Locale locale) throws ParseException {
-		return Period.parse(text);
-	}
+    @Override
+    public Period parse(String text, Locale locale) throws ParseException {
+        return Period.parse(text);
+    }
 
-	@Override
-	public String print(Period object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(Period object, Locale locale) {
+        return object.toString();
+    }
 
 }

@@ -30,19 +30,19 @@ import org.springframework.lang.UsesJava7;
 @UsesJava7
 public class SimpleThrowawayClassLoader extends OverridingClassLoader {
 
-	static {
-		if (parallelCapableClassLoaderAvailable) {
-			ClassLoader.registerAsParallelCapable();
-		}
-	}
+    static {
+        if (parallelCapableClassLoaderAvailable) {
+            ClassLoader.registerAsParallelCapable();
+        }
+    }
 
 
-	/**
-	 * Create a new SimpleThrowawayClassLoader for the given ClassLoader.
-	 * @param parent the ClassLoader to build a throwaway ClassLoader for
-	 */
-	public SimpleThrowawayClassLoader(ClassLoader parent) {
-		super(parent);
-	}
+    /**
+     * Create a new SimpleThrowawayClassLoader for the given ClassLoader.
+     * @param parent the ClassLoader to build a throwaway ClassLoader for
+     */
+    public SimpleThrowawayClassLoader(ClassLoader parent) {
+        super(parent);
+    }
 
 }

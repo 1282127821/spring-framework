@@ -44,15 +44,15 @@ import javax.management.Notification;
  */
 public interface NotificationPublisher {
 
-	/**
-	 * Send the specified {@link javax.management.Notification} to all registered
-	 * {@link javax.management.NotificationListener NotificationListeners}.
-	 * Managed resources are <strong>not</strong> responsible for managing the list
-	 * of registered {@link javax.management.NotificationListener NotificationListeners};
-	 * that is performed automatically.
-	 * @param notification the JMX Notification to send
-	 * @throws UnableToSendNotificationException if sending failed
-	 */
-	void sendNotification(Notification notification) throws UnableToSendNotificationException;
+    /**
+     * Send the specified {@link javax.management.Notification} to all registered
+     * {@link javax.management.NotificationListener NotificationListeners}.
+     * Managed resources are <strong>not</strong> responsible for managing the list
+     * of registered {@link javax.management.NotificationListener NotificationListeners};
+     * that is performed automatically.
+     * @param notification the JMX Notification to send
+     * @throws UnableToSendNotificationException if sending failed
+     */
+    void sendNotification(Notification notification) throws UnableToSendNotificationException;
 
 }

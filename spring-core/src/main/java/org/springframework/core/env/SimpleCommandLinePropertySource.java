@@ -77,45 +77,45 @@ import java.util.List;
  */
 public class SimpleCommandLinePropertySource extends CommandLinePropertySource<CommandLineArgs> {
 
-	/**
-	 * Create a new {@code SimpleCommandLinePropertySource} having the default name
-	 * and backed by the given {@code String[]} of command line arguments.
-	 * @see CommandLinePropertySource#COMMAND_LINE_PROPERTY_SOURCE_NAME
-	 * @see CommandLinePropertySource#CommandLinePropertySource(Object)
-	 */
-	public SimpleCommandLinePropertySource(String... args) {
-		super(new SimpleCommandLineArgsParser().parse(args));
-	}
+    /**
+     * Create a new {@code SimpleCommandLinePropertySource} having the default name
+     * and backed by the given {@code String[]} of command line arguments.
+     * @see CommandLinePropertySource#COMMAND_LINE_PROPERTY_SOURCE_NAME
+     * @see CommandLinePropertySource#CommandLinePropertySource(Object)
+     */
+    public SimpleCommandLinePropertySource(String... args) {
+        super(new SimpleCommandLineArgsParser().parse(args));
+    }
 
-	/**
-	 * Create a new {@code SimpleCommandLinePropertySource} having the given name
-	 * and backed by the given {@code String[]} of command line arguments.
-	 */
-	public SimpleCommandLinePropertySource(String name, String[] args) {
-		super(name, new SimpleCommandLineArgsParser().parse(args));
-	}
+    /**
+     * Create a new {@code SimpleCommandLinePropertySource} having the given name
+     * and backed by the given {@code String[]} of command line arguments.
+     */
+    public SimpleCommandLinePropertySource(String name, String[] args) {
+        super(name, new SimpleCommandLineArgsParser().parse(args));
+    }
 
-	/**
-	 * Get the property names for the option arguments.
-	 */
-	@Override
-	public String[] getPropertyNames() {
-		return source.getOptionNames().toArray(new String[source.getOptionNames().size()]);
-	}
+    /**
+     * Get the property names for the option arguments.
+     */
+    @Override
+    public String[] getPropertyNames() {
+        return source.getOptionNames().toArray(new String[source.getOptionNames().size()]);
+    }
 
-	@Override
-	protected boolean containsOption(String name) {
-		return this.source.containsOption(name);
-	}
+    @Override
+    protected boolean containsOption(String name) {
+        return this.source.containsOption(name);
+    }
 
-	@Override
-	protected List<String> getOptionValues(String name) {
-		return this.source.getOptionValues(name);
-	}
+    @Override
+    protected List<String> getOptionValues(String name) {
+        return this.source.getOptionValues(name);
+    }
 
-	@Override
-	protected List<String> getNonOptionArgs() {
-		return this.source.getNonOptionArgs();
-	}
+    @Override
+    protected List<String> getNonOptionArgs() {
+        return this.source.getNonOptionArgs();
+    }
 
 }

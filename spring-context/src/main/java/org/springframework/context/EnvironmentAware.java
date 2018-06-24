@@ -28,9 +28,9 @@ import org.springframework.core.env.Environment;
  */
 public interface EnvironmentAware extends Aware {
 
-	/**
-	 * Set the {@code Environment} that this object runs in.
-	 */
-	void setEnvironment(Environment environment);
+    /**
+     * Set the {@code Environment} that this object runs in.
+     */
+    void setEnvironment(Environment environment);
 
 }

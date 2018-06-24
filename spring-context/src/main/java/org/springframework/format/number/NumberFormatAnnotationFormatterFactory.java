@@ -37,40 +37,37 @@ import org.springframework.util.StringUtils;
  * @see NumberFormat
  */
 public class NumberFormatAnnotationFormatterFactory extends EmbeddedValueResolutionSupport
-		implements AnnotationFormatterFactory<NumberFormat> {
+        implements AnnotationFormatterFactory<NumberFormat> {
 
-	@Override
-	public Set<Class<?>> getFieldTypes() {
-		return NumberUtils.STANDARD_NUMBER_TYPES;
-	}
+    @Override
+    public Set<Class<?>> getFieldTypes() {
+        return NumberUtils.STANDARD_NUMBER_TYPES;
+    }
 
-	@Override
-	public Printer<Number> getPrinter(NumberFormat annotation, Class<?> fieldType) {
-		return configureFormatterFrom(annotation);
-	}
+    @Override
+    public Printer<Number> getPrinter(NumberFormat annotation, Class<?> fieldType) {
+        return configureFormatterFrom(annotation);
+    }
 
-	@Override
-	public Parser<Number> getParser(NumberFormat annotation, Class<?> fieldType) {
-		return configureFormatterFrom(annotation);
-	}
+    @Override
+    public Parser<Number> getParser(NumberFormat annotation, Class<?> fieldType) {
+        return configureFormatterFrom(annotation);
+    }
 
 
-	private Formatter<Number> configureFormatterFrom(NumberFormat annotation) {
-		if (StringUtils.hasLength(annotation.pattern())) {
-			return new NumberStyleFormatter(resolveEmbeddedValue(annotation.pattern()));
-		}
-		else {
-			Style style = annotation.style();
-			if (style == Style.CURRENCY) {
-				return new CurrencyStyleFormatter();
-			}
-			else if (style == Style.PERCENT) {
-				return new PercentStyleFormatter();
-			}
-			else {
-				return new NumberStyleFormatter();
-			}
-		}
-	}
+    private Formatter<Number> configureFormatterFrom(NumberFormat annotation) {
+        if (StringUtils.hasLength(annotation.pattern())) {
+            return new NumberStyleFormatter(resolveEmbeddedValue(annotation.pattern()));
+        } else {
+            Style style = annotation.style();
+            if (style == Style.CURRENCY) {
+                return new CurrencyStyleFormatter();
+            } else if (style == Style.PERCENT) {
+                return new PercentStyleFormatter();
+            } else {
+                return new NumberStyleFormatter();
+            }
+        }
+    }
 
 }

@@ -36,42 +36,41 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class ContextBeanFactoryReference implements BeanFactoryReference {
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
 
-	/**
-	 * Create a new ContextBeanFactoryReference for the given context.
-	 * @param applicationContext the ApplicationContext to wrap
-	 */
-	public ContextBeanFactoryReference(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
+    /**
+     * Create a new ContextBeanFactoryReference for the given context.
+     * @param applicationContext the ApplicationContext to wrap
+     */
+    public ContextBeanFactoryReference(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
 
-	@Override
-	public BeanFactory getFactory() {
-		if (this.applicationContext == null) {
-			throw new IllegalStateException(
-					"ApplicationContext owned by this BeanFactoryReference has been released");
-		}
-		return this.applicationContext;
-	}
+    @Override
+    public BeanFactory getFactory() {
+        if (this.applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext owned by this BeanFactoryReference has been released");
+        }
+        return this.applicationContext;
+    }
 
-	@Override
-	public void release() {
-		if (this.applicationContext != null) {
-			ApplicationContext savedCtx;
+    @Override
+    public void release() {
+        if (this.applicationContext != null) {
+            ApplicationContext savedCtx;
 
-			// We don't actually guarantee thread-safety, but it's not a lot of extra work.
-			synchronized (this) {
-				savedCtx = this.applicationContext;
-				this.applicationContext = null;
-			}
+            // We don't actually guarantee thread-safety, but it's not a lot of extra work.
+            synchronized (this) {
+                savedCtx = this.applicationContext;
+                this.applicationContext = null;
+            }
 
-			if (savedCtx != null && savedCtx instanceof ConfigurableApplicationContext) {
-				((ConfigurableApplicationContext) savedCtx).close();
-			}
-		}
-	}
+            if (savedCtx != null && savedCtx instanceof ConfigurableApplicationContext) {
+                ((ConfigurableApplicationContext) savedCtx).close();
+            }
+        }
+    }
 
 }

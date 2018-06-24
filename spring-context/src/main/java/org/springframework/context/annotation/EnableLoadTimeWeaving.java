@@ -141,31 +141,31 @@ import org.springframework.instrument.classloading.LoadTimeWeaver;
 @Import(LoadTimeWeavingConfiguration.class)
 public @interface EnableLoadTimeWeaving {
 
-	/**
-	 * Whether AspectJ weaving should be enabled.
-	 */
-	AspectJWeaving aspectjWeaving() default AspectJWeaving.AUTODETECT;
+    /**
+     * Whether AspectJ weaving should be enabled.
+     */
+    AspectJWeaving aspectjWeaving() default AspectJWeaving.AUTODETECT;
 
 
-	enum AspectJWeaving {
+    enum AspectJWeaving {
 
-		/**
-		 * Switches on Spring-based AspectJ load-time weaving.
-		 */
-		ENABLED,
+        /**
+         * Switches on Spring-based AspectJ load-time weaving.
+         */
+        ENABLED,
 
-		/**
-		 * Switches off Spring-based AspectJ load-time weaving (even if a
-		 * "META-INF/aop.xml" resource is present on the classpath).
-		 */
-		DISABLED,
+        /**
+         * Switches off Spring-based AspectJ load-time weaving (even if a
+         * "META-INF/aop.xml" resource is present on the classpath).
+         */
+        DISABLED,
 
-		/**
-		 * Switches on AspectJ load-time weaving if a "META-INF/aop.xml" resource
-		 * is present in the classpath. If there is no such resource, then AspectJ
-		 * load-time weaving will be switched off.
-		 */
-		AUTODETECT;
-	}
+        /**
+         * Switches on AspectJ load-time weaving if a "META-INF/aop.xml" resource
+         * is present in the classpath. If there is no such resource, then AspectJ
+         * load-time weaving will be switched off.
+         */
+        AUTODETECT;
+    }
 
 }

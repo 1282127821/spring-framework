@@ -31,13 +31,13 @@ import javax.management.ObjectName;
  */
 public interface SelfNaming {
 
-	/**
-	 * Return the {@code ObjectName} for the implementing object.
-	 * @throws MalformedObjectNameException if thrown by the ObjectName constructor
-	 * @see javax.management.ObjectName#ObjectName(String)
-	 * @see javax.management.ObjectName#getInstance(String)
-	 * @see org.springframework.jmx.support.ObjectNameManager#getInstance(String)
-	 */
-	ObjectName getObjectName() throws MalformedObjectNameException;
+    /**
+     * Return the {@code ObjectName} for the implementing object.
+     * @throws MalformedObjectNameException if thrown by the ObjectName constructor
+     * @see javax.management.ObjectName#ObjectName(String)
+     * @see javax.management.ObjectName#getInstance(String)
+     * @see org.springframework.jmx.support.ObjectNameManager#getInstance(String)
+     */
+    ObjectName getObjectName() throws MalformedObjectNameException;
 
 }

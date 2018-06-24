@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import org.aopalliance.aop.Advice;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.util.Assert;
@@ -41,72 +40,72 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
-	private String adviceBeanName;
+    private String adviceBeanName;
 
-	private BeanFactory beanFactory;
+    private BeanFactory beanFactory;
 
-	private transient Advice advice;
+    private transient Advice advice;
 
-	private transient volatile Object adviceMonitor = new Object();
-
-
-	/**
-	 * Specify the name of the advice bean that this advisor should refer to.
-	 * <p>An instance of the specified bean will be obtained on first access
-	 * of this advisor's advice. This advisor will only ever obtain at most one
-	 * single instance of the advice bean, caching the instance for the lifetime
-	 * of the advisor.
-	 * @see #getAdvice()
-	 */
-	public void setAdviceBeanName(String adviceBeanName) {
-		this.adviceBeanName = adviceBeanName;
-	}
-
-	/**
-	 * Return the name of the advice bean that this advisor refers to, if any.
-	 */
-	public String getAdviceBeanName() {
-		return this.adviceBeanName;
-	}
-
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
-
-	public void setAdvice(Advice advice) {
-		synchronized (this.adviceMonitor) {
-			this.advice = advice;
-		}
-	}
-
-	@Override
-	public Advice getAdvice() {
-		synchronized (this.adviceMonitor) {
-			if (this.advice == null && this.adviceBeanName != null) {
-				Assert.state(this.beanFactory != null, "BeanFactory must be set to resolve 'adviceBeanName'");
-				this.advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
-			}
-			return this.advice;
-		}
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getName() + ": advice bean '" + getAdviceBeanName() + "'";
-	}
+    private transient volatile Object adviceMonitor = new Object();
 
 
-	//---------------------------------------------------------------------
-	// Serialization support
-	//---------------------------------------------------------------------
+    /**
+     * Specify the name of the advice bean that this advisor should refer to.
+     * <p>An instance of the specified bean will be obtained on first access
+     * of this advisor's advice. This advisor will only ever obtain at most one
+     * single instance of the advice bean, caching the instance for the lifetime
+     * of the advisor.
+     * @see #getAdvice()
+     */
+    public void setAdviceBeanName(String adviceBeanName) {
+        this.adviceBeanName = adviceBeanName;
+    }
 
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		// Rely on default serialization, just initialize state after deserialization.
-		ois.defaultReadObject();
+    /**
+     * Return the name of the advice bean that this advisor refers to, if any.
+     */
+    public String getAdviceBeanName() {
+        return this.adviceBeanName;
+    }
 
-		// Initialize transient fields.
-		this.adviceMonitor = new Object();
-	}
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    public void setAdvice(Advice advice) {
+        synchronized (this.adviceMonitor) {
+            this.advice = advice;
+        }
+    }
+
+    @Override
+    public Advice getAdvice() {
+        synchronized (this.adviceMonitor) {
+            if (this.advice == null && this.adviceBeanName != null) {
+                Assert.state(this.beanFactory != null, "BeanFactory must be set to resolve 'adviceBeanName'");
+                this.advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
+            }
+            return this.advice;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + ": advice bean '" + getAdviceBeanName() + "'";
+    }
+
+
+    //---------------------------------------------------------------------
+    // Serialization support
+    //---------------------------------------------------------------------
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        // Rely on default serialization, just initialize state after deserialization.
+        ois.defaultReadObject();
+
+        // Initialize transient fields.
+        this.adviceMonitor = new Object();
+    }
 
 }

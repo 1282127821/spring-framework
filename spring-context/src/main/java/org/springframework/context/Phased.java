@@ -26,9 +26,9 @@ package org.springframework.context;
  */
 public interface Phased {
 
-	/**
-	 * Return the phase value of this object.
-	 */
-	int getPhase();
+    /**
+     * Return the phase value of this object.
+     */
+    int getPhase();
 
 }

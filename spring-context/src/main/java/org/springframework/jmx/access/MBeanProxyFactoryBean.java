@@ -46,67 +46,66 @@ import org.springframework.util.ClassUtils;
  * @see InvalidInvocationException
  */
 public class MBeanProxyFactoryBean extends MBeanClientInterceptor
-		implements FactoryBean<Object>, BeanClassLoaderAware, InitializingBean {
+        implements FactoryBean<Object>, BeanClassLoaderAware, InitializingBean {
 
-	private Class<?> proxyInterface;
+    private Class<?> proxyInterface;
 
-	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
+    private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
-	private Object mbeanProxy;
-
-
-	/**
-	 * Set the interface that the generated proxy will implement.
-	 * <p>This will usually be a management interface that matches the target MBean,
-	 * exposing bean property setters and getters for MBean attributes and
-	 * conventional Java methods for MBean operations.
-	 * @see #setObjectName
-	 */
-	public void setProxyInterface(Class<?> proxyInterface) {
-		this.proxyInterface = proxyInterface;
-	}
-
-	@Override
-	public void setBeanClassLoader(ClassLoader classLoader) {
-		this.beanClassLoader = classLoader;
-	}
-
-	/**
-	 * Checks that the {@code proxyInterface} has been specified and then
-	 * generates the proxy for the target MBean.
-	 */
-	@Override
-	public void afterPropertiesSet() throws MBeanServerNotFoundException, MBeanInfoRetrievalException {
-		super.afterPropertiesSet();
-
-		if (this.proxyInterface == null) {
-			this.proxyInterface = getManagementInterface();
-			if (this.proxyInterface == null) {
-				throw new IllegalArgumentException("Property 'proxyInterface' or 'managementInterface' is required");
-			}
-		}
-		else {
-			if (getManagementInterface() == null) {
-				setManagementInterface(this.proxyInterface);
-			}
-		}
-		this.mbeanProxy = new ProxyFactory(this.proxyInterface, this).getProxy(this.beanClassLoader);
-	}
+    private Object mbeanProxy;
 
 
-	@Override
-	public Object getObject() {
-		return this.mbeanProxy;
-	}
+    /**
+     * Set the interface that the generated proxy will implement.
+     * <p>This will usually be a management interface that matches the target MBean,
+     * exposing bean property setters and getters for MBean attributes and
+     * conventional Java methods for MBean operations.
+     * @see #setObjectName
+     */
+    public void setProxyInterface(Class<?> proxyInterface) {
+        this.proxyInterface = proxyInterface;
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return this.proxyInterface;
-	}
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.beanClassLoader = classLoader;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    /**
+     * Checks that the {@code proxyInterface} has been specified and then
+     * generates the proxy for the target MBean.
+     */
+    @Override
+    public void afterPropertiesSet() throws MBeanServerNotFoundException, MBeanInfoRetrievalException {
+        super.afterPropertiesSet();
+
+        if (this.proxyInterface == null) {
+            this.proxyInterface = getManagementInterface();
+            if (this.proxyInterface == null) {
+                throw new IllegalArgumentException("Property 'proxyInterface' or 'managementInterface' is required");
+            }
+        } else {
+            if (getManagementInterface() == null) {
+                setManagementInterface(this.proxyInterface);
+            }
+        }
+        this.mbeanProxy = new ProxyFactory(this.proxyInterface, this).getProxy(this.beanClassLoader);
+    }
+
+
+    @Override
+    public Object getObject() {
+        return this.mbeanProxy;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return this.proxyInterface;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

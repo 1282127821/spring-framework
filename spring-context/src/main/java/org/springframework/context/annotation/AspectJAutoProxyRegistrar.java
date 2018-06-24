@@ -32,22 +32,21 @@ import org.springframework.core.type.AnnotationMetadata;
  */
 class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 
-	/**
-	 * Register, escalate, and configure the AspectJ auto proxy creator based on the value
-	 * of the @{@link EnableAspectJAutoProxy#proxyTargetClass()} attribute on the importing
-	 * {@code @Configuration} class.
-	 */
-	@Override
-	public void registerBeanDefinitions(
-			AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    /**
+     * Register, escalate, and configure the AspectJ auto proxy creator based on the value
+     * of the @{@link EnableAspectJAutoProxy#proxyTargetClass()} attribute on the importing
+     * {@code @Configuration} class.
+     */
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
-		AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);
+        AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);
 
-		AnnotationAttributes enableAJAutoProxy =
-				AnnotationConfigUtils.attributesFor(importingClassMetadata, EnableAspectJAutoProxy.class);
-		if (enableAJAutoProxy.getBoolean("proxyTargetClass")) {
-			AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
-		}
-	}
+        AnnotationAttributes enableAJAutoProxy =
+                AnnotationConfigUtils.attributesFor(importingClassMetadata, EnableAspectJAutoProxy.class);
+        if (enableAJAutoProxy.getBoolean("proxyTargetClass")) {
+            AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+        }
+    }
 
 }

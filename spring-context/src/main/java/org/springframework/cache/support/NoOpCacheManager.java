@@ -40,83 +40,80 @@ import org.springframework.cache.CacheManager;
  */
 public class NoOpCacheManager implements CacheManager {
 
-	private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>(16);
+    private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>(16);
 
-	private final Set<String> cacheNames = new LinkedHashSet<String>(16);
-
-
-	/**
-	 * This implementation always returns a {@link Cache} implementation that will not store items.
-	 * Additionally, the request cache will be remembered by the manager for consistency.
-	 */
-	@Override
-	public Cache getCache(String name) {
-		Cache cache = this.caches.get(name);
-		if (cache == null) {
-			this.caches.putIfAbsent(name, new NoOpCache(name));
-			synchronized (this.cacheNames) {
-				this.cacheNames.add(name);
-			}
-		}
-
-		return this.caches.get(name);
-	}
-
-	/**
-	 * This implementation returns the name of the caches previously requested.
-	 */
-	@Override
-	public Collection<String> getCacheNames() {
-		synchronized (this.cacheNames) {
-			return Collections.unmodifiableSet(this.cacheNames);
-		}
-	}
+    private final Set<String> cacheNames = new LinkedHashSet<String>(16);
 
 
-	private static class NoOpCache implements Cache {
+    /**
+     * This implementation always returns a {@link Cache} implementation that will not store items.
+     * Additionally, the request cache will be remembered by the manager for consistency.
+     */
+    @Override
+    public Cache getCache(String name) {
+        Cache cache = this.caches.get(name);
+        if (cache == null) {
+            this.caches.putIfAbsent(name, new NoOpCache(name));
+            synchronized (this.cacheNames) {
+                this.cacheNames.add(name);
+            }
+        }
 
-		private final String name;
+        return this.caches.get(name);
+    }
 
-		public NoOpCache(String name) {
-			this.name = name;
-		}
+    /**
+     * This implementation returns the name of the caches previously requested.
+     */
+    @Override
+    public Collection<String> getCacheNames() {
+        synchronized (this.cacheNames) {
+            return Collections.unmodifiableSet(this.cacheNames);
+        }
+    }
 
-		@Override
-		public void clear() {
-		}
 
-		@Override
-		public void evict(Object key) {
-		}
+    private static class NoOpCache implements Cache {
 
-		@Override
-		public ValueWrapper get(Object key) {
-			return null;
-		}
+        private final String name;
 
-		@Override
-		public <T> T get(Object key, Class<T> type) {
-			return null;
-		}
+        public NoOpCache(String name) {
+            this.name = name;
+        }
 
-		@Override
-		public String getName() {
-			return this.name;
-		}
+        @Override
+        public void clear() {}
 
-		@Override
-		public Object getNativeCache() {
-			return null;
-		}
+        @Override
+        public void evict(Object key) {}
 
-		@Override
-		public void put(Object key, Object value) {
-		}
+        @Override
+        public ValueWrapper get(Object key) {
+            return null;
+        }
 
-		@Override
-		public ValueWrapper putIfAbsent(Object key, Object value) {
-			return null;
-		}
-	}
+        @Override
+        public <T> T get(Object key, Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public Object getNativeCache() {
+            return null;
+        }
+
+        @Override
+        public void put(Object key, Object value) {}
+
+        @Override
+        public ValueWrapper putIfAbsent(Object key, Object value) {
+            return null;
+        }
+    }
 
 }

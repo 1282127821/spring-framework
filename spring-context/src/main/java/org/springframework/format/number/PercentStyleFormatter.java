@@ -34,13 +34,13 @@ import java.util.Locale;
  */
 public class PercentStyleFormatter extends AbstractNumberFormatter {
 
-	@Override
-	protected NumberFormat getNumberFormat(Locale locale) {
-		NumberFormat format = NumberFormat.getPercentInstance(locale);
-		if (format instanceof DecimalFormat) {
-			((DecimalFormat) format).setParseBigDecimal(true);
-		}
-		return format;
-	}
+    @Override
+    protected NumberFormat getNumberFormat(Locale locale) {
+        NumberFormat format = NumberFormat.getPercentInstance(locale);
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat) format).setParseBigDecimal(true);
+        }
+        return format;
+    }
 
 }

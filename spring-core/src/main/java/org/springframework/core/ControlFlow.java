@@ -26,25 +26,25 @@ package org.springframework.core;
  */
 public interface ControlFlow {
 
-	/**
-	 * Detect whether we're under the given class,
-	 * according to the current stack trace.
-	 * @param clazz the clazz to look for
-	 */
-	boolean under(Class<?> clazz);
+    /**
+     * Detect whether we're under the given class,
+     * according to the current stack trace.
+     * @param clazz the clazz to look for
+     */
+    boolean under(Class<?> clazz);
 
-	/**
-	 * Detect whether we're under the given class and method,
-	 * according to the current stack trace.
-	 * @param clazz the clazz to look for
-	 * @param methodName the name of the method to look for
-	 */
-	boolean under(Class<?> clazz, String methodName);
+    /**
+     * Detect whether we're under the given class and method,
+     * according to the current stack trace.
+     * @param clazz the clazz to look for
+     * @param methodName the name of the method to look for
+     */
+    boolean under(Class<?> clazz, String methodName);
 
-	/**
-	 * Detect whether the current stack trace contains the given token.
-	 * @param token the token to look for
-	 */
-	boolean underToken(String token);
+    /**
+     * Detect whether the current stack trace contains the given token.
+     * @param token the token to look for
+     */
+    boolean underToken(String token);
 
 }

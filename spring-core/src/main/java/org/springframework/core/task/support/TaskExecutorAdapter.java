@@ -43,100 +43,93 @@ import org.springframework.util.concurrent.ListenableFutureTask;
  */
 public class TaskExecutorAdapter implements AsyncListenableTaskExecutor {
 
-	private final Executor concurrentExecutor;
+    private final Executor concurrentExecutor;
 
 
-	/**
-	 * Create a new TaskExecutorAdapter,
-	 * using the given JDK concurrent executor.
-	 * @param concurrentExecutor the JDK concurrent executor to delegate to
-	 */
-	public TaskExecutorAdapter(Executor concurrentExecutor) {
-		Assert.notNull(concurrentExecutor, "Executor must not be null");
-		this.concurrentExecutor = concurrentExecutor;
-	}
+    /**
+     * Create a new TaskExecutorAdapter,
+     * using the given JDK concurrent executor.
+     * @param concurrentExecutor the JDK concurrent executor to delegate to
+     */
+    public TaskExecutorAdapter(Executor concurrentExecutor) {
+        Assert.notNull(concurrentExecutor, "Executor must not be null");
+        this.concurrentExecutor = concurrentExecutor;
+    }
 
 
-	/**
-	 * Delegates to the specified JDK concurrent executor.
-	 * @see java.util.concurrent.Executor#execute(Runnable)
-	 */
-	@Override
-	public void execute(Runnable task) {
-		try {
-			this.concurrentExecutor.execute(task);
-		}
-		catch (RejectedExecutionException ex) {
-			throw new TaskRejectedException(
-					"Executor [" + this.concurrentExecutor + "] did not accept task: " + task, ex);
-		}
-	}
+    /**
+     * Delegates to the specified JDK concurrent executor.
+     * @see java.util.concurrent.Executor#execute(Runnable)
+     */
+    @Override
+    public void execute(Runnable task) {
+        try {
+            this.concurrentExecutor.execute(task);
+        } catch (RejectedExecutionException ex) {
+            throw new TaskRejectedException("Executor [" + this.concurrentExecutor + "] did not accept task: " + task,
+                    ex);
+        }
+    }
 
-	@Override
-	public void execute(Runnable task, long startTimeout) {
-		execute(task);
-	}
+    @Override
+    public void execute(Runnable task, long startTimeout) {
+        execute(task);
+    }
 
-	@Override
-	public Future<?> submit(Runnable task) {
-		try {
-			if (this.concurrentExecutor instanceof ExecutorService) {
-				return ((ExecutorService) this.concurrentExecutor).submit(task);
-			}
-			else {
-				FutureTask<Object> future = new FutureTask<Object>(task, null);
-				this.concurrentExecutor.execute(future);
-				return future;
-			}
-		}
-		catch (RejectedExecutionException ex) {
-			throw new TaskRejectedException(
-					"Executor [" + this.concurrentExecutor + "] did not accept task: " + task, ex);
-		}
-	}
+    @Override
+    public Future<?> submit(Runnable task) {
+        try {
+            if (this.concurrentExecutor instanceof ExecutorService) {
+                return ((ExecutorService) this.concurrentExecutor).submit(task);
+            } else {
+                FutureTask<Object> future = new FutureTask<Object>(task, null);
+                this.concurrentExecutor.execute(future);
+                return future;
+            }
+        } catch (RejectedExecutionException ex) {
+            throw new TaskRejectedException("Executor [" + this.concurrentExecutor + "] did not accept task: " + task,
+                    ex);
+        }
+    }
 
-	@Override
-	public <T> Future<T> submit(Callable<T> task) {
-		try {
-			if (this.concurrentExecutor instanceof ExecutorService) {
-				return ((ExecutorService) this.concurrentExecutor).submit(task);
-			}
-			else {
-				FutureTask<T> future = new FutureTask<T>(task);
-				this.concurrentExecutor.execute(future);
-				return future;
-			}
-		}
-		catch (RejectedExecutionException ex) {
-			throw new TaskRejectedException(
-					"Executor [" + this.concurrentExecutor + "] did not accept task: " + task, ex);
-		}
-	}
+    @Override
+    public <T> Future<T> submit(Callable<T> task) {
+        try {
+            if (this.concurrentExecutor instanceof ExecutorService) {
+                return ((ExecutorService) this.concurrentExecutor).submit(task);
+            } else {
+                FutureTask<T> future = new FutureTask<T>(task);
+                this.concurrentExecutor.execute(future);
+                return future;
+            }
+        } catch (RejectedExecutionException ex) {
+            throw new TaskRejectedException("Executor [" + this.concurrentExecutor + "] did not accept task: " + task,
+                    ex);
+        }
+    }
 
-	@Override
-	public ListenableFuture<?> submitListenable(Runnable task) {
-		try {
-			ListenableFutureTask<Object> future = new ListenableFutureTask<Object>(task, null);
-			this.concurrentExecutor.execute(future);
-			return future;
-		}
-		catch (RejectedExecutionException ex) {
-			throw new TaskRejectedException(
-					"Executor [" + this.concurrentExecutor + "] did not accept task: " + task, ex);
-		}
-	}
+    @Override
+    public ListenableFuture<?> submitListenable(Runnable task) {
+        try {
+            ListenableFutureTask<Object> future = new ListenableFutureTask<Object>(task, null);
+            this.concurrentExecutor.execute(future);
+            return future;
+        } catch (RejectedExecutionException ex) {
+            throw new TaskRejectedException("Executor [" + this.concurrentExecutor + "] did not accept task: " + task,
+                    ex);
+        }
+    }
 
-	@Override
-	public <T> ListenableFuture<T> submitListenable(Callable<T> task) {
-		try {
-			ListenableFutureTask<T> future = new ListenableFutureTask<T>(task);
-			this.concurrentExecutor.execute(future);
-			return future;
-		}
-		catch (RejectedExecutionException ex) {
-			throw new TaskRejectedException(
-					"Executor [" + this.concurrentExecutor + "] did not accept task: " + task, ex);
-		}
-	}
+    @Override
+    public <T> ListenableFuture<T> submitListenable(Callable<T> task) {
+        try {
+            ListenableFutureTask<T> future = new ListenableFutureTask<T>(task);
+            this.concurrentExecutor.execute(future);
+            return future;
+        } catch (RejectedExecutionException ex) {
+            throw new TaskRejectedException("Executor [" + this.concurrentExecutor + "] did not accept task: " + task,
+                    ex);
+        }
+    }
 
 }

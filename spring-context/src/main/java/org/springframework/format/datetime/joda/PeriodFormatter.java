@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import org.joda.time.Period;
-
 import org.springframework.format.Formatter;
 
 /**
@@ -33,14 +32,14 @@ import org.springframework.format.Formatter;
  */
 class PeriodFormatter implements Formatter<Period> {
 
-	@Override
-	public Period parse(String text, Locale locale) throws ParseException {
-		return Period.parse(text);
-	}
+    @Override
+    public Period parse(String text, Locale locale) throws ParseException {
+        return Period.parse(text);
+    }
 
-	@Override
-	public String print(Period object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(Period object, Locale locale) {
+        return object.toString();
+    }
 
 }

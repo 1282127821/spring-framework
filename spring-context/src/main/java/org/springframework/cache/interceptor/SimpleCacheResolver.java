@@ -32,16 +32,15 @@ import org.springframework.cache.CacheManager;
  */
 public class SimpleCacheResolver extends AbstractCacheResolver {
 
-	public SimpleCacheResolver() {
-	}
+    public SimpleCacheResolver() {}
 
-	public SimpleCacheResolver(CacheManager cacheManager) {
-		super(cacheManager);
-	}
+    public SimpleCacheResolver(CacheManager cacheManager) {
+        super(cacheManager);
+    }
 
-	@Override
-	protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
-		return context.getOperation().getCacheNames();
-	}
+    @Override
+    protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
+        return context.getOperation().getCacheNames();
+    }
 
 }

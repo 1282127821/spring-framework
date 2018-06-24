@@ -32,26 +32,25 @@ import org.springframework.cache.CacheManager;
  */
 public class NamedCacheResolver extends AbstractCacheResolver {
 
-	private Collection<String> cacheNames;
+    private Collection<String> cacheNames;
 
-	public NamedCacheResolver(CacheManager cacheManager, String... cacheNames) {
-		super(cacheManager);
-		this.cacheNames = new ArrayList<String>(Arrays.asList(cacheNames));
-	}
+    public NamedCacheResolver(CacheManager cacheManager, String... cacheNames) {
+        super(cacheManager);
+        this.cacheNames = new ArrayList<String>(Arrays.asList(cacheNames));
+    }
 
-	public NamedCacheResolver() {
-	}
+    public NamedCacheResolver() {}
 
-	/**
-	 * Set the cache name(s) that this resolver should use.
-	 */
-	public void setCacheNames(Collection<String> cacheNames) {
-		this.cacheNames = cacheNames;
-	}
+    /**
+     * Set the cache name(s) that this resolver should use.
+     */
+    public void setCacheNames(Collection<String> cacheNames) {
+        this.cacheNames = cacheNames;
+    }
 
-	@Override
-	protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
-		return cacheNames;
-	}
+    @Override
+    protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
+        return cacheNames;
+    }
 
 }

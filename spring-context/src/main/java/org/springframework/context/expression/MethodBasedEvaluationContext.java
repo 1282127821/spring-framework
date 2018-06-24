@@ -38,61 +38,61 @@ import org.springframework.util.ObjectUtils;
  */
 public class MethodBasedEvaluationContext extends StandardEvaluationContext {
 
-	private final Method method;
+    private final Method method;
 
-	private final Object[] args;
+    private final Object[] args;
 
-	private final ParameterNameDiscoverer paramDiscoverer;
+    private final ParameterNameDiscoverer paramDiscoverer;
 
-	private boolean paramLoaded = false;
-
-
-	public MethodBasedEvaluationContext(Object rootObject, Method method, Object[] args,
-			ParameterNameDiscoverer paramDiscoverer) {
-
-		super(rootObject);
-		this.method = method;
-		this.args = args;
-		this.paramDiscoverer = paramDiscoverer;
-	}
+    private boolean paramLoaded = false;
 
 
-	@Override
-	public Object lookupVariable(String name) {
-		Object variable = super.lookupVariable(name);
-		if (variable != null) {
-			return variable;
-		}
-		if (!this.paramLoaded) {
-			lazyLoadArguments();
-			this.paramLoaded = true;
-			variable = super.lookupVariable(name);
-		}
-		return variable;
-	}
+    public MethodBasedEvaluationContext(Object rootObject, Method method, Object[] args,
+            ParameterNameDiscoverer paramDiscoverer) {
 
-	/**
-	 * Load the param information only when needed.
-	 */
-	protected void lazyLoadArguments() {
-		// shortcut if no args need to be loaded
-		if (ObjectUtils.isEmpty(this.args)) {
-			return;
-		}
+        super(rootObject);
+        this.method = method;
+        this.args = args;
+        this.paramDiscoverer = paramDiscoverer;
+    }
 
-		// save arguments as indexed variables
-		for (int i = 0; i < this.args.length; i++) {
-			setVariable("a" + i, this.args[i]);
-			setVariable("p" + i, this.args[i]);
-		}
 
-		String[] parameterNames = this.paramDiscoverer.getParameterNames(this.method);
-		// save parameter names (if discovered)
-		if (parameterNames != null) {
-			for (int i = 0; i < parameterNames.length; i++) {
-				setVariable(parameterNames[i], this.args[i]);
-			}
-		}
-	}
+    @Override
+    public Object lookupVariable(String name) {
+        Object variable = super.lookupVariable(name);
+        if (variable != null) {
+            return variable;
+        }
+        if (!this.paramLoaded) {
+            lazyLoadArguments();
+            this.paramLoaded = true;
+            variable = super.lookupVariable(name);
+        }
+        return variable;
+    }
+
+    /**
+     * Load the param information only when needed.
+     */
+    protected void lazyLoadArguments() {
+        // shortcut if no args need to be loaded
+        if (ObjectUtils.isEmpty(this.args)) {
+            return;
+        }
+
+        // save arguments as indexed variables
+        for (int i = 0; i < this.args.length; i++) {
+            setVariable("a" + i, this.args[i]);
+            setVariable("p" + i, this.args[i]);
+        }
+
+        String[] parameterNames = this.paramDiscoverer.getParameterNames(this.method);
+        // save parameter names (if discovered)
+        if (parameterNames != null) {
+            for (int i = 0; i < parameterNames.length; i++) {
+                setVariable(parameterNames[i], this.args[i]);
+            }
+        }
+    }
 
 }

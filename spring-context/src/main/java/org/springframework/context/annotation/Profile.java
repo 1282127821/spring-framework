@@ -84,9 +84,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @Conditional(ProfileCondition.class)
 public @interface Profile {
 
-	/**
-	 * The set of profiles for which the annotated component should be registered.
-	 */
-	String[] value();
+    /**
+     * The set of profiles for which the annotated component should be registered.
+     */
+    String[] value();
 
 }

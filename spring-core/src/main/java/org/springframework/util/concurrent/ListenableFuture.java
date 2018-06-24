@@ -30,23 +30,23 @@ import java.util.concurrent.Future;
  */
 public interface ListenableFuture<T> extends Future<T> {
 
-	/**
-	 * Registers the given callback to this {@code ListenableFuture}. The callback will
-	 * be triggered when this {@code Future} is complete or, if it is already complete,
-	 * immediately.
-	 * @param callback the callback to register
-	 */
-	void addCallback(ListenableFutureCallback<? super T> callback);
+    /**
+     * Registers the given callback to this {@code ListenableFuture}. The callback will
+     * be triggered when this {@code Future} is complete or, if it is already complete,
+     * immediately.
+     * @param callback the callback to register
+     */
+    void addCallback(ListenableFutureCallback<? super T> callback);
 
-	/**
-	 * Registers the given success and failure callbacks to this {@code ListenableFuture}.
-	 * The callback will be triggered when this {@code Future} is complete or, if it is
-	 * already complete immediately. This is a Java 8 lambdas compliant alternative to
-	 * {@link #addCallback(ListenableFutureCallback)}.
-	 * @param successCallback the success callback to register
-	 * @param failureCallback the failure callback to register
-	 * @since 4.1
-	 */
-	void addCallback(SuccessCallback<? super T> successCallback, FailureCallback failureCallback);
+    /**
+     * Registers the given success and failure callbacks to this {@code ListenableFuture}.
+     * The callback will be triggered when this {@code Future} is complete or, if it is
+     * already complete immediately. This is a Java 8 lambdas compliant alternative to
+     * {@link #addCallback(ListenableFutureCallback)}.
+     * @param successCallback the success callback to register
+     * @param failureCallback the failure callback to register
+     * @since 4.1
+     */
+    void addCallback(SuccessCallback<? super T> successCallback, FailureCallback failureCallback);
 
 }

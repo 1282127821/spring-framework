@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
@@ -59,186 +60,177 @@ import org.springframework.jndi.TypeMismatchNamingException;
  */
 public class SimpleJndiBeanFactory extends JndiLocatorSupport implements BeanFactory {
 
-	/** JNDI names of resources that are known to be shareable, i.e. can be cached */
-	private final Set<String> shareableResources = new HashSet<String>();
+    /** JNDI names of resources that are known to be shareable, i.e. can be cached */
+    private final Set<String> shareableResources = new HashSet<String>();
 
-	/** Cache of shareable singleton objects: bean name --> bean instance */
-	private final Map<String, Object> singletonObjects = new HashMap<String, Object>();
+    /** Cache of shareable singleton objects: bean name --> bean instance */
+    private final Map<String, Object> singletonObjects = new HashMap<String, Object>();
 
-	/** Cache of the types of nonshareable resources: bean name --> bean type */
-	private final Map<String, Class<?>> resourceTypes = new HashMap<String, Class<?>>();
-
-
-	public SimpleJndiBeanFactory() {
-		setResourceRef(true);
-	}
+    /** Cache of the types of nonshareable resources: bean name --> bean type */
+    private final Map<String, Class<?>> resourceTypes = new HashMap<String, Class<?>>();
 
 
-	/**
-	 * Add the name of a shareable JNDI resource,
-	 * which this factory is allowed to cache once obtained.
-	 * @param shareableResource the JNDI name
-	 * (typically within the "java:comp/env/" namespace)
-	 */
-	public void addShareableResource(String shareableResource) {
-		this.shareableResources.add(shareableResource);
-	}
-
-	/**
-	 * Set a list of names of shareable JNDI resources,
-	 * which this factory is allowed to cache once obtained.
-	 * @param shareableResources the JNDI names
-	 * (typically within the "java:comp/env/" namespace)
-	 */
-	public void setShareableResources(String... shareableResources) {
-		this.shareableResources.addAll(Arrays.asList(shareableResources));
-	}
+    public SimpleJndiBeanFactory() {
+        setResourceRef(true);
+    }
 
 
-	//---------------------------------------------------------------------
-	// Implementation of BeanFactory interface
-	//---------------------------------------------------------------------
+    /**
+     * Add the name of a shareable JNDI resource,
+     * which this factory is allowed to cache once obtained.
+     * @param shareableResource the JNDI name
+     * (typically within the "java:comp/env/" namespace)
+     */
+    public void addShareableResource(String shareableResource) {
+        this.shareableResources.add(shareableResource);
+    }
+
+    /**
+     * Set a list of names of shareable JNDI resources,
+     * which this factory is allowed to cache once obtained.
+     * @param shareableResources the JNDI names
+     * (typically within the "java:comp/env/" namespace)
+     */
+    public void setShareableResources(String... shareableResources) {
+        this.shareableResources.addAll(Arrays.asList(shareableResources));
+    }
 
 
-	@Override
-	public Object getBean(String name) throws BeansException {
-		return getBean(name, Object.class);
-	}
-
-	@Override
-	public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-		try {
-			if (isSingleton(name)) {
-				return doGetSingleton(name, requiredType);
-			}
-			else {
-				return lookup(name, requiredType);
-			}
-		}
-		catch (NameNotFoundException ex) {
-			throw new NoSuchBeanDefinitionException(name, "not found in JNDI environment");
-		}
-		catch (TypeMismatchNamingException ex) {
-			throw new BeanNotOfRequiredTypeException(name, ex.getRequiredType(), ex.getActualType());
-		}
-		catch (NamingException ex) {
-			throw new BeanDefinitionStoreException("JNDI environment", name, "JNDI lookup failed", ex);
-		}
-	}
-
-	@Override
-	public <T> T getBean(Class<T> requiredType) throws BeansException {
-		return getBean(requiredType.getSimpleName(), requiredType);
-	}
-
-	@Override
-	public Object getBean(String name, Object... args) throws BeansException {
-		if (args != null) {
-			throw new UnsupportedOperationException(
-					"SimpleJndiBeanFactory does not support explicit bean creation arguments");
-		}
-		return getBean(name);
-	}
-
-	@Override
-	public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
-		if (args != null) {
-			throw new UnsupportedOperationException(
-					"SimpleJndiBeanFactory does not support explicit bean creation arguments");
-		}
-		return getBean(requiredType);
-	}
-
-	@Override
-	public boolean containsBean(String name) {
-		if (this.singletonObjects.containsKey(name) || this.resourceTypes.containsKey(name)) {
-			return true;
-		}
-		try {
-			doGetType(name);
-			return true;
-		}
-		catch (NamingException ex) {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
-		return this.shareableResources.contains(name);
-	}
-
-	@Override
-	public boolean isPrototype(String name) throws NoSuchBeanDefinitionException {
-		return !this.shareableResources.contains(name);
-	}
-
-	@Override
-	public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
-		Class<?> type = getType(name);
-		return (type != null && typeToMatch.isAssignableFrom(type));
-	}
-
-	@Override
-	public boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
-		Class<?> type = getType(name);
-		return (typeToMatch == null || (type != null && typeToMatch.isAssignableFrom(type)));
-	}
-
-	@Override
-	public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
-		try {
-			return doGetType(name);
-		}
-		catch (NameNotFoundException ex) {
-			throw new NoSuchBeanDefinitionException(name, "not found in JNDI environment");
-		}
-		catch (NamingException ex) {
-			return null;
-		}
-	}
-
-	@Override
-	public String[] getAliases(String name) {
-		return new String[0];
-	}
+    //---------------------------------------------------------------------
+    // Implementation of BeanFactory interface
+    //---------------------------------------------------------------------
 
 
-	@SuppressWarnings("unchecked")
-	private <T> T doGetSingleton(String name, Class<T> requiredType) throws NamingException {
-		synchronized (this.singletonObjects) {
-			if (this.singletonObjects.containsKey(name)) {
-				Object jndiObject = this.singletonObjects.get(name);
-				if (requiredType != null && !requiredType.isInstance(jndiObject)) {
-					throw new TypeMismatchNamingException(
-							convertJndiName(name), requiredType, (jndiObject != null ? jndiObject.getClass() : null));
-				}
-				return (T) jndiObject;
-			}
-			T jndiObject = lookup(name, requiredType);
-			this.singletonObjects.put(name, jndiObject);
-			return jndiObject;
-		}
-	}
+    @Override
+    public Object getBean(String name) throws BeansException {
+        return getBean(name, Object.class);
+    }
 
-	private Class<?> doGetType(String name) throws NamingException {
-		if (isSingleton(name)) {
-			Object jndiObject = doGetSingleton(name, null);
-			return (jndiObject != null ? jndiObject.getClass() : null);
-		}
-		else {
-			synchronized (this.resourceTypes) {
-				if (this.resourceTypes.containsKey(name)) {
-					return this.resourceTypes.get(name);
-				}
-				else {
-					Object jndiObject = lookup(name, null);
-					Class<?> type = (jndiObject != null ? jndiObject.getClass() : null);
-					this.resourceTypes.put(name, type);
-					return type;
-				}
-			}
-		}
-	}
+    @Override
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        try {
+            if (isSingleton(name)) {
+                return doGetSingleton(name, requiredType);
+            } else {
+                return lookup(name, requiredType);
+            }
+        } catch (NameNotFoundException ex) {
+            throw new NoSuchBeanDefinitionException(name, "not found in JNDI environment");
+        } catch (TypeMismatchNamingException ex) {
+            throw new BeanNotOfRequiredTypeException(name, ex.getRequiredType(), ex.getActualType());
+        } catch (NamingException ex) {
+            throw new BeanDefinitionStoreException("JNDI environment", name, "JNDI lookup failed", ex);
+        }
+    }
+
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        return getBean(requiredType.getSimpleName(), requiredType);
+    }
+
+    @Override
+    public Object getBean(String name, Object... args) throws BeansException {
+        if (args != null) {
+            throw new UnsupportedOperationException(
+                    "SimpleJndiBeanFactory does not support explicit bean creation arguments");
+        }
+        return getBean(name);
+    }
+
+    @Override
+    public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
+        if (args != null) {
+            throw new UnsupportedOperationException(
+                    "SimpleJndiBeanFactory does not support explicit bean creation arguments");
+        }
+        return getBean(requiredType);
+    }
+
+    @Override
+    public boolean containsBean(String name) {
+        if (this.singletonObjects.containsKey(name) || this.resourceTypes.containsKey(name)) {
+            return true;
+        }
+        try {
+            doGetType(name);
+            return true;
+        } catch (NamingException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
+        return this.shareableResources.contains(name);
+    }
+
+    @Override
+    public boolean isPrototype(String name) throws NoSuchBeanDefinitionException {
+        return !this.shareableResources.contains(name);
+    }
+
+    @Override
+    public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
+        Class<?> type = getType(name);
+        return (type != null && typeToMatch.isAssignableFrom(type));
+    }
+
+    @Override
+    public boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
+        Class<?> type = getType(name);
+        return (typeToMatch == null || (type != null && typeToMatch.isAssignableFrom(type)));
+    }
+
+    @Override
+    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+        try {
+            return doGetType(name);
+        } catch (NameNotFoundException ex) {
+            throw new NoSuchBeanDefinitionException(name, "not found in JNDI environment");
+        } catch (NamingException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public String[] getAliases(String name) {
+        return new String[0];
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private <T> T doGetSingleton(String name, Class<T> requiredType) throws NamingException {
+        synchronized (this.singletonObjects) {
+            if (this.singletonObjects.containsKey(name)) {
+                Object jndiObject = this.singletonObjects.get(name);
+                if (requiredType != null && !requiredType.isInstance(jndiObject)) {
+                    throw new TypeMismatchNamingException(convertJndiName(name), requiredType,
+                            (jndiObject != null ? jndiObject.getClass() : null));
+                }
+                return (T) jndiObject;
+            }
+            T jndiObject = lookup(name, requiredType);
+            this.singletonObjects.put(name, jndiObject);
+            return jndiObject;
+        }
+    }
+
+    private Class<?> doGetType(String name) throws NamingException {
+        if (isSingleton(name)) {
+            Object jndiObject = doGetSingleton(name, null);
+            return (jndiObject != null ? jndiObject.getClass() : null);
+        } else {
+            synchronized (this.resourceTypes) {
+                if (this.resourceTypes.containsKey(name)) {
+                    return this.resourceTypes.get(name);
+                } else {
+                    Object jndiObject = lookup(name, null);
+                    Class<?> type = (jndiObject != null ? jndiObject.getClass() : null);
+                    this.resourceTypes.put(name, type);
+                    return type;
+                }
+            }
+        }
+    }
 
 }

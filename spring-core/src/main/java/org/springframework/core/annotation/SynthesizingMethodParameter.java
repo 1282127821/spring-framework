@@ -33,26 +33,26 @@ import org.springframework.core.MethodParameter;
  */
 public class SynthesizingMethodParameter extends MethodParameter {
 
-	/**
-	 * Create a new {@code SynthesizingMethodParameter} for the given method.
-	 * @param method the Method to specify a parameter for
-	 * @param parameterIndex the index of the parameter: -1 for the method
-	 * return type; 0 for the first method parameter; 1 for the second method
-	 * parameter, etc.
-	 */
-	public SynthesizingMethodParameter(Method method, int parameterIndex) {
-		super(method, parameterIndex);
-	}
+    /**
+     * Create a new {@code SynthesizingMethodParameter} for the given method.
+     * @param method the Method to specify a parameter for
+     * @param parameterIndex the index of the parameter: -1 for the method
+     * return type; 0 for the first method parameter; 1 for the second method
+     * parameter, etc.
+     */
+    public SynthesizingMethodParameter(Method method, int parameterIndex) {
+        super(method, parameterIndex);
+    }
 
 
-	@Override
-	protected <A extends Annotation> A adaptAnnotation(A annotation) {
-		return AnnotationUtils.synthesizeAnnotation(annotation, getAnnotatedElement());
-	}
+    @Override
+    protected <A extends Annotation> A adaptAnnotation(A annotation) {
+        return AnnotationUtils.synthesizeAnnotation(annotation, getAnnotatedElement());
+    }
 
-	@Override
-	protected Annotation[] adaptAnnotationArray(Annotation[] annotations) {
-		return AnnotationUtils.synthesizeAnnotationArray(annotations, getAnnotatedElement());
-	}
+    @Override
+    protected Annotation[] adaptAnnotationArray(Annotation[] annotations) {
+        return AnnotationUtils.synthesizeAnnotationArray(annotations, getAnnotatedElement());
+    }
 
 }

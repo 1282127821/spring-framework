@@ -30,13 +30,13 @@ import org.springframework.jmx.JmxException;
 @SuppressWarnings("serial")
 public class InvalidMetadataException extends JmxException {
 
-	/**
-	 * Create a new {@code InvalidMetadataException} with the supplied
-	 * error message.
-	 * @param msg the detail message
-	 */
-	public InvalidMetadataException(String msg) {
-		super(msg);
-	}
+    /**
+     * Create a new {@code InvalidMetadataException} with the supplied
+     * error message.
+     * @param msg the detail message
+     */
+    public InvalidMetadataException(String msg) {
+        super(msg);
+    }
 
 }

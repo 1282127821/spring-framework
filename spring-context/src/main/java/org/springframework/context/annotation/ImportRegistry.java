@@ -24,8 +24,8 @@ import org.springframework.core.type.AnnotationMetadata;
  */
 interface ImportRegistry {
 
-	AnnotationMetadata getImportingClassFor(String importedClass);
+    AnnotationMetadata getImportingClassFor(String importedClass);
 
-	void removeImportingClassFor(String importedClass);
+    void removeImportingClassFor(String importedClass);
 
 }

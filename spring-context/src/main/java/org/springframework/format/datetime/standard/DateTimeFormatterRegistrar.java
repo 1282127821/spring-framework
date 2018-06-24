@@ -54,161 +54,160 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 public class DateTimeFormatterRegistrar implements FormatterRegistrar {
 
-	private enum Type {DATE, TIME, DATE_TIME}
+    private enum Type {
+        DATE, TIME, DATE_TIME
+    }
 
 
-	/**
-	 * User defined formatters.
-	 */
-	private final Map<Type, DateTimeFormatter> formatters = new HashMap<Type, DateTimeFormatter>();
+    /**
+     * User defined formatters.
+     */
+    private final Map<Type, DateTimeFormatter> formatters = new HashMap<Type, DateTimeFormatter>();
 
-	/**
-	 * Factories used when specific formatters have not been specified.
-	 */
-	private final Map<Type, DateTimeFormatterFactory> factories;
-
-
-	public DateTimeFormatterRegistrar() {
-		this.factories = new HashMap<Type, DateTimeFormatterFactory>();
-		for (Type type : Type.values()) {
-			this.factories.put(type, new DateTimeFormatterFactory());
-		}
-	}
+    /**
+     * Factories used when specific formatters have not been specified.
+     */
+    private final Map<Type, DateTimeFormatterFactory> factories;
 
 
-	/**
-	 * Set whether standard ISO formatting should be applied to all date/time types.
-	 * Default is "false" (no).
-	 * <p>If set to "true", the "dateStyle", "timeStyle" and "dateTimeStyle"
-	 * properties are effectively ignored.
-	 */
-	public void setUseIsoFormat(boolean useIsoFormat) {
-		this.factories.get(Type.DATE).setIso(useIsoFormat ? ISO.DATE : null);
-		this.factories.get(Type.TIME).setIso(useIsoFormat ? ISO.TIME : null);
-		this.factories.get(Type.DATE_TIME).setIso(useIsoFormat ? ISO.DATE_TIME : null);
-	}
-
-	/**
-	 * Set the default format style of {@link java.time.LocalDate} objects.
-	 * Default is {@link java.time.format.FormatStyle#SHORT}.
-	 */
-	public void setDateStyle(FormatStyle dateStyle) {
-		this.factories.get(Type.DATE).setDateStyle(dateStyle);
-	}
-
-	/**
-	 * Set the default format style of {@link java.time.LocalTime} objects.
-	 * Default is {@link java.time.format.FormatStyle#SHORT}.
-	 */
-	public void setTimeStyle(FormatStyle timeStyle) {
-		this.factories.get(Type.TIME).setTimeStyle(timeStyle);
-	}
-
-	/**
-	 * Set the default format style of {@link java.time.LocalDateTime} objects.
-	 * Default is {@link java.time.format.FormatStyle#SHORT}.
-	 */
-	public void setDateTimeStyle(FormatStyle dateTimeStyle) {
-		this.factories.get(Type.DATE_TIME).setDateTimeStyle(dateTimeStyle);
-	}
-
-	/**
-	 * Set the formatter that will be used for objects representing date values.
-	 * <p>This formatter will be used for the {@link LocalDate} type.
-	 * When specified, the {@link #setDateStyle dateStyle} and
-	 * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
-	 * @param formatter the formatter to use
-	 * @see #setTimeFormatter
-	 * @see #setDateTimeFormatter
-	 */
-	public void setDateFormatter(DateTimeFormatter formatter) {
-		this.formatters.put(Type.DATE, formatter);
-	}
-
-	/**
-	 * Set the formatter that will be used for objects representing time values.
-	 * <p>This formatter will be used for the {@link LocalTime} and {@link OffsetTime}
-	 * types. When specified, the {@link #setTimeStyle timeStyle} and
-	 * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
-	 * @param formatter the formatter to use
-	 * @see #setDateFormatter
-	 * @see #setDateTimeFormatter
-	 */
-	public void setTimeFormatter(DateTimeFormatter formatter) {
-		this.formatters.put(Type.TIME, formatter);
-	}
-
-	/**
-	 * Set the formatter that will be used for objects representing date and time values.
-	 * <p>This formatter will be used for {@link LocalDateTime}, {@link ZonedDateTime}
-	 * and {@link OffsetDateTime} types. When specified, the
-	 * {@link #setDateTimeStyle dateTimeStyle} and
-	 * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
-	 * @param formatter the formatter to use
-	 * @see #setDateFormatter
-	 * @see #setTimeFormatter
-	 */
-	public void setDateTimeFormatter(DateTimeFormatter formatter) {
-		this.formatters.put(Type.DATE_TIME, formatter);
-	}
+    public DateTimeFormatterRegistrar() {
+        this.factories = new HashMap<Type, DateTimeFormatterFactory>();
+        for (Type type : Type.values()) {
+            this.factories.put(type, new DateTimeFormatterFactory());
+        }
+    }
 
 
-	@Override
-	public void registerFormatters(FormatterRegistry registry) {
-		DateTimeConverters.registerConverters(registry);
+    /**
+     * Set whether standard ISO formatting should be applied to all date/time types.
+     * Default is "false" (no).
+     * <p>If set to "true", the "dateStyle", "timeStyle" and "dateTimeStyle"
+     * properties are effectively ignored.
+     */
+    public void setUseIsoFormat(boolean useIsoFormat) {
+        this.factories.get(Type.DATE).setIso(useIsoFormat ? ISO.DATE : null);
+        this.factories.get(Type.TIME).setIso(useIsoFormat ? ISO.TIME : null);
+        this.factories.get(Type.DATE_TIME).setIso(useIsoFormat ? ISO.DATE_TIME : null);
+    }
 
-		DateTimeFormatter dateFormatter = getFormatter(Type.DATE);
-		DateTimeFormatter timeFormatter = getFormatter(Type.TIME);
-		DateTimeFormatter dateTimeFormatter = getFormatter(Type.DATE_TIME);
+    /**
+     * Set the default format style of {@link java.time.LocalDate} objects.
+     * Default is {@link java.time.format.FormatStyle#SHORT}.
+     */
+    public void setDateStyle(FormatStyle dateStyle) {
+        this.factories.get(Type.DATE).setDateStyle(dateStyle);
+    }
 
-		registry.addFormatterForFieldType(LocalDate.class,
-				new TemporalAccessorPrinter(dateFormatter),
-				new TemporalAccessorParser(LocalDate.class, dateFormatter));
+    /**
+     * Set the default format style of {@link java.time.LocalTime} objects.
+     * Default is {@link java.time.format.FormatStyle#SHORT}.
+     */
+    public void setTimeStyle(FormatStyle timeStyle) {
+        this.factories.get(Type.TIME).setTimeStyle(timeStyle);
+    }
 
-		registry.addFormatterForFieldType(LocalTime.class,
-				new TemporalAccessorPrinter(timeFormatter),
-				new TemporalAccessorParser(LocalTime.class, timeFormatter));
+    /**
+     * Set the default format style of {@link java.time.LocalDateTime} objects.
+     * Default is {@link java.time.format.FormatStyle#SHORT}.
+     */
+    public void setDateTimeStyle(FormatStyle dateTimeStyle) {
+        this.factories.get(Type.DATE_TIME).setDateTimeStyle(dateTimeStyle);
+    }
 
-		registry.addFormatterForFieldType(LocalDateTime.class,
-				new TemporalAccessorPrinter(dateTimeFormatter),
-				new TemporalAccessorParser(LocalDateTime.class, dateTimeFormatter));
+    /**
+     * Set the formatter that will be used for objects representing date values.
+     * <p>This formatter will be used for the {@link LocalDate} type.
+     * When specified, the {@link #setDateStyle dateStyle} and
+     * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
+     * @param formatter the formatter to use
+     * @see #setTimeFormatter
+     * @see #setDateTimeFormatter
+     */
+    public void setDateFormatter(DateTimeFormatter formatter) {
+        this.formatters.put(Type.DATE, formatter);
+    }
 
-		registry.addFormatterForFieldType(ZonedDateTime.class,
-				new TemporalAccessorPrinter(dateTimeFormatter),
-				new TemporalAccessorParser(ZonedDateTime.class, dateTimeFormatter));
+    /**
+     * Set the formatter that will be used for objects representing time values.
+     * <p>This formatter will be used for the {@link LocalTime} and {@link OffsetTime}
+     * types. When specified, the {@link #setTimeStyle timeStyle} and
+     * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
+     * @param formatter the formatter to use
+     * @see #setDateFormatter
+     * @see #setDateTimeFormatter
+     */
+    public void setTimeFormatter(DateTimeFormatter formatter) {
+        this.formatters.put(Type.TIME, formatter);
+    }
 
-		registry.addFormatterForFieldType(OffsetDateTime.class,
-				new TemporalAccessorPrinter(dateTimeFormatter),
-				new TemporalAccessorParser(OffsetDateTime.class, dateTimeFormatter));
+    /**
+     * Set the formatter that will be used for objects representing date and time values.
+     * <p>This formatter will be used for {@link LocalDateTime}, {@link ZonedDateTime}
+     * and {@link OffsetDateTime} types. When specified, the
+     * {@link #setDateTimeStyle dateTimeStyle} and
+     * {@link #setUseIsoFormat useIsoFormat} properties will be ignored.
+     * @param formatter the formatter to use
+     * @see #setDateFormatter
+     * @see #setTimeFormatter
+     */
+    public void setDateTimeFormatter(DateTimeFormatter formatter) {
+        this.formatters.put(Type.DATE_TIME, formatter);
+    }
 
-		registry.addFormatterForFieldType(OffsetTime.class,
-				new TemporalAccessorPrinter(timeFormatter),
-				new TemporalAccessorParser(OffsetTime.class, timeFormatter));
 
-		registry.addFormatterForFieldType(Instant.class, new InstantFormatter());
-		registry.addFormatterForFieldType(Period.class, new PeriodFormatter());
-		registry.addFormatterForFieldType(Duration.class, new DurationFormatter());
-		registry.addFormatterForFieldType(YearMonth.class, new YearMonthFormatter());
-		registry.addFormatterForFieldType(MonthDay.class, new MonthDayFormatter());
+    @Override
+    public void registerFormatters(FormatterRegistry registry) {
+        DateTimeConverters.registerConverters(registry);
 
-		registry.addFormatterForFieldAnnotation(new Jsr310DateTimeFormatAnnotationFormatterFactory());
-	}
+        DateTimeFormatter dateFormatter = getFormatter(Type.DATE);
+        DateTimeFormatter timeFormatter = getFormatter(Type.TIME);
+        DateTimeFormatter dateTimeFormatter = getFormatter(Type.DATE_TIME);
 
-	private DateTimeFormatter getFormatter(Type type) {
-		DateTimeFormatter formatter = this.formatters.get(type);
-		if (formatter != null) {
-			return formatter;
-		}
-		DateTimeFormatter fallbackFormatter = getFallbackFormatter(type);
-		return this.factories.get(type).createDateTimeFormatter(fallbackFormatter);
-	}
+        registry.addFormatterForFieldType(LocalDate.class, new TemporalAccessorPrinter(dateFormatter),
+                new TemporalAccessorParser(LocalDate.class, dateFormatter));
 
-	private DateTimeFormatter getFallbackFormatter(Type type) {
-		switch (type) {
-			case DATE: return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-			case TIME: return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
-			default: return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
-		}
-	}
+        registry.addFormatterForFieldType(LocalTime.class, new TemporalAccessorPrinter(timeFormatter),
+                new TemporalAccessorParser(LocalTime.class, timeFormatter));
+
+        registry.addFormatterForFieldType(LocalDateTime.class, new TemporalAccessorPrinter(dateTimeFormatter),
+                new TemporalAccessorParser(LocalDateTime.class, dateTimeFormatter));
+
+        registry.addFormatterForFieldType(ZonedDateTime.class, new TemporalAccessorPrinter(dateTimeFormatter),
+                new TemporalAccessorParser(ZonedDateTime.class, dateTimeFormatter));
+
+        registry.addFormatterForFieldType(OffsetDateTime.class, new TemporalAccessorPrinter(dateTimeFormatter),
+                new TemporalAccessorParser(OffsetDateTime.class, dateTimeFormatter));
+
+        registry.addFormatterForFieldType(OffsetTime.class, new TemporalAccessorPrinter(timeFormatter),
+                new TemporalAccessorParser(OffsetTime.class, timeFormatter));
+
+        registry.addFormatterForFieldType(Instant.class, new InstantFormatter());
+        registry.addFormatterForFieldType(Period.class, new PeriodFormatter());
+        registry.addFormatterForFieldType(Duration.class, new DurationFormatter());
+        registry.addFormatterForFieldType(YearMonth.class, new YearMonthFormatter());
+        registry.addFormatterForFieldType(MonthDay.class, new MonthDayFormatter());
+
+        registry.addFormatterForFieldAnnotation(new Jsr310DateTimeFormatAnnotationFormatterFactory());
+    }
+
+    private DateTimeFormatter getFormatter(Type type) {
+        DateTimeFormatter formatter = this.formatters.get(type);
+        if (formatter != null) {
+            return formatter;
+        }
+        DateTimeFormatter fallbackFormatter = getFallbackFormatter(type);
+        return this.factories.get(type).createDateTimeFormatter(fallbackFormatter);
+    }
+
+    private DateTimeFormatter getFallbackFormatter(Type type) {
+        switch (type) {
+            case DATE:
+                return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+            case TIME:
+                return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
+            default:
+                return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
+        }
+    }
 
 }

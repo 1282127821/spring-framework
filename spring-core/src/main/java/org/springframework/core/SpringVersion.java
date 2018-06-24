@@ -31,14 +31,14 @@ package org.springframework.core;
  */
 public class SpringVersion {
 
-	/**
-	 * Return the full version string of the present Spring codebase,
-	 * or {@code null} if it cannot be determined.
-	 * @see Package#getImplementationVersion()
-	 */
-	public static String getVersion() {
-		Package pkg = SpringVersion.class.getPackage();
-		return (pkg != null ? pkg.getImplementationVersion() : null);
-	}
+    /**
+     * Return the full version string of the present Spring codebase,
+     * or {@code null} if it cannot be determined.
+     * @see Package#getImplementationVersion()
+     */
+    public static String getVersion() {
+        Package pkg = SpringVersion.class.getPackage();
+        return (pkg != null ? pkg.getImplementationVersion() : null);
+    }
 
 }

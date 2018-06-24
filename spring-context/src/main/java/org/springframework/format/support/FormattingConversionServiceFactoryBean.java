@@ -61,118 +61,117 @@ import org.springframework.util.StringValueResolver;
  * @since 3.0
  */
 public class FormattingConversionServiceFactoryBean
-		implements FactoryBean<FormattingConversionService>, EmbeddedValueResolverAware, InitializingBean {
+        implements FactoryBean<FormattingConversionService>, EmbeddedValueResolverAware, InitializingBean {
 
-	private Set<?> converters;
+    private Set<?> converters;
 
-	private Set<?> formatters;
+    private Set<?> formatters;
 
-	private Set<FormatterRegistrar> formatterRegistrars;
+    private Set<FormatterRegistrar> formatterRegistrars;
 
-	private boolean registerDefaultFormatters = true;
+    private boolean registerDefaultFormatters = true;
 
-	private StringValueResolver embeddedValueResolver;
+    private StringValueResolver embeddedValueResolver;
 
-	private FormattingConversionService conversionService;
-
-
-	/**
-	 * Configure the set of custom converter objects that should be added.
-	 * @param converters instances of any of the following:
-	 * {@link org.springframework.core.convert.converter.Converter},
-	 * {@link org.springframework.core.convert.converter.ConverterFactory},
-	 * {@link org.springframework.core.convert.converter.GenericConverter}
-	 */
-	public void setConverters(Set<?> converters) {
-		this.converters = converters;
-	}
-
-	/**
-	 * Configure the set of custom formatter objects that should be added.
-	 * @param formatters instances of {@link Formatter} or {@link AnnotationFormatterFactory}
-	 */
-	public void setFormatters(Set<?> formatters) {
-		this.formatters = formatters;
-	}
-
-	/**
-	 * <p>Configure the set of FormatterRegistrars to invoke to register
-	 * Converters and Formatters in addition to those added declaratively
-	 * via {@link #setConverters(Set)} and {@link #setFormatters(Set)}.
-	 * <p>FormatterRegistrars are useful when registering multiple related
-	 * converters and formatters for a formatting category, such as Date
-	 * formatting. All types related needed to support the formatting
-	 * category can be registered from one place.
-	 * <p>FormatterRegistrars can also be used to register Formatters
-	 * indexed under a specific field type different from its own &lt;T&gt;,
-	 * or when registering a Formatter from a Printer/Parser pair.
-	 * @see FormatterRegistry#addFormatterForFieldType(Class, Formatter)
-	 * @see FormatterRegistry#addFormatterForFieldType(Class, Printer, Parser)
-	 */
-	public void setFormatterRegistrars(Set<FormatterRegistrar> formatterRegistrars) {
-		this.formatterRegistrars = formatterRegistrars;
-	}
-
-	/**
-	 * Indicate whether default formatters should be registered or not.
-	 * <p>By default, built-in formatters are registered. This flag can be used
-	 * to turn that off and rely on explicitly registered formatters only.
-	 * @see #setFormatters(Set)
-	 * @see #setFormatterRegistrars(Set)
-	 */
-	public void setRegisterDefaultFormatters(boolean registerDefaultFormatters) {
-		this.registerDefaultFormatters = registerDefaultFormatters;
-	}
-
-	@Override
-	public void setEmbeddedValueResolver(StringValueResolver embeddedValueResolver) {
-		this.embeddedValueResolver = embeddedValueResolver;
-	}
+    private FormattingConversionService conversionService;
 
 
-	@Override
-	public void afterPropertiesSet() {
-		this.conversionService = new DefaultFormattingConversionService(this.embeddedValueResolver, this.registerDefaultFormatters);
-		ConversionServiceFactory.registerConverters(this.converters, this.conversionService);
-		registerFormatters();
-	}
+    /**
+     * Configure the set of custom converter objects that should be added.
+     * @param converters instances of any of the following:
+     * {@link org.springframework.core.convert.converter.Converter},
+     * {@link org.springframework.core.convert.converter.ConverterFactory},
+     * {@link org.springframework.core.convert.converter.GenericConverter}
+     */
+    public void setConverters(Set<?> converters) {
+        this.converters = converters;
+    }
 
-	private void registerFormatters() {
-		if (this.formatters != null) {
-			for (Object formatter : this.formatters) {
-				if (formatter instanceof Formatter<?>) {
-					this.conversionService.addFormatter((Formatter<?>) formatter);
-				}
-				else if (formatter instanceof AnnotationFormatterFactory<?>) {
-					this.conversionService.addFormatterForFieldAnnotation((AnnotationFormatterFactory<?>) formatter);
-				}
-				else {
-					throw new IllegalArgumentException(
-							"Custom formatters must be implementations of Formatter or AnnotationFormatterFactory");
-				}
-			}
-		}
-		if (this.formatterRegistrars != null) {
-			for (FormatterRegistrar registrar : this.formatterRegistrars) {
-				registrar.registerFormatters(this.conversionService);
-			}
-		}
-	}
+    /**
+     * Configure the set of custom formatter objects that should be added.
+     * @param formatters instances of {@link Formatter} or {@link AnnotationFormatterFactory}
+     */
+    public void setFormatters(Set<?> formatters) {
+        this.formatters = formatters;
+    }
+
+    /**
+     * <p>Configure the set of FormatterRegistrars to invoke to register
+     * Converters and Formatters in addition to those added declaratively
+     * via {@link #setConverters(Set)} and {@link #setFormatters(Set)}.
+     * <p>FormatterRegistrars are useful when registering multiple related
+     * converters and formatters for a formatting category, such as Date
+     * formatting. All types related needed to support the formatting
+     * category can be registered from one place.
+     * <p>FormatterRegistrars can also be used to register Formatters
+     * indexed under a specific field type different from its own &lt;T&gt;,
+     * or when registering a Formatter from a Printer/Parser pair.
+     * @see FormatterRegistry#addFormatterForFieldType(Class, Formatter)
+     * @see FormatterRegistry#addFormatterForFieldType(Class, Printer, Parser)
+     */
+    public void setFormatterRegistrars(Set<FormatterRegistrar> formatterRegistrars) {
+        this.formatterRegistrars = formatterRegistrars;
+    }
+
+    /**
+     * Indicate whether default formatters should be registered or not.
+     * <p>By default, built-in formatters are registered. This flag can be used
+     * to turn that off and rely on explicitly registered formatters only.
+     * @see #setFormatters(Set)
+     * @see #setFormatterRegistrars(Set)
+     */
+    public void setRegisterDefaultFormatters(boolean registerDefaultFormatters) {
+        this.registerDefaultFormatters = registerDefaultFormatters;
+    }
+
+    @Override
+    public void setEmbeddedValueResolver(StringValueResolver embeddedValueResolver) {
+        this.embeddedValueResolver = embeddedValueResolver;
+    }
 
 
-	@Override
-	public FormattingConversionService getObject() {
-		return this.conversionService;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        this.conversionService =
+                new DefaultFormattingConversionService(this.embeddedValueResolver, this.registerDefaultFormatters);
+        ConversionServiceFactory.registerConverters(this.converters, this.conversionService);
+        registerFormatters();
+    }
 
-	@Override
-	public Class<? extends FormattingConversionService> getObjectType() {
-		return FormattingConversionService.class;
-	}
+    private void registerFormatters() {
+        if (this.formatters != null) {
+            for (Object formatter : this.formatters) {
+                if (formatter instanceof Formatter<?>) {
+                    this.conversionService.addFormatter((Formatter<?>) formatter);
+                } else if (formatter instanceof AnnotationFormatterFactory<?>) {
+                    this.conversionService.addFormatterForFieldAnnotation((AnnotationFormatterFactory<?>) formatter);
+                } else {
+                    throw new IllegalArgumentException(
+                            "Custom formatters must be implementations of Formatter or AnnotationFormatterFactory");
+                }
+            }
+        }
+        if (this.formatterRegistrars != null) {
+            for (FormatterRegistrar registrar : this.formatterRegistrars) {
+                registrar.registerFormatters(this.conversionService);
+            }
+        }
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public FormattingConversionService getObject() {
+        return this.conversionService;
+    }
+
+    @Override
+    public Class<? extends FormattingConversionService> getObjectType() {
+        return FormattingConversionService.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

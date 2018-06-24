@@ -31,23 +31,23 @@ import org.springframework.jmx.JmxException;
 @SuppressWarnings("serial")
 public class UnableToSendNotificationException extends JmxException {
 
-	/**
-	 * Create a new instance of the {@link UnableToSendNotificationException}
-	 * class with the specified error message.
-	 * @param msg the detail message
-	 */
-	public UnableToSendNotificationException(String msg) {
-		super(msg);
-	}
+    /**
+     * Create a new instance of the {@link UnableToSendNotificationException}
+     * class with the specified error message.
+     * @param msg the detail message
+     */
+    public UnableToSendNotificationException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Create a new instance of the {@link UnableToSendNotificationException}
-	 * with the specified error message and root cause.
-	 * @param msg the detail message
-	 * @param cause the root cause
-	 */
-	public UnableToSendNotificationException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Create a new instance of the {@link UnableToSendNotificationException}
+     * with the specified error message and root cause.
+     * @param msg the detail message
+     * @param cause the root cause
+     */
+    public UnableToSendNotificationException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

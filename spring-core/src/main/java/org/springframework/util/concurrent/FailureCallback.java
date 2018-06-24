@@ -25,10 +25,10 @@ package org.springframework.util.concurrent;
  */
 public interface FailureCallback {
 
-	/**
-	 * Called when the {@link ListenableFuture} fails to complete.
-	 * @param ex the exception that triggered the failure
-	 */
-	void onFailure(Throwable ex);
+    /**
+     * Called when the {@link ListenableFuture} fails to complete.
+     * @param ex the exception that triggered the failure
+     */
+    void onFailure(Throwable ex);
 
 }

@@ -44,93 +44,90 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class PreferencesPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements InitializingBean {
 
-	private String systemTreePath;
+    private String systemTreePath;
 
-	private String userTreePath;
+    private String userTreePath;
 
-	private Preferences systemPrefs;
+    private Preferences systemPrefs;
 
-	private Preferences userPrefs;
-
-
-	/**
-	 * Set the path in the system preferences tree to use for resolving
-	 * placeholders. Default is the root node.
-	 */
-	public void setSystemTreePath(String systemTreePath) {
-		this.systemTreePath = systemTreePath;
-	}
-
-	/**
-	 * Set the path in the system preferences tree to use for resolving
-	 * placeholders. Default is the root node.
-	 */
-	public void setUserTreePath(String userTreePath) {
-		this.userTreePath = userTreePath;
-	}
+    private Preferences userPrefs;
 
 
-	/**
-	 * This implementation eagerly fetches the Preferences instances
-	 * for the required system and user tree nodes.
-	 */
-	@Override
-	public void afterPropertiesSet() {
-		this.systemPrefs = (this.systemTreePath != null) ?
-				Preferences.systemRoot().node(this.systemTreePath) : Preferences.systemRoot();
-		this.userPrefs = (this.userTreePath != null) ?
-				Preferences.userRoot().node(this.userTreePath) : Preferences.userRoot();
-	}
+    /**
+     * Set the path in the system preferences tree to use for resolving
+     * placeholders. Default is the root node.
+     */
+    public void setSystemTreePath(String systemTreePath) {
+        this.systemTreePath = systemTreePath;
+    }
 
-	/**
-	 * This implementation tries to resolve placeholders as keys first
-	 * in the user preferences, then in the system preferences, then in
-	 * the passed-in properties.
-	 */
-	@Override
-	protected String resolvePlaceholder(String placeholder, Properties props) {
-		String path = null;
-		String key = placeholder;
-		int endOfPath = placeholder.lastIndexOf('/');
-		if (endOfPath != -1) {
-			path = placeholder.substring(0, endOfPath);
-			key = placeholder.substring(endOfPath + 1);
-		}
-		String value = resolvePlaceholder(path, key, this.userPrefs);
-		if (value == null) {
-			value = resolvePlaceholder(path, key, this.systemPrefs);
-			if (value == null) {
-				value = props.getProperty(placeholder);
-			}
-		}
-		return value;
-	}
+    /**
+     * Set the path in the system preferences tree to use for resolving
+     * placeholders. Default is the root node.
+     */
+    public void setUserTreePath(String userTreePath) {
+        this.userTreePath = userTreePath;
+    }
 
-	/**
-	 * Resolve the given path and key against the given Preferences.
-	 * @param path the preferences path (placeholder part before '/')
-	 * @param key the preferences key (placeholder part after '/')
-	 * @param preferences the Preferences to resolve against
-	 * @return the value for the placeholder, or {@code null} if none found
-	 */
-	protected String resolvePlaceholder(String path, String key, Preferences preferences) {
-		if (path != null) {
-			 // Do not create the node if it does not exist...
-			try {
-				if (preferences.nodeExists(path)) {
-					return preferences.node(path).get(key, null);
-				}
-				else {
-					return null;
-				}
-			}
-			catch (BackingStoreException ex) {
-				throw new BeanDefinitionStoreException("Cannot access specified node path [" + path + "]", ex);
-			}
-		}
-		else {
-			return preferences.get(key, null);
-		}
-	}
+
+    /**
+     * This implementation eagerly fetches the Preferences instances
+     * for the required system and user tree nodes.
+     */
+    @Override
+    public void afterPropertiesSet() {
+        this.systemPrefs = (this.systemTreePath != null) ? Preferences.systemRoot().node(this.systemTreePath)
+                : Preferences.systemRoot();
+        this.userPrefs =
+                (this.userTreePath != null) ? Preferences.userRoot().node(this.userTreePath) : Preferences.userRoot();
+    }
+
+    /**
+     * This implementation tries to resolve placeholders as keys first
+     * in the user preferences, then in the system preferences, then in
+     * the passed-in properties.
+     */
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        String path = null;
+        String key = placeholder;
+        int endOfPath = placeholder.lastIndexOf('/');
+        if (endOfPath != -1) {
+            path = placeholder.substring(0, endOfPath);
+            key = placeholder.substring(endOfPath + 1);
+        }
+        String value = resolvePlaceholder(path, key, this.userPrefs);
+        if (value == null) {
+            value = resolvePlaceholder(path, key, this.systemPrefs);
+            if (value == null) {
+                value = props.getProperty(placeholder);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Resolve the given path and key against the given Preferences.
+     * @param path the preferences path (placeholder part before '/')
+     * @param key the preferences key (placeholder part after '/')
+     * @param preferences the Preferences to resolve against
+     * @return the value for the placeholder, or {@code null} if none found
+     */
+    protected String resolvePlaceholder(String path, String key, Preferences preferences) {
+        if (path != null) {
+            // Do not create the node if it does not exist...
+            try {
+                if (preferences.nodeExists(path)) {
+                    return preferences.node(path).get(key, null);
+                } else {
+                    return null;
+                }
+            } catch (BackingStoreException ex) {
+                throw new BeanDefinitionStoreException("Cannot access specified node path [" + path + "]", ex);
+            }
+        } else {
+            return preferences.get(key, null);
+        }
+    }
 
 }

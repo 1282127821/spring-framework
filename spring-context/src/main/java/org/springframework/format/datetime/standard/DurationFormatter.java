@@ -34,14 +34,14 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 class DurationFormatter implements Formatter<Duration> {
 
-	@Override
-	public Duration parse(String text, Locale locale) throws ParseException {
-		return Duration.parse(text);
-	}
+    @Override
+    public Duration parse(String text, Locale locale) throws ParseException {
+        return Duration.parse(text);
+    }
 
-	@Override
-	public String print(Duration object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(Duration object, Locale locale) {
+        return object.toString();
+    }
 
 }

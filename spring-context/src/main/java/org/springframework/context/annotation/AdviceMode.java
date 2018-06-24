@@ -27,6 +27,5 @@ package org.springframework.context.annotation;
  * @see org.springframework.transaction.annotation.EnableTransactionManagement#mode()
  */
 public enum AdviceMode {
-	PROXY,
-	ASPECTJ
+    PROXY, ASPECTJ
 }

@@ -35,21 +35,21 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 public final class TemporalAccessorPrinter implements Printer<TemporalAccessor> {
 
-	private final DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter;
 
 
-	/**
-	 * Create a new TemporalAccessorPrinter.
-	 * @param formatter the base DateTimeFormatter instance
-	 */
-	public TemporalAccessorPrinter(DateTimeFormatter formatter) {
-		this.formatter = formatter;
-	}
+    /**
+     * Create a new TemporalAccessorPrinter.
+     * @param formatter the base DateTimeFormatter instance
+     */
+    public TemporalAccessorPrinter(DateTimeFormatter formatter) {
+        this.formatter = formatter;
+    }
 
 
-	@Override
-	public String print(TemporalAccessor partial, Locale locale) {
-		return DateTimeContextHolder.getFormatter(this.formatter, locale).format(partial);
-	}
+    @Override
+    public String print(TemporalAccessor partial, Locale locale) {
+        return DateTimeContextHolder.getFormatter(this.formatter, locale).format(partial);
+    }
 
 }

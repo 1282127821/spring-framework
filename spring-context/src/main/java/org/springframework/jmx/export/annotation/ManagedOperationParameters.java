@@ -35,6 +35,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ManagedOperationParameters {
 
-	ManagedOperationParameter[] value() default {};
+    ManagedOperationParameter[] value() default {};
 
 }

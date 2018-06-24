@@ -26,20 +26,20 @@ package org.springframework.remoting;
 @SuppressWarnings("serial")
 public class RemoteTimeoutException extends RemoteAccessException {
 
-	/**
-	 * Constructor for RemoteTimeoutException.
-	 * @param msg the detail message
-	 */
-	public RemoteTimeoutException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor for RemoteTimeoutException.
+     * @param msg the detail message
+     */
+    public RemoteTimeoutException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Constructor for RemoteTimeoutException.
-	 * @param msg the detail message
-	 * @param cause the root cause from the remoting API in use
-	 */
-	public RemoteTimeoutException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Constructor for RemoteTimeoutException.
+     * @param msg the detail message
+     * @param cause the root cause from the remoting API in use
+     */
+    public RemoteTimeoutException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 }

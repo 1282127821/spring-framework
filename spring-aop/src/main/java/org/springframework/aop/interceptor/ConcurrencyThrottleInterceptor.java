@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.springframework.util.ConcurrencyThrottleSupport;
 
 /**
@@ -41,21 +40,20 @@ import org.springframework.util.ConcurrencyThrottleSupport;
  */
 @SuppressWarnings("serial")
 public class ConcurrencyThrottleInterceptor extends ConcurrencyThrottleSupport
-		implements MethodInterceptor, Serializable {
+        implements MethodInterceptor, Serializable {
 
-	public ConcurrencyThrottleInterceptor() {
-		setConcurrencyLimit(1);
-	}
+    public ConcurrencyThrottleInterceptor() {
+        setConcurrencyLimit(1);
+    }
 
-	@Override
-	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-		beforeAccess();
-		try {
-			return methodInvocation.proceed();
-		}
-		finally {
-			afterAccess();
-		}
-	}
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        beforeAccess();
+        try {
+            return methodInvocation.proceed();
+        } finally {
+            afterAccess();
+        }
+    }
 
 }

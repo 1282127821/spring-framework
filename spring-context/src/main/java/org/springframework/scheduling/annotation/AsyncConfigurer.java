@@ -43,17 +43,17 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
  */
 public interface AsyncConfigurer {
 
-	/**
-	 * The {@link Executor} instance to be used when processing async
-	 * method invocations.
-	 */
-	Executor getAsyncExecutor();
+    /**
+     * The {@link Executor} instance to be used when processing async
+     * method invocations.
+     */
+    Executor getAsyncExecutor();
 
-	/**
-	 * The {@link AsyncUncaughtExceptionHandler} instance to be used
-	 * when an exception is thrown during an asynchronous method execution
-	 * with {@code void} return type.
-	 */
-	AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler();
+    /**
+     * The {@link AsyncUncaughtExceptionHandler} instance to be used
+     * when an exception is thrown during an asynchronous method execution
+     * with {@code void} return type.
+     */
+    AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler();
 
 }

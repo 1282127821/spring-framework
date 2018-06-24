@@ -34,14 +34,14 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 class MonthDayFormatter implements Formatter<MonthDay> {
 
-	@Override
-	public MonthDay parse(String text, Locale locale) throws ParseException {
-		return MonthDay.parse(text);
-	}
+    @Override
+    public MonthDay parse(String text, Locale locale) throws ParseException {
+        return MonthDay.parse(text);
+    }
 
-	@Override
-	public String print(MonthDay object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(MonthDay object, Locale locale) {
+        return object.toString();
+    }
 
 }

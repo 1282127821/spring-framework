@@ -25,16 +25,17 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * @author Juergen Hoeller
  * @since 3.2.1
  */
-public class ContextLifecycleScheduledTaskRegistrar extends ScheduledTaskRegistrar implements SmartInitializingSingleton {
+public class ContextLifecycleScheduledTaskRegistrar extends ScheduledTaskRegistrar
+        implements SmartInitializingSingleton {
 
-	@Override
-	public void afterPropertiesSet() {
-		// no-op
-	}
+    @Override
+    public void afterPropertiesSet() {
+        // no-op
+    }
 
-	@Override
-	public void afterSingletonsInstantiated() {
-		scheduleTasks();
-	}
+    @Override
+    public void afterSingletonsInstantiated() {
+        scheduleTasks();
+    }
 
 }

@@ -41,80 +41,80 @@ import org.springframework.util.Assert;
  */
 public class ConcurrentMapCache extends AbstractValueAdaptingCache {
 
-	private final String name;
+    private final String name;
 
-	private final ConcurrentMap<Object, Object> store;
-
-
-	/**
-	 * Create a new ConcurrentMapCache with the specified name.
-	 * @param name the name of the cache
-	 */
-	public ConcurrentMapCache(String name) {
-		this(name, new ConcurrentHashMap<Object, Object>(256), true);
-	}
-
-	/**
-	 * Create a new ConcurrentMapCache with the specified name.
-	 * @param name the name of the cache
-	 * @param allowNullValues whether to accept and convert {@code null}
-	 * values for this cache
-	 */
-	public ConcurrentMapCache(String name, boolean allowNullValues) {
-		this(name, new ConcurrentHashMap<Object, Object>(256), allowNullValues);
-	}
-
-	/**
-	 * Create a new ConcurrentMapCache with the specified name and the
-	 * given internal {@link ConcurrentMap} to use.
-	 * @param name the name of the cache
-	 * @param store the ConcurrentMap to use as an internal store
-	 * @param allowNullValues whether to allow {@code null} values
-	 * (adapting them to an internal null holder value)
-	 */
-	public ConcurrentMapCache(String name, ConcurrentMap<Object, Object> store, boolean allowNullValues) {
-		super(allowNullValues);
-		Assert.notNull(name, "Name must not be null");
-		Assert.notNull(store, "Store must not be null");
-		this.name = name;
-		this.store = store;
-	}
+    private final ConcurrentMap<Object, Object> store;
 
 
-	@Override
-	public final String getName() {
-		return this.name;
-	}
+    /**
+     * Create a new ConcurrentMapCache with the specified name.
+     * @param name the name of the cache
+     */
+    public ConcurrentMapCache(String name) {
+        this(name, new ConcurrentHashMap<Object, Object>(256), true);
+    }
 
-	@Override
-	public final ConcurrentMap<Object, Object> getNativeCache() {
-		return this.store;
-	}
+    /**
+     * Create a new ConcurrentMapCache with the specified name.
+     * @param name the name of the cache
+     * @param allowNullValues whether to accept and convert {@code null}
+     * values for this cache
+     */
+    public ConcurrentMapCache(String name, boolean allowNullValues) {
+        this(name, new ConcurrentHashMap<Object, Object>(256), allowNullValues);
+    }
 
-	@Override
-	protected Object lookup(Object key) {
-		return this.store.get(key);
-	}
+    /**
+     * Create a new ConcurrentMapCache with the specified name and the
+     * given internal {@link ConcurrentMap} to use.
+     * @param name the name of the cache
+     * @param store the ConcurrentMap to use as an internal store
+     * @param allowNullValues whether to allow {@code null} values
+     * (adapting them to an internal null holder value)
+     */
+    public ConcurrentMapCache(String name, ConcurrentMap<Object, Object> store, boolean allowNullValues) {
+        super(allowNullValues);
+        Assert.notNull(name, "Name must not be null");
+        Assert.notNull(store, "Store must not be null");
+        this.name = name;
+        this.store = store;
+    }
 
-	@Override
-	public void put(Object key, Object value) {
-		this.store.put(key, toStoreValue(value));
-	}
 
-	@Override
-	public ValueWrapper putIfAbsent(Object key, Object value) {
-		Object existing = this.store.putIfAbsent(key, toStoreValue(value));
-		return toValueWrapper(existing);
-	}
+    @Override
+    public final String getName() {
+        return this.name;
+    }
 
-	@Override
-	public void evict(Object key) {
-		this.store.remove(key);
-	}
+    @Override
+    public final ConcurrentMap<Object, Object> getNativeCache() {
+        return this.store;
+    }
 
-	@Override
-	public void clear() {
-		this.store.clear();
-	}
+    @Override
+    protected Object lookup(Object key) {
+        return this.store.get(key);
+    }
+
+    @Override
+    public void put(Object key, Object value) {
+        this.store.put(key, toStoreValue(value));
+    }
+
+    @Override
+    public ValueWrapper putIfAbsent(Object key, Object value) {
+        Object existing = this.store.putIfAbsent(key, toStoreValue(value));
+        return toValueWrapper(existing);
+    }
+
+    @Override
+    public void evict(Object key) {
+        this.store.remove(key);
+    }
+
+    @Override
+    public void clear() {
+        this.store.clear();
+    }
 
 }

@@ -72,33 +72,32 @@ import org.springframework.util.StringUtils;
  */
 public class ResourceBundleEditor extends PropertyEditorSupport {
 
-	/**
-	 * The separator used to distinguish between the base name and the locale
-	 * (if any) when {@link #setAsText(String) converting from a String}.
-	 */
-	public static final String BASE_NAME_SEPARATOR = "_";
+    /**
+     * The separator used to distinguish between the base name and the locale
+     * (if any) when {@link #setAsText(String) converting from a String}.
+     */
+    public static final String BASE_NAME_SEPARATOR = "_";
 
 
-	@Override
-	public void setAsText(String text) throws IllegalArgumentException {
-		Assert.hasText(text, "'text' must not be empty");
-		String name = text.trim();
+    @Override
+    public void setAsText(String text) throws IllegalArgumentException {
+        Assert.hasText(text, "'text' must not be empty");
+        String name = text.trim();
 
-		int separator = name.indexOf(BASE_NAME_SEPARATOR);
-		if (separator == -1) {
-			setValue(ResourceBundle.getBundle(name));
-		}
-		else {
-			// The name potentially contains locale information
-			String baseName = name.substring(0, separator);
-			if (!StringUtils.hasText(baseName)) {
-				throw new IllegalArgumentException("Invalid ResourceBundle name: '" + text + "'");
-			}
-			String localeString = name.substring(separator + 1);
-			Locale locale = StringUtils.parseLocaleString(localeString);
-			setValue((StringUtils.hasText(localeString)) ? ResourceBundle.getBundle(baseName, locale) :
-					ResourceBundle.getBundle(baseName));
-		}
-	}
+        int separator = name.indexOf(BASE_NAME_SEPARATOR);
+        if (separator == -1) {
+            setValue(ResourceBundle.getBundle(name));
+        } else {
+            // The name potentially contains locale information
+            String baseName = name.substring(0, separator);
+            if (!StringUtils.hasText(baseName)) {
+                throw new IllegalArgumentException("Invalid ResourceBundle name: '" + text + "'");
+            }
+            String localeString = name.substring(separator + 1);
+            Locale locale = StringUtils.parseLocaleString(localeString);
+            setValue((StringUtils.hasText(localeString)) ? ResourceBundle.getBundle(baseName, locale)
+                    : ResourceBundle.getBundle(baseName));
+        }
+    }
 
 }

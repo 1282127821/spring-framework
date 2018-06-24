@@ -41,28 +41,26 @@ import org.aopalliance.intercept.MethodInvocation;
 @SuppressWarnings("serial")
 public class CacheInterceptor extends CacheAspectSupport implements MethodInterceptor, Serializable {
 
-	@Override
-	public Object invoke(final MethodInvocation invocation) throws Throwable {
-		Method method = invocation.getMethod();
+    @Override
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        Method method = invocation.getMethod();
 
-		CacheOperationInvoker aopAllianceInvoker = new CacheOperationInvoker() {
-			@Override
-			public Object invoke() {
-				try {
-					return invocation.proceed();
-				}
-				catch (Throwable ex) {
-					throw new ThrowableWrapper(ex);
-				}
-			}
-		};
+        CacheOperationInvoker aopAllianceInvoker = new CacheOperationInvoker() {
+            @Override
+            public Object invoke() {
+                try {
+                    return invocation.proceed();
+                } catch (Throwable ex) {
+                    throw new ThrowableWrapper(ex);
+                }
+            }
+        };
 
-		try {
-			return execute(aopAllianceInvoker, invocation.getThis(), method, invocation.getArguments());
-		}
-		catch (CacheOperationInvoker.ThrowableWrapper th) {
-			throw th.getOriginal();
-		}
-	}
+        try {
+            return execute(aopAllianceInvoker, invocation.getThis(), method, invocation.getArguments());
+        } catch (CacheOperationInvoker.ThrowableWrapper th) {
+            throw th.getOriginal();
+        }
+    }
 
 }

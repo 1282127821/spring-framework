@@ -32,27 +32,27 @@ import org.springframework.util.ClassUtils;
  */
 final class EnumToStringConverter implements Converter<Enum<?>, String>, ConditionalConverter {
 
-	private final ConversionService conversionService;
+    private final ConversionService conversionService;
 
 
-	public EnumToStringConverter(ConversionService conversionService) {
-		this.conversionService = conversionService;
-	}
+    public EnumToStringConverter(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 
 
-	@Override
-	public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
-		for (Class<?> interfaceType : ClassUtils.getAllInterfacesForClass(sourceType.getType())) {
-			if (this.conversionService.canConvert(TypeDescriptor.valueOf(interfaceType), targetType)) {
-				return false;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+        for (Class<?> interfaceType : ClassUtils.getAllInterfacesForClass(sourceType.getType())) {
+            if (this.conversionService.canConvert(TypeDescriptor.valueOf(interfaceType), targetType)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public String convert(Enum<?> source) {
-		return source.name();
-	}
+    @Override
+    public String convert(Enum<?> source) {
+        return source.name();
+    }
 
 }

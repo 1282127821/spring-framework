@@ -35,14 +35,14 @@ import org.springframework.lang.UsesJava8;
 @UsesJava8
 public class InstantFormatter implements Formatter<Instant> {
 
-	@Override
-	public Instant parse(String text, Locale locale) throws ParseException {
-		return Instant.parse(text);
-	}
+    @Override
+    public Instant parse(String text, Locale locale) throws ParseException {
+        return Instant.parse(text);
+    }
 
-	@Override
-	public String print(Instant object, Locale locale) {
-		return object.toString();
-	}
+    @Override
+    public String print(Instant object, Locale locale) {
+        return object.toString();
+    }
 
 }

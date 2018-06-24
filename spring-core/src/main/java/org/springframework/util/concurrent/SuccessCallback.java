@@ -25,10 +25,10 @@ package org.springframework.util.concurrent;
  */
 public interface SuccessCallback<T> {
 
-	/**
-	 * Called when the {@link ListenableFuture} successfully completes.
-	 * @param result the result
-	 */
-	void onSuccess(T result);
+    /**
+     * Called when the {@link ListenableFuture} successfully completes.
+     * @param result the result
+     */
+    void onSuccess(T result);
 
 }

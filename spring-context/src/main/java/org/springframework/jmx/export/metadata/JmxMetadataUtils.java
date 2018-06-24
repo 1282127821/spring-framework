@@ -29,23 +29,23 @@ import org.springframework.util.StringUtils;
  */
 public abstract class JmxMetadataUtils {
 
-	/**
-	 * Convert the supplied {@link ManagedNotification} into the corresponding
-	 * {@link javax.management.modelmbean.ModelMBeanNotificationInfo}.
-	 */
-	public static ModelMBeanNotificationInfo convertToModelMBeanNotificationInfo(ManagedNotification notificationInfo) {
-		String name = notificationInfo.getName();
-		if (!StringUtils.hasText(name)) {
-			throw new IllegalArgumentException("Must specify notification name");
-		}
+    /**
+     * Convert the supplied {@link ManagedNotification} into the corresponding
+     * {@link javax.management.modelmbean.ModelMBeanNotificationInfo}.
+     */
+    public static ModelMBeanNotificationInfo convertToModelMBeanNotificationInfo(ManagedNotification notificationInfo) {
+        String name = notificationInfo.getName();
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("Must specify notification name");
+        }
 
-		String[] notifTypes = notificationInfo.getNotificationTypes();
-		if (notifTypes == null || notifTypes.length == 0) {
-			throw new IllegalArgumentException("Must specify at least one notification type");
-		}
+        String[] notifTypes = notificationInfo.getNotificationTypes();
+        if (notifTypes == null || notifTypes.length == 0) {
+            throw new IllegalArgumentException("Must specify at least one notification type");
+        }
 
-		String description = notificationInfo.getDescription();
-		return new ModelMBeanNotificationInfo(notifTypes, name, description);
-	}
+        String description = notificationInfo.getDescription();
+        return new ModelMBeanNotificationInfo(notifTypes, name, description);
+    }
 
 }

@@ -32,49 +32,47 @@ import org.springframework.util.ReflectionUtils;
  */
 class JBossModulesAdapter implements JBossClassLoaderAdapter {
 
-	private static final String DELEGATING_TRANSFORMER_CLASS_NAME =
-			"org.jboss.as.server.deployment.module.DelegatingClassFileTransformer";
+    private static final String DELEGATING_TRANSFORMER_CLASS_NAME =
+            "org.jboss.as.server.deployment.module.DelegatingClassFileTransformer";
 
 
-	private final ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
-	private final Method addTransformer;
+    private final Method addTransformer;
 
-	private final Object delegatingTransformer;
+    private final Object delegatingTransformer;
 
 
-	public JBossModulesAdapter(ClassLoader loader) {
-		this.classLoader = loader;
-		try {
-			Field transformer = ReflectionUtils.findField(loader.getClass(), "transformer");
-			transformer.setAccessible(true);
-			this.delegatingTransformer = transformer.get(loader);
-			if (!this.delegatingTransformer.getClass().getName().equals(DELEGATING_TRANSFORMER_CLASS_NAME)) {
-				throw new IllegalStateException("Transformer not of the expected type DelegatingClassFileTransformer: " +
-						this.delegatingTransformer.getClass().getName());
-			}
-			this.addTransformer = ReflectionUtils.findMethod(this.delegatingTransformer.getClass(),
-					"addTransformer", ClassFileTransformer.class);
-			this.addTransformer.setAccessible(true);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Could not initialize JBoss 7 LoadTimeWeaver", ex);
-		}
-	}
+    public JBossModulesAdapter(ClassLoader loader) {
+        this.classLoader = loader;
+        try {
+            Field transformer = ReflectionUtils.findField(loader.getClass(), "transformer");
+            transformer.setAccessible(true);
+            this.delegatingTransformer = transformer.get(loader);
+            if (!this.delegatingTransformer.getClass().getName().equals(DELEGATING_TRANSFORMER_CLASS_NAME)) {
+                throw new IllegalStateException("Transformer not of the expected type DelegatingClassFileTransformer: "
+                        + this.delegatingTransformer.getClass().getName());
+            }
+            this.addTransformer = ReflectionUtils.findMethod(this.delegatingTransformer.getClass(), "addTransformer",
+                    ClassFileTransformer.class);
+            this.addTransformer.setAccessible(true);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Could not initialize JBoss 7 LoadTimeWeaver", ex);
+        }
+    }
 
-	@Override
-	public void addTransformer(ClassFileTransformer transformer) {
-		try {
-			this.addTransformer.invoke(this.delegatingTransformer, transformer);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Could not add transformer on JBoss 7 ClassLoader " + this.classLoader, ex);
-		}
-	}
+    @Override
+    public void addTransformer(ClassFileTransformer transformer) {
+        try {
+            this.addTransformer.invoke(this.delegatingTransformer, transformer);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Could not add transformer on JBoss 7 ClassLoader " + this.classLoader, ex);
+        }
+    }
 
-	@Override
-	public ClassLoader getInstrumentableClassLoader() {
-		return this.classLoader;
-	}
+    @Override
+    public ClassLoader getInstrumentableClassLoader() {
+        return this.classLoader;
+    }
 
 }

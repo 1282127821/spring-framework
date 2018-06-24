@@ -27,12 +27,12 @@ import java.util.Locale;
  */
 public interface Printer<T> {
 
-	/**
-	 * Print the object of type T for display.
-	 * @param object the instance to print
-	 * @param locale the current user locale
-	 * @return the printed text string
-	 */
-	String print(T object, Locale locale);
+    /**
+     * Print the object of type T for display.
+     * @param object the instance to print
+     * @param locale the current user locale
+     * @return the printed text string
+     */
+    String print(T object, Locale locale);
 
 }

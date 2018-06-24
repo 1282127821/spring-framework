@@ -26,8 +26,8 @@ import java.lang.instrument.ClassFileTransformer;
  */
 interface JBossClassLoaderAdapter {
 
-	void addTransformer(ClassFileTransformer transformer);
+    void addTransformer(ClassFileTransformer transformer);
 
-	ClassLoader getInstrumentableClassLoader();
+    ClassLoader getInstrumentableClassLoader();
 
 }

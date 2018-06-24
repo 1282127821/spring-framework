@@ -33,14 +33,14 @@ import org.springframework.core.ResolvableType;
  */
 public interface GenericApplicationListener extends ApplicationListener<ApplicationEvent>, Ordered {
 
-	/**
-	 * Determine whether this listener actually supports the given event type.
-	 */
-	boolean supportsEventType(ResolvableType eventType);
+    /**
+     * Determine whether this listener actually supports the given event type.
+     */
+    boolean supportsEventType(ResolvableType eventType);
 
-	/**
-	 * Determine whether this listener actually supports the given source type.
-	 */
-	boolean supportsSourceType(Class<?> sourceType);
+    /**
+     * Determine whether this listener actually supports the given source type.
+     */
+    boolean supportsSourceType(Class<?> sourceType);
 
 }

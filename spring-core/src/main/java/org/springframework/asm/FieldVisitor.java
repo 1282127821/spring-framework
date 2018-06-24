@@ -114,9 +114,8 @@ public abstract class FieldVisitor {
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public AnnotationVisitor visitTypeAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+        /* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
         if (api < Opcodes.ASM5) {
             throw new RuntimeException();
         }
