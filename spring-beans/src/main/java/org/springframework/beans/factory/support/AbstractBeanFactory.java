@@ -1522,11 +1522,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     protected Object getObjectForBeanInstance(Object beanInstance, String name, String beanName,
             RootBeanDefinition mbd) {
 
+        // 如果指定的Bean是工厂相关的（以&为前缀），但beanInstance又不是FactoryBean类型，则验证不通过
         // Don't let calling code try to dereference the factory if the bean isn't a factory.
         if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
             throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
         }
 
+        // beanInstance不是FactoryBean的，或者就是想要获取FactoryBean本身（而不是其内部的getObject()），则直接返回
         // Now we have the bean instance, which may be a normal bean or a FactoryBean.
         // If it's a FactoryBean, we use it to create a bean instance, unless the
         // caller actually wants a reference to the factory.
