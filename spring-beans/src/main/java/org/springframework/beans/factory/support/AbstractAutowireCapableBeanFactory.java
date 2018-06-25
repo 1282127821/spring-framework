@@ -501,6 +501,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
         }
         if (instanceWrapper == null) {
+            /*
+             * 真正的创建方法
+             * 根据指定Bean使用对应的策略创建新的实例，如：工厂方法，构造函数自动注入，简单初始化
+             */
             instanceWrapper = createBeanInstance(beanName, mbd, args);
         }
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
@@ -514,6 +518,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
+        // 是否需要提早曝光：单例 & 允许循环依赖 & 当前Bean正在创建中
         // Eagerly cache singletons to be able to resolve circular references
         // even when triggered by lifecycle interfaces like BeanFactoryAware.
         boolean earlySingletonExposure =
@@ -523,9 +528,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 logger.debug(
                         "Eagerly caching bean '" + beanName + "' to allow for resolving potential circular references");
             }
+            // 为避免后期循环依赖，可以在Bean初始化完成前将创建实例的ObjectFactory加入工厂
             addSingletonFactory(beanName, new ObjectFactory<Object>() {
                 @Override
                 public Object getObject() throws BeansException {
+                    // 我们熟知的AOP就是在这里将Advice动态织入Bean中（？？？？），若没有则不做任何处理直接返回Bean
                     return getEarlyBeanReference(beanName, mbd, bean);
                 }
             });
@@ -534,8 +541,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // Initialize the bean instance.
         Object exposedObject = bean;
         try {
+            // 对Bean进行填充，将各个属性值注入；可能存在依赖于其它Bean属性的情况，则会递归初始化依赖Bean
             populateBean(beanName, mbd, instanceWrapper);
             if (exposedObject != null) {
+                // 调用初始化方法，比如 init-method
                 exposedObject = initializeBean(beanName, exposedObject, mbd);
             }
         } catch (Throwable ex) {
@@ -549,6 +558,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         if (earlySingletonExposure) {
             Object earlySingletonReference = getSingleton(beanName, false);
+            // earlySingletonReference 只有在检测到循环依赖的情况下才会不为空
             if (earlySingletonReference != null) {
                 if (exposedObject == bean) {
                     exposedObject = earlySingletonReference;
@@ -556,10 +566,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     String[] dependentBeans = getDependentBeans(beanName);
                     Set<String> actualDependentBeans = new LinkedHashSet<String>(dependentBeans.length);
                     for (String dependentBean : dependentBeans) {
+                        // 检测依赖
                         if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
                             actualDependentBeans.add(dependentBean);
                         }
                     }
+                    /*
+                     * 因为Bean创建后其所依赖的Bean一定是已经创建的，
+                     * actualDependentBeans 不为空则表示当前Bean创建后其依赖的Bean却没有全部创建完，也就是说存在循环依赖
+                     */
                     if (!actualDependentBeans.isEmpty()) {
                         throw new BeanCurrentlyInCreationException(beanName, "Bean with name '" + beanName
                                 + "' has been injected into other beans ["
@@ -575,6 +590,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         // Register bean as disposable.
         try {
+            // 根据Scope注册Bean
             registerDisposableBeanIfNecessary(beanName, bean, mbd);
         } catch (BeanDefinitionValidationException ex) {
             throw new BeanCreationException(mbd.getResourceDescription(), beanName, "Invalid destruction signature",
