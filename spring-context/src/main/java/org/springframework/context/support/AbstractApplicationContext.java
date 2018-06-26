@@ -497,45 +497,45 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     @Override
     public void refresh() throws BeansException, IllegalStateException {
         synchronized (this.startupShutdownMonitor) {
-            // Prepare this context for refreshing.
+            // Prepare this context for refreshing.准备刷新的上正文环境
             prepareRefresh();
 
-            // Tell the subclass to refresh the internal bean factory.
+            // Tell the subclass to refresh the internal bean factory.初始化BeanFactory并进行XML文件读取
             ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-            // Prepare the bean factory for use in this context.
+            // Prepare the bean factory for use in this context.对BeanFactory进行各种功能填充
             prepareBeanFactory(beanFactory);
 
             try {
-                // Allows post-processing of the bean factory in context subclasses.
+                // Allows post-processing of the bean factory in context subclasses.子类覆盖方法做额外的处理
                 postProcessBeanFactory(beanFactory);
 
-                // Invoke factory processors registered as beans in the context.
+                // Invoke factory processors registered as beans in the context.激活各种BeanFactoryPostProcessors
                 invokeBeanFactoryPostProcessors(beanFactory);
 
+                // 注册拦截Bean创建的BeanPostProcessor（这里只是注册，真正的调用是在getBean()的时候）
                 // Register bean processors that intercept bean creation.
                 registerBeanPostProcessors(beanFactory);
 
-                // Initialize message source for this context.
+                // Initialize message source for this context.初始化国际化资源
                 initMessageSource();
 
-                // Initialize event multicaster for this context.
+                // Initialize event multicaster for this context.初始化应用消息广播器
                 initApplicationEventMulticaster();
 
-                // Initialize other special beans in specific context subclasses.
+                // Initialize other special beans in specific context subclasses.留给子类来初始化其它的Bean
                 onRefresh();
 
-                // Check for listener beans and register them.
+                // Check for listener beans and register them.在所有注册的Bean中查找Listener Bean，注册到消息广播中
                 registerListeners();
 
-                // Instantiate all remaining (non-lazy-init) singletons.
+                // Instantiate all remaining (non-lazy-init) singletons.初始化剩下的单实例Bean（非惰性的）
                 finishBeanFactoryInitialization(beanFactory);
 
+                // 完成刷新过程，通知生命周期处理器 lifecycleProcessor 刷新过程，同时发出 ContextRefreshEvent 通知别人
                 // Last step: publish corresponding event.
                 finishRefresh();
-            }
-
-            catch (BeansException ex) {
+            } catch (BeansException ex) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Exception encountered during context initialization - "
                             + "cancelling refresh attempt: " + ex);
@@ -549,9 +549,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
                 // Propagate exception to caller.
                 throw ex;
-            }
-
-            finally {
+            } finally {
                 // Reset common introspection caches in Spring's core, since we
                 // might not ever need metadata for singleton beans anymore...
                 resetCommonCaches();
