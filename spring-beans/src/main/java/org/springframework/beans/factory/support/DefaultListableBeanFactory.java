@@ -995,6 +995,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             TypeConverter typeConverter) throws BeansException {
 
         Class<?> type = descriptor.getDependencyType();
+        // 用于支持Spring中新增的 @Value 注解
         Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
         if (value != null) {
             if (value instanceof String) {
@@ -1012,6 +1013,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             Class<?> componentType = type.getComponentType();
             DependencyDescriptor targetDesc = new DependencyDescriptor(descriptor);
             targetDesc.increaseNestingLevel();
+            // 根据属性类型找到BeanFactory中所有类型匹配的Bean
+            // 返回值的构成为： key=匹配的beanName，value=beanName对应的实例化后的Bean（通过getBean(beanName)方法返回）
             Map<String, Object> matchingBeans = findAutowireCandidates(beanName, componentType, targetDesc);
             if (matchingBeans.isEmpty()) {
                 if (descriptor.isRequired()) {
@@ -1024,6 +1027,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 autowiredBeanNames.addAll(matchingBeans.keySet());
             }
             TypeConverter converter = (typeConverter != null ? typeConverter : getTypeConverter());
+            // 通过转换器将Bean的值转换为对应的Type类型
             Object result = converter.convertIfNecessary(matchingBeans.values(), type);
             if (getDependencyComparator() != null && result instanceof Object[]) {
                 Arrays.sort((Object[]) result, adaptDependencyComparator(matchingBeans));
@@ -1104,7 +1108,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 }
                 return matchingBeans.get(primaryBeanName);
             }
-            // We have exactly one match.
+            // We have exactly one match.已经确定只有一个匹配项
             Map.Entry<String, Object> entry = matchingBeans.entrySet().iterator().next();
             if (autowiredBeanNames != null) {
                 autowiredBeanNames.add(entry.getKey());
