@@ -292,8 +292,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean != null) {
+            // 根据给定Bean的 Class & Name 构建一个Key，格式为：beanClassName_beanName
             Object cacheKey = getCacheKey(bean.getClass(), beanName);
             if (!this.earlyProxyReferences.contains(cacheKey)) {
+                // 如果适合被代理，则需要封装指定的Bean
                 return wrapIfNecessary(bean, beanName, cacheKey);
             }
         }
@@ -329,21 +331,25 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
      * @return a proxy wrapping the bean, or the raw bean instance as-is
      */
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+        // 已经处理过
         if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
             return bean;
         }
+        // 之前已经判断过一次，结果是不需要创建代理，所以第二次及以后不再需要判断
         if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
             return bean;
         }
+        // 给定的Bean类是否是一个基础设施类（基础设施类不应该被代理），或者配置中指定了Bean不需要被代理
         if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
             this.advisedBeans.put(cacheKey, Boolean.FALSE);
             return bean;
         }
 
-        // Create proxy if we have advice.
+        // Create proxy if we have advice.如果存在增强方法则创建代理
         Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
         if (specificInterceptors != DO_NOT_PROXY) {
             this.advisedBeans.put(cacheKey, Boolean.TRUE);
+            ////////////////////// 创建代理 ///////////////////////////////
             Object proxy =
                     createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
             this.proxyTypes.put(cacheKey, proxy.getClass());
