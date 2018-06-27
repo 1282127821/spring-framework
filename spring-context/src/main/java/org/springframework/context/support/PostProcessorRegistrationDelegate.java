@@ -224,12 +224,13 @@ class PostProcessorRegistrationDelegate {
         int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
         beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
-        // Separate between BeanPostProcessors that implement PriorityOrdered,
-        // Ordered, and the rest.
-        List<BeanPostProcessor> priorityOrderedPostProcessors = new ArrayList<BeanPostProcessor>();
-        List<BeanPostProcessor> internalPostProcessors = new ArrayList<BeanPostProcessor>();
-        List<String> orderedPostProcessorNames = new ArrayList<String>();
-        List<String> nonOrderedPostProcessorNames = new ArrayList<String>();
+        List<BeanPostProcessor> internalPostProcessors = new ArrayList<>();
+
+        // Separate between BeanPostProcessors that implement PriorityOrdered, Ordered, and others.
+        List<BeanPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+        List<String> orderedPostProcessorNames = new ArrayList<>();
+        List<String> nonOrderedPostProcessorNames = new ArrayList<>();
+
         for (String ppName : postProcessorNames) {
             if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
                 BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -249,7 +250,7 @@ class PostProcessorRegistrationDelegate {
         registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
         // Next, register the BeanPostProcessors that implement Ordered.
-        List<BeanPostProcessor> orderedPostProcessors = new ArrayList<BeanPostProcessor>();
+        List<BeanPostProcessor> orderedPostProcessors = new ArrayList<>();
         for (String ppName : orderedPostProcessorNames) {
             BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
             orderedPostProcessors.add(pp);
@@ -261,7 +262,7 @@ class PostProcessorRegistrationDelegate {
         registerBeanPostProcessors(beanFactory, orderedPostProcessors);
 
         // Now, register all regular BeanPostProcessors.
-        List<BeanPostProcessor> nonOrderedPostProcessors = new ArrayList<BeanPostProcessor>();
+        List<BeanPostProcessor> nonOrderedPostProcessors = new ArrayList<>();
         for (String ppName : nonOrderedPostProcessorNames) {
             BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
             nonOrderedPostProcessors.add(pp);
