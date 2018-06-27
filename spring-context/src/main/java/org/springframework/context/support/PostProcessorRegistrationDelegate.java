@@ -17,6 +17,7 @@
 package org.springframework.context.support;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,89 +57,120 @@ class PostProcessorRegistrationDelegate {
     public static void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory,
             List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
-        // Invoke BeanDefinitionRegistryPostProcessors first, if any.
-        Set<String> processedBeans = new HashSet<String>();
+        // 第一步：先调用 BeanDefinitionRegistryPostProcessors
+        Set<String> processedBeans = callBeanDefinitionRegistryPostProcessors(beanFactory, beanFactoryPostProcessors);
+        // 第二步：后调用 BeanFactoryPostProcessors
+        callBeanFactoryPostProcessors(beanFactory, processedBeans);
 
-        if (beanFactory instanceof BeanDefinitionRegistry) {
-            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
-            List<BeanFactoryPostProcessor> regularPostProcessors = new LinkedList<BeanFactoryPostProcessor>();
-            List<BeanDefinitionRegistryPostProcessor> registryPostProcessors =
-                    new LinkedList<BeanDefinitionRegistryPostProcessor>();
+        // Clear cached merged bean definitions since the post-processors might have
+        // modified the original metadata, e.g. replacing placeholders in values...
+        beanFactory.clearMetadataCache();
+    }
 
-            for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
-                if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
-                    BeanDefinitionRegistryPostProcessor registryPostProcessor =
-                            (BeanDefinitionRegistryPostProcessor) postProcessor;
-                    registryPostProcessor.postProcessBeanDefinitionRegistry(registry);
-                    registryPostProcessors.add(registryPostProcessor);
-                } else {
-                    regularPostProcessors.add(postProcessor);
-                }
-            }
+    /**
+     * 先调用 BeanDefinitionRegistryPostProcessors
+     *
+     * 因为 BeanDefinitionRegistryPostProcessor 接口自身也继承自 BeanFactoryPostProcessor 接口
+     * 所以在此方法内部，也是先调用 BeanDefinitionRegistryPostProcessor 接口的 postProcessBeanDefinitionRegistry() 方法
+     * 后调用 BeanFactoryPostProcessor 接口的 postProcessBeanFactory() 方法
+     *
+     * @param beanFactory
+     * @param beanFactoryPostProcessors
+     * @return processedBeans 已经处理过的Bean名称的集合，用于后续判断重复性
+     */
+    private static Set<String> callBeanDefinitionRegistryPostProcessors(ConfigurableListableBeanFactory beanFactory,
+            List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
-            // Do not initialize FactoryBeans here: We need to leave all regular beans
-            // uninitialized to let the bean factory post-processors apply to them!
-            // Separate between BeanDefinitionRegistryPostProcessors that implement
-            // PriorityOrdered, Ordered, and the rest.
-            String[] postProcessorNames =
-                    beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+        Set<String> processedBeans = new HashSet<>();
 
-            // First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
-            List<BeanDefinitionRegistryPostProcessor> priorityOrderedPostProcessors =
-                    new ArrayList<BeanDefinitionRegistryPostProcessor>();
-            for (String ppName : postProcessorNames) {
-                if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
-                    priorityOrderedPostProcessors
-                            .add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
-                    processedBeans.add(ppName);
-                }
-            }
-            sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
-            registryPostProcessors.addAll(priorityOrderedPostProcessors);
-            invokeBeanDefinitionRegistryPostProcessors(priorityOrderedPostProcessors, registry);
-
-            // Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
-            postProcessorNames =
-                    beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
-            List<BeanDefinitionRegistryPostProcessor> orderedPostProcessors =
-                    new ArrayList<BeanDefinitionRegistryPostProcessor>();
-            for (String ppName : postProcessorNames) {
-                if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
-                    orderedPostProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
-                    processedBeans.add(ppName);
-                }
-            }
-            sortPostProcessors(beanFactory, orderedPostProcessors);
-            registryPostProcessors.addAll(orderedPostProcessors);
-            invokeBeanDefinitionRegistryPostProcessors(orderedPostProcessors, registry);
-
-            // Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
-            boolean reiterate = true;
-            while (reiterate) {
-                reiterate = false;
-                postProcessorNames =
-                        beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
-                for (String ppName : postProcessorNames) {
-                    if (!processedBeans.contains(ppName)) {
-                        BeanDefinitionRegistryPostProcessor pp =
-                                beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class);
-                        registryPostProcessors.add(pp);
-                        processedBeans.add(ppName);
-                        pp.postProcessBeanDefinitionRegistry(registry);
-                        reiterate = true;
-                    }
-                }
-            }
-
-            // Now, invoke the postProcessBeanFactory callback of all processors handled so far.
-            invokeBeanFactoryPostProcessors(registryPostProcessors, beanFactory);
-            invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
-        }
-
-        else {
+        if (!(beanFactory instanceof BeanDefinitionRegistry)) {
             // Invoke factory processors registered with the context instance.
             invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
+            return processedBeans;
         }
+
+        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+
+        List<BeanDefinitionRegistryPostProcessor> registryPostProcessors = new LinkedList<>();
+        List<BeanFactoryPostProcessor> regularPostProcessors = new LinkedList<>();
+
+        for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
+            if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+                BeanDefinitionRegistryPostProcessor registryPostProcessor =
+                        (BeanDefinitionRegistryPostProcessor) postProcessor;
+                registryPostProcessor.postProcessBeanDefinitionRegistry(registry);
+                registryPostProcessors.add(registryPostProcessor);
+            } else {
+                regularPostProcessors.add(postProcessor);
+            }
+        }
+
+        // Do not initialize FactoryBeans here: We need to leave all regular beans
+        // uninitialized to let the bean factory post-processors apply to them!
+        // Separate between BeanDefinitionRegistryPostProcessors that implement
+        // PriorityOrdered, Ordered, and the rest.
+        String[] postProcessorNames =
+                beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+
+        // First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+        List<BeanDefinitionRegistryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+        for (String ppName : postProcessorNames) {
+            if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+                priorityOrderedPostProcessors
+                        .add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+                processedBeans.add(ppName);
+            }
+        }
+        sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
+        registryPostProcessors.addAll(priorityOrderedPostProcessors);
+        invokeBeanDefinitionRegistryPostProcessors(priorityOrderedPostProcessors, registry);
+
+        // Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
+        postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+        List<BeanDefinitionRegistryPostProcessor> orderedPostProcessors = new ArrayList<>();
+        for (String ppName : postProcessorNames) {
+            if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
+                orderedPostProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+                processedBeans.add(ppName);
+            }
+        }
+        sortPostProcessors(beanFactory, orderedPostProcessors);
+        registryPostProcessors.addAll(orderedPostProcessors);
+        invokeBeanDefinitionRegistryPostProcessors(orderedPostProcessors, registry);
+
+        // Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+        boolean reiterate = true;
+        while (reiterate) {
+            reiterate = false;
+            postProcessorNames =
+                    beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+            for (String ppName : postProcessorNames) {
+                if (!processedBeans.contains(ppName)) {
+                    BeanDefinitionRegistryPostProcessor pp =
+                            beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class);
+                    registryPostProcessors.add(pp);
+                    processedBeans.add(ppName);
+                    // 原句 pp.postProcessBeanDefinitionRegistry(registry); 等价于下面这句--CYH
+                    invokeBeanDefinitionRegistryPostProcessors(Arrays.asList(pp), registry);
+                    reiterate = true;
+                }
+            }
+        }
+
+        // Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+        invokeBeanFactoryPostProcessors(registryPostProcessors, beanFactory);
+        invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
+
+        return processedBeans;
+    }
+
+    /**
+     * 后调用 BeanFactoryPostProcessors
+     * @param beanFactory
+     * @param processedBeans
+     */
+    private static void callBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory,
+            Set<String> processedBeans) {
 
         // Do not initialize FactoryBeans here: We need to leave all regular beans
         // uninitialized to let the bean factory post-processors apply to them!
@@ -146,9 +178,9 @@ class PostProcessorRegistrationDelegate {
 
         // Separate between BeanFactoryPostProcessors that implement PriorityOrdered,
         // Ordered, and the rest.
-        List<BeanFactoryPostProcessor> priorityOrderedPostProcessors = new ArrayList<BeanFactoryPostProcessor>();
-        List<String> orderedPostProcessorNames = new ArrayList<String>();
-        List<String> nonOrderedPostProcessorNames = new ArrayList<String>();
+        List<BeanFactoryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+        List<String> orderedPostProcessorNames = new ArrayList<>();
+        List<String> nonOrderedPostProcessorNames = new ArrayList<>();
         for (String ppName : postProcessorNames) {
             if (processedBeans.contains(ppName)) {
                 // skip - already processed in first phase above
@@ -166,7 +198,7 @@ class PostProcessorRegistrationDelegate {
         invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
 
         // Next, invoke the BeanFactoryPostProcessors that implement Ordered.
-        List<BeanFactoryPostProcessor> orderedPostProcessors = new ArrayList<BeanFactoryPostProcessor>();
+        List<BeanFactoryPostProcessor> orderedPostProcessors = new ArrayList<>();
         for (String postProcessorName : orderedPostProcessorNames) {
             orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
         }
@@ -174,15 +206,11 @@ class PostProcessorRegistrationDelegate {
         invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
 
         // Finally, invoke all other BeanFactoryPostProcessors.
-        List<BeanFactoryPostProcessor> nonOrderedPostProcessors = new ArrayList<BeanFactoryPostProcessor>();
+        List<BeanFactoryPostProcessor> nonOrderedPostProcessors = new ArrayList<>();
         for (String postProcessorName : nonOrderedPostProcessorNames) {
             nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
         }
         invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
-
-        // Clear cached merged bean definitions since the post-processors might have
-        // modified the original metadata, e.g. replacing placeholders in values...
-        beanFactory.clearMetadataCache();
     }
 
     public static void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory,
