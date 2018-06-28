@@ -444,9 +444,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         }
 
         ProxyFactory proxyFactory = new ProxyFactory();
+        // 获取当前类中相关属性
         proxyFactory.copyFrom(this);
 
         if (!proxyFactory.isProxyTargetClass()) {
+            // 决定对于给定的Bean，是否应该使用 TargetClass 而不是它的接口代理，
+            // 检查 ProxyTargetClass 设置以及 preserveTargetClass 属性
             if (shouldProxyTargetClass(beanClass, beanName)) {
                 proxyFactory.setProxyTargetClass(true);
             } else {
@@ -456,12 +459,15 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
         Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
         for (Advisor advisor : advisors) {
+            // 加入增强器
             proxyFactory.addAdvisor(advisor);
         }
 
+        // 设置要代理的类
         proxyFactory.setTargetSource(targetSource);
+        // 定制代理
         customizeProxyFactory(proxyFactory);
-
+        // 用来控制代理工厂被配置之后，是否还允许修改通知。默认为False（不允许）
         proxyFactory.setFrozen(this.freezeProxy);
         if (advisorsPreFiltered()) {
             proxyFactory.setPreFiltered(true);
@@ -507,11 +513,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
      * @return the list of Advisors for the given bean
      */
     protected Advisor[] buildAdvisors(String beanName, Object[] specificInterceptors) {
-        // Handle prototypes correctly...
+        // Handle prototypes correctly...解析注册的所有InterceptorNames
         Advisor[] commonInterceptors = resolveInterceptorNames();
 
-        List<Object> allInterceptors = new ArrayList<Object>();
+        List<Object> allInterceptors = new ArrayList<>();
         if (specificInterceptors != null) {
+            // 加入拦截器
             allInterceptors.addAll(Arrays.asList(specificInterceptors));
             if (commonInterceptors.length > 0) {
                 if (this.applyCommonInterceptorsFirst) {
@@ -530,6 +537,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
         Advisor[] advisors = new Advisor[allInterceptors.size()];
         for (int i = 0; i < allInterceptors.size(); i++) {
+            // 拦截器进行封装，转化为Advisor
             advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
         }
         return advisors;
