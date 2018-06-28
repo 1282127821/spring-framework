@@ -200,7 +200,7 @@ public abstract class AopUtils {
             introductionAwareMethodMatcher = (IntroductionAwareMethodMatcher) methodMatcher;
         }
 
-        Set<Class<?>> classes = new LinkedHashSet<Class<?>>(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
+        Set<Class<?>> classes = new LinkedHashSet<>(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
         classes.add(targetClass);
         for (Class<?> clazz : classes) {
             Method[] methods = clazz.getMethods();
@@ -262,22 +262,27 @@ public abstract class AopUtils {
         if (candidateAdvisors.isEmpty()) {
             return candidateAdvisors;
         }
-        List<Advisor> eligibleAdvisors = new LinkedList<Advisor>();
+
+        List<Advisor> eligibleAdvisors = new LinkedList<>();
         for (Advisor candidate : candidateAdvisors) {
+            // 首先处理引介增强
             if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
                 eligibleAdvisors.add(candidate);
             }
         }
+
         boolean hasIntroductions = !eligibleAdvisors.isEmpty();
         for (Advisor candidate : candidateAdvisors) {
             if (candidate instanceof IntroductionAdvisor) {
-                // already processed
+                // already processed 引介增强已经处理过了
                 continue;
             }
+            // 对于普通Bean的处理
             if (canApply(candidate, clazz, hasIntroductions)) {
                 eligibleAdvisors.add(candidate);
             }
         }
+
         return eligibleAdvisors;
     }
 
