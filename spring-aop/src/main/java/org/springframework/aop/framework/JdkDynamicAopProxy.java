@@ -173,8 +173,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
                 return AopUtils.invokeJoinpointUsingReflection(this.advised, method, args);
             }
 
-            Object retVal;
-
+            // 有时候目标对象内部的自我调用将无法实施切面中的增强，则需要通过此属性暴露代理
             if (this.advised.exposeProxy) {
                 // Make invocation available if necessary.
                 oldProxy = AopContext.setCurrentProxy(proxy);
@@ -188,20 +187,24 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
                 targetClass = target.getClass();
             }
 
-            // Get the interception chain for this method.
+            Object retVal;
+            // Get the interception chain for this method.获取当前方法的拦截器链
             List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
             // Check whether we have any advice. If we don't, we can fallback on direct
             // reflective invocation of the target, and avoid creating a MethodInvocation.
             if (chain.isEmpty()) {
+                // 如果没有任何拦截器，则直接调用切点方法
                 // We can skip creating a MethodInvocation: just invoke the target directly
                 // Note that the final invoker must be an InvokerInterceptor so we know it does
                 // nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
                 Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
                 retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
             } else {
+                // 将拦截器封装在 ReflectiveMethodInvocation 中以便于使用其 proceed() 方法进行链接调用
                 // We need to create a method invocation...
                 invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
+                // 执行拦截器链
                 // Proceed to the joinpoint through the interceptor chain.
                 retVal = invocation.proceed();
             }
