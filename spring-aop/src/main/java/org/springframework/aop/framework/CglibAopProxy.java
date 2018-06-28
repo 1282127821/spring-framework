@@ -174,7 +174,7 @@ class CglibAopProxy implements AopProxy, Serializable {
             // Validate the class, writing log messages as necessary.
             validateClassIfNecessary(proxySuperClass, classLoader);
 
-            // Configure CGLIB Enhancer...
+            // Configure CGLIB Enhancer...创建及配置Enhancer
             Enhancer enhancer = createEnhancer();
             if (classLoader != null) {
                 enhancer.setClassLoader(classLoader);
@@ -188,6 +188,7 @@ class CglibAopProxy implements AopProxy, Serializable {
             enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
             enhancer.setStrategy(new ClassLoaderAwareUndeclaredThrowableStrategy(classLoader));
 
+            // 设置拦截器
             Callback[] callbacks = getCallbacks(rootClass);
             Class<?>[] types = new Class<?>[callbacks.length];
             for (int x = 0; x < types.length; x++) {
@@ -198,7 +199,7 @@ class CglibAopProxy implements AopProxy, Serializable {
                     this.fixedInterceptorMap, this.fixedInterceptorOffset));
             enhancer.setCallbackTypes(types);
 
-            // Generate the proxy class and create a proxy instance.
+            // Generate the proxy class and create a proxy instance.生成代理类以及创建代理
             return createProxyClassAndInstance(enhancer, callbacks);
         } catch (CodeGenerationException ex) {
             throw new AopConfigException("Could not generate CGLIB subclass of class [" + this.advised.getTargetClass()
@@ -273,7 +274,7 @@ class CglibAopProxy implements AopProxy, Serializable {
         boolean isFrozen = this.advised.isFrozen();
         boolean isStatic = this.advised.getTargetSource().isStatic();
 
-        // Choose an "aop" interceptor (used for AOP calls).
+        // Choose an "aop" interceptor (used for AOP calls).将拦截器封装在 DynamicAdvisedInterceptor 中
         Callback aopInterceptor = new DynamicAdvisedInterceptor(this.advised);
 
         // Choose a "straight to target" interceptor. (used for calls that are
@@ -293,7 +294,7 @@ class CglibAopProxy implements AopProxy, Serializable {
         Callback targetDispatcher =
                 isStatic ? new StaticDispatcher(this.advised.getTargetSource().getTarget()) : new SerializableNoOp();
 
-        Callback[] mainCallbacks = new Callback[] {aopInterceptor, // for normal advice
+        Callback[] mainCallbacks = new Callback[] {aopInterceptor, // for normal advice 将拦截器加入 Callback 中
                 targetInterceptor, // invoke target without considering advice, if optimized
                 new SerializableNoOp(), // no override for methods mapped to this
                 targetDispatcher, this.advisedDispatcher, new EqualsInterceptor(this.advised),
@@ -618,11 +619,13 @@ class CglibAopProxy implements AopProxy, Serializable {
                 if (target != null) {
                     targetClass = target.getClass();
                 }
+                // 获取拦截器链
                 List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
                 Object retVal;
                 // Check whether we only have one InvokerInterceptor: that is,
                 // no real advice, but just reflective invocation of the target.
                 if (chain.isEmpty() && Modifier.isPublic(method.getModifiers())) {
+                    // 如果拦截器为空，则直接激活原方法
                     // We can skip creating a MethodInvocation: just invoke the target directly.
                     // Note that the final invoker must be an InvokerInterceptor, so we know
                     // it does nothing but a reflective operation on the target, and no hot
@@ -630,6 +633,7 @@ class CglibAopProxy implements AopProxy, Serializable {
                     Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
                     retVal = methodProxy.invoke(target, argsToUse);
                 } else {
+                    // 进入链，后续逻辑和JDK动态代理的一样
                     // We need to create a method invocation...
                     retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy)
                             .proceed();
