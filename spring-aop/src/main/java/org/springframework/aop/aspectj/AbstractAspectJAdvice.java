@@ -602,6 +602,7 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
         try {
             ReflectionUtils.makeAccessible(this.aspectJAdviceMethod);
             // TODO AopUtils.invokeJoinpointUsingReflection
+            // 激活（调用）增强方法
             return this.aspectJAdviceMethod.invoke(this.aspectInstanceFactory.getAspectInstance(), actualArgs);
         } catch (IllegalArgumentException ex) {
             throw new AopInvocationException("Mismatch on arguments to advice method [" + this.aspectJAdviceMethod

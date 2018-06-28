@@ -66,11 +66,15 @@ class InstantiationModelAwarePointcutAdvisorImpl
             Method aspectJAdviceMethod, AspectJAdvisorFactory aspectJAdvisorFactory,
             MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
 
+        // test()
         this.declaredPointcut = declaredPointcut;
+        // public void test.AspectJTest.beforeTest()
         this.aspectJAdviceMethod = aspectJAdviceMethod;
         this.aspectJAdvisorFactory = aspectJAdvisorFactory;
         this.aspectInstanceFactory = aspectInstanceFactory;
+        // 0
         this.declarationOrder = declarationOrder;
+        // test.AspectJTest
         this.aspectName = aspectName;
 
         if (aspectInstanceFactory.getAspectMetadata().isLazilyInstantiated()) {

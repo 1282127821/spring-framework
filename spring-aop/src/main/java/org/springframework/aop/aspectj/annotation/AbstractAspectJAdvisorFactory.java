@@ -180,6 +180,13 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
         return null;
     }
 
+    /**
+     * 获取指定方法上的注解并使用 AspectJAnnotation 封装
+     * @param method
+     * @param toLookFor
+     * @param <A>
+     * @return
+     */
     private static <A extends Annotation> AspectJAnnotation<A> findAnnotation(Method method, Class<A> toLookFor) {
         A result = AnnotationUtils.findAnnotation(method, toLookFor);
         if (result != null) {
