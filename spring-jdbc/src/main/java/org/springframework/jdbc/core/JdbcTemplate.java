@@ -603,6 +603,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
             logger.debug("Executing prepared SQL statement" + (sql != null ? " [" + sql + "]" : ""));
         }
 
+        // 获取数据库连接
         Connection con = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
         try {
@@ -612,15 +613,18 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
                 conToUse = this.nativeJdbcExtractor.getNativeConnection(con);
             }
             ps = psc.createPreparedStatement(conToUse);
+            // 应用用户设定的输入参数
             applyStatementSettings(ps);
             PreparedStatement psToUse = ps;
             if (this.nativeJdbcExtractor != null) {
                 psToUse = this.nativeJdbcExtractor.getNativePreparedStatement(ps);
             }
+            // 调用回调函数
             T result = action.doInPreparedStatement(psToUse);
             handleWarnings(ps);
             return result;
         } catch (SQLException ex) {
+        	// 释放数据库连接，避免当异常转换器没有被初始化的时候出现潜在的连接池死锁
             // Release Connection early, to avoid potential connection pool deadlock
             // in the case when the exception translator hasn't been initialized yet.
             if (psc instanceof ParameterDisposer) {
@@ -630,6 +634,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
             psc = null;
             JdbcUtils.closeStatement(ps);
             ps = null;
+            // 释放连接
             DataSourceUtils.releaseConnection(con, getDataSource());
             con = null;
             throw getExceptionTranslator().translate("PreparedStatementCallback", sql, ex);
@@ -860,6 +865,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 try {
                     if (pss != null) {
+                    	// 设置 PreparedStatement 所需的全部参数
                         pss.setValues(ps);
                     }
                     int rows = ps.executeUpdate();
@@ -1366,6 +1372,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
      * @see org.springframework.jdbc.SQLWarningException
      */
     protected void handleWarnings(Statement stmt) throws SQLException {
+    	// 当设置为忽略警告时，只尝试打印日志
         if (isIgnoreWarnings()) {
             if (logger.isDebugEnabled()) {
                 SQLWarning warningToLog = stmt.getWarnings();
