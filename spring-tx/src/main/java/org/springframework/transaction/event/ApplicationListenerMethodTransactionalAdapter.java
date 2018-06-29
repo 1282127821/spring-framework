@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ApplicationListenerMethodAdapter;
 import org.springframework.context.event.EventListener;
@@ -47,94 +46,90 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 class ApplicationListenerMethodTransactionalAdapter extends ApplicationListenerMethodAdapter {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private final TransactionalEventListener annotation;
-
-
-	public ApplicationListenerMethodTransactionalAdapter(String beanName, Class<?> targetClass, Method method) {
-		super(beanName, targetClass, method);
-		this.annotation = findAnnotation(method);
-	}
+    private final TransactionalEventListener annotation;
 
 
-	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		if (TransactionSynchronizationManager.isSynchronizationActive()) {
-			TransactionSynchronization transactionSynchronization = createTransactionSynchronization(event);
-			TransactionSynchronizationManager.registerSynchronization(transactionSynchronization);
-		}
-		else if (this.annotation.fallbackExecution()) {
-			if (this.annotation.phase() == TransactionPhase.AFTER_ROLLBACK) {
-				logger.warn("Processing '" + event + "' as a fallback execution on AFTER_ROLLBACK phase.");
-			}
-			processEvent(event);
-		}
-		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No transaction is running, skipping '" + event + "' for '" + this + "'");
-			}
-		}
-	}
-
-	private TransactionSynchronization createTransactionSynchronization(ApplicationEvent event) {
-		return new TransactionSynchronizationEventAdapter(this, event, this.annotation.phase());
-	}
-
-	static TransactionalEventListener findAnnotation(Method method) {
-		TransactionalEventListener annotation =
-				AnnotatedElementUtils.findMergedAnnotation(method, TransactionalEventListener.class);
-		if (annotation == null) {
-			throw new IllegalStateException("No TransactionalEventListener annotation found on '" + method + "'");
-		}
-		return annotation;
-	}
+    public ApplicationListenerMethodTransactionalAdapter(String beanName, Class<?> targetClass, Method method) {
+        super(beanName, targetClass, method);
+        this.annotation = findAnnotation(method);
+    }
 
 
-	private static class TransactionSynchronizationEventAdapter extends TransactionSynchronizationAdapter {
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronization transactionSynchronization = createTransactionSynchronization(event);
+            TransactionSynchronizationManager.registerSynchronization(transactionSynchronization);
+        } else if (this.annotation.fallbackExecution()) {
+            if (this.annotation.phase() == TransactionPhase.AFTER_ROLLBACK) {
+                logger.warn("Processing '" + event + "' as a fallback execution on AFTER_ROLLBACK phase.");
+            }
+            processEvent(event);
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("No transaction is running, skipping '" + event + "' for '" + this + "'");
+            }
+        }
+    }
 
-		private final ApplicationListenerMethodAdapter listener;
+    private TransactionSynchronization createTransactionSynchronization(ApplicationEvent event) {
+        return new TransactionSynchronizationEventAdapter(this, event, this.annotation.phase());
+    }
 
-		private final ApplicationEvent event;
+    static TransactionalEventListener findAnnotation(Method method) {
+        TransactionalEventListener annotation =
+                AnnotatedElementUtils.findMergedAnnotation(method, TransactionalEventListener.class);
+        if (annotation == null) {
+            throw new IllegalStateException("No TransactionalEventListener annotation found on '" + method + "'");
+        }
+        return annotation;
+    }
 
-		private final TransactionPhase phase;
 
-		public TransactionSynchronizationEventAdapter(ApplicationListenerMethodAdapter listener,
-				ApplicationEvent event, TransactionPhase phase) {
+    private static class TransactionSynchronizationEventAdapter extends TransactionSynchronizationAdapter {
 
-			this.listener = listener;
-			this.event = event;
-			this.phase = phase;
-		}
+        private final ApplicationListenerMethodAdapter listener;
 
-		@Override
-		public void beforeCommit(boolean readOnly) {
-			if (this.phase == TransactionPhase.BEFORE_COMMIT) {
-				processEvent();
-			}
-		}
+        private final ApplicationEvent event;
 
-		@Override
-		public void afterCompletion(int status) {
-			if (this.phase == TransactionPhase.AFTER_COMPLETION) {
-				processEvent();
-			}
-			else if (this.phase == TransactionPhase.AFTER_COMMIT && status == STATUS_COMMITTED) {
-				processEvent();
-			}
-			else if (this.phase == TransactionPhase.AFTER_ROLLBACK && status == STATUS_ROLLED_BACK) {
-				processEvent();
-			}
-		}
+        private final TransactionPhase phase;
 
-		@Override
-		public int getOrder() {
-			return this.listener.getOrder();
-		}
+        public TransactionSynchronizationEventAdapter(ApplicationListenerMethodAdapter listener, ApplicationEvent event,
+                TransactionPhase phase) {
 
-		protected void processEvent() {
-			this.listener.processEvent(this.event);
-		}
-	}
+            this.listener = listener;
+            this.event = event;
+            this.phase = phase;
+        }
+
+        @Override
+        public void beforeCommit(boolean readOnly) {
+            if (this.phase == TransactionPhase.BEFORE_COMMIT) {
+                processEvent();
+            }
+        }
+
+        @Override
+        public void afterCompletion(int status) {
+            if (this.phase == TransactionPhase.AFTER_COMPLETION) {
+                processEvent();
+            } else if (this.phase == TransactionPhase.AFTER_COMMIT && status == STATUS_COMMITTED) {
+                processEvent();
+            } else if (this.phase == TransactionPhase.AFTER_ROLLBACK && status == STATUS_ROLLED_BACK) {
+                processEvent();
+            }
+        }
+
+        @Override
+        public int getOrder() {
+            return this.listener.getOrder();
+        }
+
+        protected void processEvent() {
+            this.listener.processEvent(this.event);
+        }
+    }
 
 }

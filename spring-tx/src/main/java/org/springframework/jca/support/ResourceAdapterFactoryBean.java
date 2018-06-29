@@ -50,104 +50,104 @@ import org.springframework.util.Assert;
  */
 public class ResourceAdapterFactoryBean implements FactoryBean<ResourceAdapter>, InitializingBean, DisposableBean {
 
-	private ResourceAdapter resourceAdapter;
+    private ResourceAdapter resourceAdapter;
 
-	private BootstrapContext bootstrapContext;
+    private BootstrapContext bootstrapContext;
 
-	private WorkManager workManager;
+    private WorkManager workManager;
 
-	private XATerminator xaTerminator;
-
-
-	/**
-	 * Specify the target JCA ResourceAdapter as class, to be instantiated
-	 * with its default configuration.
-	 * <p>Alternatively, specify a pre-configured ResourceAdapter instance
-	 * through the "resourceAdapter" property.
-	 * @see #setResourceAdapter
-	 */
-	public void setResourceAdapterClass(Class<?> resourceAdapterClass) {
-		Assert.isAssignable(ResourceAdapter.class, resourceAdapterClass);
-		this.resourceAdapter = (ResourceAdapter) BeanUtils.instantiateClass(resourceAdapterClass);
-	}
-
-	/**
-	 * Specify the target JCA ResourceAdapter, passed in as configured instance
-	 * which hasn't been started yet. This will typically happen as an
-	 * inner bean definition, configuring the ResourceAdapter instance
-	 * through its vendor-specific bean properties.
-	 */
-	public void setResourceAdapter(ResourceAdapter resourceAdapter) {
-		this.resourceAdapter = resourceAdapter;
-	}
-
-	/**
-	 * Specify the JCA BootstrapContext to use for starting the ResourceAdapter.
-	 * <p>Alternatively, you can specify the individual parts (such as the
-	 * JCA WorkManager) as individual references.
-	 * @see #setWorkManager
-	 * @see #setXaTerminator
-	 */
-	public void setBootstrapContext(BootstrapContext bootstrapContext) {
-		this.bootstrapContext = bootstrapContext;
-	}
-
-	/**
-	 * Specify the JCA WorkManager to use for bootstrapping the ResourceAdapter.
-	 * @see #setBootstrapContext
-	 */
-	public void setWorkManager(WorkManager workManager) {
-		this.workManager = workManager;
-	}
-
-	/**
-	 * Specify the JCA XATerminator to use for bootstrapping the ResourceAdapter.
-	 * @see #setBootstrapContext
-	 */
-	public void setXaTerminator(XATerminator xaTerminator) {
-		this.xaTerminator = xaTerminator;
-	}
+    private XATerminator xaTerminator;
 
 
-	/**
-	 * Builds the BootstrapContext and starts the ResourceAdapter with it.
-	 * @see javax.resource.spi.ResourceAdapter#start(javax.resource.spi.BootstrapContext)
-	 */
-	@Override
-	public void afterPropertiesSet() throws ResourceException {
-		if (this.resourceAdapter == null) {
-			throw new IllegalArgumentException("'resourceAdapter' or 'resourceAdapterClass' is required");
-		}
-		if (this.bootstrapContext == null) {
-			this.bootstrapContext = new SimpleBootstrapContext(this.workManager, this.xaTerminator);
-		}
-		this.resourceAdapter.start(this.bootstrapContext);
-	}
+    /**
+     * Specify the target JCA ResourceAdapter as class, to be instantiated
+     * with its default configuration.
+     * <p>Alternatively, specify a pre-configured ResourceAdapter instance
+     * through the "resourceAdapter" property.
+     * @see #setResourceAdapter
+     */
+    public void setResourceAdapterClass(Class<?> resourceAdapterClass) {
+        Assert.isAssignable(ResourceAdapter.class, resourceAdapterClass);
+        this.resourceAdapter = (ResourceAdapter) BeanUtils.instantiateClass(resourceAdapterClass);
+    }
+
+    /**
+     * Specify the target JCA ResourceAdapter, passed in as configured instance
+     * which hasn't been started yet. This will typically happen as an
+     * inner bean definition, configuring the ResourceAdapter instance
+     * through its vendor-specific bean properties.
+     */
+    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+        this.resourceAdapter = resourceAdapter;
+    }
+
+    /**
+     * Specify the JCA BootstrapContext to use for starting the ResourceAdapter.
+     * <p>Alternatively, you can specify the individual parts (such as the
+     * JCA WorkManager) as individual references.
+     * @see #setWorkManager
+     * @see #setXaTerminator
+     */
+    public void setBootstrapContext(BootstrapContext bootstrapContext) {
+        this.bootstrapContext = bootstrapContext;
+    }
+
+    /**
+     * Specify the JCA WorkManager to use for bootstrapping the ResourceAdapter.
+     * @see #setBootstrapContext
+     */
+    public void setWorkManager(WorkManager workManager) {
+        this.workManager = workManager;
+    }
+
+    /**
+     * Specify the JCA XATerminator to use for bootstrapping the ResourceAdapter.
+     * @see #setBootstrapContext
+     */
+    public void setXaTerminator(XATerminator xaTerminator) {
+        this.xaTerminator = xaTerminator;
+    }
 
 
-	@Override
-	public ResourceAdapter getObject() {
-		return this.resourceAdapter;
-	}
+    /**
+     * Builds the BootstrapContext and starts the ResourceAdapter with it.
+     * @see javax.resource.spi.ResourceAdapter#start(javax.resource.spi.BootstrapContext)
+     */
+    @Override
+    public void afterPropertiesSet() throws ResourceException {
+        if (this.resourceAdapter == null) {
+            throw new IllegalArgumentException("'resourceAdapter' or 'resourceAdapterClass' is required");
+        }
+        if (this.bootstrapContext == null) {
+            this.bootstrapContext = new SimpleBootstrapContext(this.workManager, this.xaTerminator);
+        }
+        this.resourceAdapter.start(this.bootstrapContext);
+    }
 
-	@Override
-	public Class<? extends ResourceAdapter> getObjectType() {
-		return (this.resourceAdapter != null ? this.resourceAdapter.getClass() : ResourceAdapter.class);
-	}
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public ResourceAdapter getObject() {
+        return this.resourceAdapter;
+    }
+
+    @Override
+    public Class<? extends ResourceAdapter> getObjectType() {
+        return (this.resourceAdapter != null ? this.resourceAdapter.getClass() : ResourceAdapter.class);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 
-	/**
-	 * Stops the ResourceAdapter.
-	 * @see javax.resource.spi.ResourceAdapter#stop()
-	 */
-	@Override
-	public void destroy() {
-		this.resourceAdapter.stop();
-	}
+    /**
+     * Stops the ResourceAdapter.
+     * @see javax.resource.spi.ResourceAdapter#stop()
+     */
+    @Override
+    public void destroy() {
+        this.resourceAdapter.stop();
+    }
 
 }

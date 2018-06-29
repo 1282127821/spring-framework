@@ -26,13 +26,13 @@ package org.springframework.dao;
 @SuppressWarnings("serial")
 public abstract class UncategorizedDataAccessException extends NonTransientDataAccessException {
 
-	/**
-	 * Constructor for UncategorizedDataAccessException.
-	 * @param msg the detail message
-	 * @param cause the exception thrown by underlying data access API
-	 */
-	public UncategorizedDataAccessException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Constructor for UncategorizedDataAccessException.
+     * @param msg the detail message
+     * @param cause the exception thrown by underlying data access API
+     */
+    public UncategorizedDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

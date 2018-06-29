@@ -44,24 +44,24 @@ import org.springframework.jca.work.WorkManagerTaskExecutor;
 @Deprecated
 public class JBossWorkManagerTaskExecutor extends WorkManagerTaskExecutor {
 
-	/**
-	 * Identify a specific JBossWorkManagerMBean to talk to,
-	 * through its JMX object name.
-	 * <p>The default MBean name is "jboss.jca:service=WorkManager".
-	 * @see JBossWorkManagerUtils#getWorkManager(String)
-	 */
-	public void setWorkManagerMBeanName(String mbeanName) {
-		setWorkManager(JBossWorkManagerUtils.getWorkManager(mbeanName));
-	}
+    /**
+     * Identify a specific JBossWorkManagerMBean to talk to,
+     * through its JMX object name.
+     * <p>The default MBean name is "jboss.jca:service=WorkManager".
+     * @see JBossWorkManagerUtils#getWorkManager(String)
+     */
+    public void setWorkManagerMBeanName(String mbeanName) {
+        setWorkManager(JBossWorkManagerUtils.getWorkManager(mbeanName));
+    }
 
-	/**
-	 * Obtains the default JBoss JCA WorkManager through a JMX lookup
-	 * for the JBossWorkManagerMBean.
-	 * @see JBossWorkManagerUtils#getWorkManager()
-	 */
-	@Override
-	protected WorkManager getDefaultWorkManager() {
-		return JBossWorkManagerUtils.getWorkManager();
-	}
+    /**
+     * Obtains the default JBoss JCA WorkManager through a JMX lookup
+     * for the JBossWorkManagerMBean.
+     * @see JBossWorkManagerUtils#getWorkManager()
+     */
+    @Override
+    protected WorkManager getDefaultWorkManager() {
+        return JBossWorkManagerUtils.getWorkManager();
+    }
 
 }

@@ -27,33 +27,33 @@ import org.springframework.transaction.support.TransactionSynchronization;
  */
 public enum TransactionPhase {
 
-	/**
-	 * Fire the event before transaction commit.
-	 * @see TransactionSynchronization#beforeCommit(boolean)
-	 */
-	BEFORE_COMMIT,
+    /**
+     * Fire the event before transaction commit.
+     * @see TransactionSynchronization#beforeCommit(boolean)
+     */
+    BEFORE_COMMIT,
 
-	/**
-	 * Fire the event after the transaction has completed. For
-	 * more fine-grained event, use {@link #AFTER_COMMIT} or
-	 * {@link #AFTER_ROLLBACK} to intercept transaction commit
-	 * or rollback respectively.
-	 * @see TransactionSynchronization#afterCompletion(int)
-	 */
-	AFTER_COMPLETION,
+    /**
+     * Fire the event after the transaction has completed. For
+     * more fine-grained event, use {@link #AFTER_COMMIT} or
+     * {@link #AFTER_ROLLBACK} to intercept transaction commit
+     * or rollback respectively.
+     * @see TransactionSynchronization#afterCompletion(int)
+     */
+    AFTER_COMPLETION,
 
-	/**
-	 * Fire the event after the commit has completed successfully.
-	 * @see TransactionSynchronization#afterCompletion(int)
-	 * @see TransactionSynchronization#STATUS_COMMITTED
-	 */
-	AFTER_COMMIT,
+    /**
+     * Fire the event after the commit has completed successfully.
+     * @see TransactionSynchronization#afterCompletion(int)
+     * @see TransactionSynchronization#STATUS_COMMITTED
+     */
+    AFTER_COMMIT,
 
-	/**
-	 * Fire the event if the transaction has rolled back.
-	 * @see TransactionSynchronization#afterCompletion(int)
-	 * @see TransactionSynchronization#STATUS_ROLLED_BACK
-	 */
-	AFTER_ROLLBACK
+    /**
+     * Fire the event if the transaction has rolled back.
+     * @see TransactionSynchronization#afterCompletion(int)
+     * @see TransactionSynchronization#STATUS_ROLLED_BACK
+     */
+    AFTER_ROLLBACK
 
 }

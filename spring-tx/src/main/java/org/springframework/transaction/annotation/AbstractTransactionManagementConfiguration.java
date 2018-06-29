@@ -43,41 +43,41 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 public abstract class AbstractTransactionManagementConfiguration implements ImportAware {
 
-	protected AnnotationAttributes enableTx;
+    protected AnnotationAttributes enableTx;
 
-	/**
-	 * Default transaction manager, as configured through a {@link TransactionManagementConfigurer}.
-	 */
-	protected PlatformTransactionManager txManager;
-
-
-	@Override
-	public void setImportMetadata(AnnotationMetadata importMetadata) {
-		this.enableTx = AnnotationAttributes.fromMap(
-				importMetadata.getAnnotationAttributes(EnableTransactionManagement.class.getName(), false));
-		if (this.enableTx == null) {
-			throw new IllegalArgumentException(
-					"@EnableTransactionManagement is not present on importing class " + importMetadata.getClassName());
-		}
-	}
-
-	@Autowired(required = false)
-	void setConfigurers(Collection<TransactionManagementConfigurer> configurers) {
-		if (CollectionUtils.isEmpty(configurers)) {
-			return;
-		}
-		if (configurers.size() > 1) {
-			throw new IllegalStateException("Only one TransactionManagementConfigurer may exist");
-		}
-		TransactionManagementConfigurer configurer = configurers.iterator().next();
-		this.txManager = configurer.annotationDrivenTransactionManager();
-	}
+    /**
+     * Default transaction manager, as configured through a {@link TransactionManagementConfigurer}.
+     */
+    protected PlatformTransactionManager txManager;
 
 
-	@Bean(name = TransactionManagementConfigUtils.TRANSACTIONAL_EVENT_LISTENER_FACTORY_BEAN_NAME)
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public TransactionalEventListenerFactory transactionalEventListenerFactory() {
-		return new TransactionalEventListenerFactory();
-	}
+    @Override
+    public void setImportMetadata(AnnotationMetadata importMetadata) {
+        this.enableTx = AnnotationAttributes
+                .fromMap(importMetadata.getAnnotationAttributes(EnableTransactionManagement.class.getName(), false));
+        if (this.enableTx == null) {
+            throw new IllegalArgumentException(
+                    "@EnableTransactionManagement is not present on importing class " + importMetadata.getClassName());
+        }
+    }
+
+    @Autowired(required = false)
+    void setConfigurers(Collection<TransactionManagementConfigurer> configurers) {
+        if (CollectionUtils.isEmpty(configurers)) {
+            return;
+        }
+        if (configurers.size() > 1) {
+            throw new IllegalStateException("Only one TransactionManagementConfigurer may exist");
+        }
+        TransactionManagementConfigurer configurer = configurers.iterator().next();
+        this.txManager = configurer.annotationDrivenTransactionManager();
+    }
+
+
+    @Bean(name = TransactionManagementConfigUtils.TRANSACTIONAL_EVENT_LISTENER_FACTORY_BEAN_NAME)
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public TransactionalEventListenerFactory transactionalEventListenerFactory() {
+        return new TransactionalEventListenerFactory();
+    }
 
 }

@@ -27,7 +27,6 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -107,144 +106,141 @@ import org.springframework.util.StringUtils;
  */
 public class SpringContextResourceAdapter implements ResourceAdapter {
 
-	/**
-	 * Any number of these characters are considered delimiters between
-	 * multiple context config paths in a single String value.
-	 * @see #setContextConfigLocation
-	 */
-	public static final String CONFIG_LOCATION_DELIMITERS = ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS;
+    /**
+     * Any number of these characters are considered delimiters between
+     * multiple context config paths in a single String value.
+     * @see #setContextConfigLocation
+     */
+    public static final String CONFIG_LOCATION_DELIMITERS = ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS;
 
-	public static final String DEFAULT_CONTEXT_CONFIG_LOCATION = "META-INF/applicationContext.xml";
-
-
-	protected final Log logger = LogFactory.getLog(getClass());
-
-	private String contextConfigLocation = DEFAULT_CONTEXT_CONFIG_LOCATION;
-
-	private ConfigurableApplicationContext applicationContext;
+    public static final String DEFAULT_CONTEXT_CONFIG_LOCATION = "META-INF/applicationContext.xml";
 
 
-	/**
-	 * Set the location of the context configuration files, within the
-	 * resource adapter's deployment unit. This can be a delimited
-	 * String that consists of multiple resource location, separated
-	 * by commas, semicolons, whitespace, or line breaks.
-	 * <p>This can be specified as "ContextConfigLocation" config
-	 * property in the {@code ra.xml} deployment descriptor.
-	 * <p>The default is "classpath:META-INF/applicationContext.xml".
-	 */
-	public void setContextConfigLocation(String contextConfigLocation) {
-		this.contextConfigLocation = contextConfigLocation;
-	}
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	/**
-	 * Return the specified context configuration files.
-	 */
-	protected String getContextConfigLocation() {
-		return this.contextConfigLocation;
-	}
+    private String contextConfigLocation = DEFAULT_CONTEXT_CONFIG_LOCATION;
 
-	/**
-	 * Return a new {@link StandardEnvironment}.
-	 * <p>Subclasses may override this method in order to supply
-	 * a custom {@link ConfigurableEnvironment} implementation.
-	 */
-	protected ConfigurableEnvironment createEnvironment() {
-		return new StandardEnvironment();
-	}
-
-	/**
-	 * This implementation loads a Spring ApplicationContext through the
-	 * {@link #createApplicationContext} template method.
-	 */
-	@Override
-	public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
-		if (logger.isInfoEnabled()) {
-			logger.info("Starting SpringContextResourceAdapter with BootstrapContext: " + bootstrapContext);
-		}
-		this.applicationContext = createApplicationContext(bootstrapContext);
-	}
-
-	/**
-	 * Build a Spring ApplicationContext for the given JCA BootstrapContext.
-	 * <p>The default implementation builds a {@link ResourceAdapterApplicationContext}
-	 * and delegates to {@link #loadBeanDefinitions} for actually parsing the
-	 * specified configuration files.
-	 * @param bootstrapContext this ResourceAdapter's BootstrapContext
-	 * @return the Spring ApplicationContext instance
-	 */
-	protected ConfigurableApplicationContext createApplicationContext(BootstrapContext bootstrapContext) {
-		ResourceAdapterApplicationContext applicationContext =
-				new ResourceAdapterApplicationContext(bootstrapContext);
-		// Set ResourceAdapter's ClassLoader as bean class loader.
-		applicationContext.setClassLoader(getClass().getClassLoader());
-		// Extract individual config locations.
-		String[] configLocations =
-				StringUtils.tokenizeToStringArray(getContextConfigLocation(), CONFIG_LOCATION_DELIMITERS);
-		if (configLocations != null) {
-			loadBeanDefinitions(applicationContext, configLocations);
-		}
-		applicationContext.refresh();
-		return applicationContext;
-	}
-
-	/**
-	 * Load the bean definitions into the given registry,
-	 * based on the specified configuration files.
-	 * @param registry the registry to load into
-	 * @param configLocations the parsed config locations
-	 * @see #setContextConfigLocation
-	 */
-	protected void loadBeanDefinitions(BeanDefinitionRegistry registry, String[] configLocations) {
-		new XmlBeanDefinitionReader(registry).loadBeanDefinitions(configLocations);
-	}
-
-	/**
-	 * This implementation closes the Spring ApplicationContext.
-	 */
-	@Override
-	public void stop() {
-		logger.info("Stopping SpringContextResourceAdapter");
-		this.applicationContext.close();
-	}
+    private ConfigurableApplicationContext applicationContext;
 
 
-	/**
-	 * This implementation always throws a NotSupportedException.
-	 */
-	@Override
-	public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec)
-			throws ResourceException {
+    /**
+     * Set the location of the context configuration files, within the
+     * resource adapter's deployment unit. This can be a delimited
+     * String that consists of multiple resource location, separated
+     * by commas, semicolons, whitespace, or line breaks.
+     * <p>This can be specified as "ContextConfigLocation" config
+     * property in the {@code ra.xml} deployment descriptor.
+     * <p>The default is "classpath:META-INF/applicationContext.xml".
+     */
+    public void setContextConfigLocation(String contextConfigLocation) {
+        this.contextConfigLocation = contextConfigLocation;
+    }
 
-		throw new NotSupportedException("SpringContextResourceAdapter does not support message endpoints");
-	}
+    /**
+     * Return the specified context configuration files.
+     */
+    protected String getContextConfigLocation() {
+        return this.contextConfigLocation;
+    }
 
-	/**
-	 * This implementation does nothing.
-	 */
-	@Override
-	public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
-	}
+    /**
+     * Return a new {@link StandardEnvironment}.
+     * <p>Subclasses may override this method in order to supply
+     * a custom {@link ConfigurableEnvironment} implementation.
+     */
+    protected ConfigurableEnvironment createEnvironment() {
+        return new StandardEnvironment();
+    }
 
-	/**
-	 * This implementation always returns {@code null}.
-	 */
-	@Override
-	public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
-		return null;
-	}
+    /**
+     * This implementation loads a Spring ApplicationContext through the
+     * {@link #createApplicationContext} template method.
+     */
+    @Override
+    public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+        if (logger.isInfoEnabled()) {
+            logger.info("Starting SpringContextResourceAdapter with BootstrapContext: " + bootstrapContext);
+        }
+        this.applicationContext = createApplicationContext(bootstrapContext);
+    }
+
+    /**
+     * Build a Spring ApplicationContext for the given JCA BootstrapContext.
+     * <p>The default implementation builds a {@link ResourceAdapterApplicationContext}
+     * and delegates to {@link #loadBeanDefinitions} for actually parsing the
+     * specified configuration files.
+     * @param bootstrapContext this ResourceAdapter's BootstrapContext
+     * @return the Spring ApplicationContext instance
+     */
+    protected ConfigurableApplicationContext createApplicationContext(BootstrapContext bootstrapContext) {
+        ResourceAdapterApplicationContext applicationContext = new ResourceAdapterApplicationContext(bootstrapContext);
+        // Set ResourceAdapter's ClassLoader as bean class loader.
+        applicationContext.setClassLoader(getClass().getClassLoader());
+        // Extract individual config locations.
+        String[] configLocations =
+                StringUtils.tokenizeToStringArray(getContextConfigLocation(), CONFIG_LOCATION_DELIMITERS);
+        if (configLocations != null) {
+            loadBeanDefinitions(applicationContext, configLocations);
+        }
+        applicationContext.refresh();
+        return applicationContext;
+    }
+
+    /**
+     * Load the bean definitions into the given registry,
+     * based on the specified configuration files.
+     * @param registry the registry to load into
+     * @param configLocations the parsed config locations
+     * @see #setContextConfigLocation
+     */
+    protected void loadBeanDefinitions(BeanDefinitionRegistry registry, String[] configLocations) {
+        new XmlBeanDefinitionReader(registry).loadBeanDefinitions(configLocations);
+    }
+
+    /**
+     * This implementation closes the Spring ApplicationContext.
+     */
+    @Override
+    public void stop() {
+        logger.info("Stopping SpringContextResourceAdapter");
+        this.applicationContext.close();
+    }
 
 
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof SpringContextResourceAdapter &&
-				ObjectUtils.nullSafeEquals(getContextConfigLocation(),
-						((SpringContextResourceAdapter) obj).getContextConfigLocation()));
-	}
+    /**
+     * This implementation always throws a NotSupportedException.
+     */
+    @Override
+    public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec)
+            throws ResourceException {
 
-	@Override
-	public int hashCode() {
-		return ObjectUtils.nullSafeHashCode(getContextConfigLocation());
-	}
+        throw new NotSupportedException("SpringContextResourceAdapter does not support message endpoints");
+    }
+
+    /**
+     * This implementation does nothing.
+     */
+    @Override
+    public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {}
+
+    /**
+     * This implementation always returns {@code null}.
+     */
+    @Override
+    public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
+        return null;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof SpringContextResourceAdapter && ObjectUtils.nullSafeEquals(getContextConfigLocation(),
+                ((SpringContextResourceAdapter) obj).getContextConfigLocation()));
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtils.nullSafeHashCode(getContextConfigLocation());
+    }
 
 }
