@@ -51,64 +51,62 @@ import org.springframework.util.ReflectionUtils;
 @Deprecated
 public class CommonsDbcpNativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	private static final String GET_INNERMOST_DELEGATE_METHOD_NAME = "getInnermostDelegate";
+    private static final String GET_INNERMOST_DELEGATE_METHOD_NAME = "getInnermostDelegate";
 
 
-	/**
-	 * Extracts the innermost delegate from the given Commons DBCP object.
-	 * Falls back to the given object if no underlying object found.
-	 * @param obj the Commons DBCP Connection/Statement/ResultSet
-	 * @return the underlying native Connection/Statement/ResultSet
-	 */
-	private static Object getInnermostDelegate(Object obj) throws SQLException {
-		if (obj == null) {
-			return null;
-		}
-		try {
-			Class<?> classToAnalyze = obj.getClass();
-			while (!Modifier.isPublic(classToAnalyze.getModifiers())) {
-				classToAnalyze = classToAnalyze.getSuperclass();
-				if (classToAnalyze == null) {
-					// No public provider class found -> fall back to given object.
-					return obj;
-				}
-			}
-			Method getInnermostDelegate = classToAnalyze.getMethod(GET_INNERMOST_DELEGATE_METHOD_NAME, (Class[]) null);
-			Object delegate = ReflectionUtils.invokeJdbcMethod(getInnermostDelegate, obj);
-			return (delegate != null ? delegate : obj);
-		}
-		catch (NoSuchMethodException ex) {
-			return obj;
-		}
-		catch (SecurityException ex) {
-			throw new IllegalStateException("Commons DBCP getInnermostDelegate method is not accessible: " + ex);
-		}
-	}
+    /**
+     * Extracts the innermost delegate from the given Commons DBCP object.
+     * Falls back to the given object if no underlying object found.
+     * @param obj the Commons DBCP Connection/Statement/ResultSet
+     * @return the underlying native Connection/Statement/ResultSet
+     */
+    private static Object getInnermostDelegate(Object obj) throws SQLException {
+        if (obj == null) {
+            return null;
+        }
+        try {
+            Class<?> classToAnalyze = obj.getClass();
+            while (!Modifier.isPublic(classToAnalyze.getModifiers())) {
+                classToAnalyze = classToAnalyze.getSuperclass();
+                if (classToAnalyze == null) {
+                    // No public provider class found -> fall back to given object.
+                    return obj;
+                }
+            }
+            Method getInnermostDelegate = classToAnalyze.getMethod(GET_INNERMOST_DELEGATE_METHOD_NAME, (Class[]) null);
+            Object delegate = ReflectionUtils.invokeJdbcMethod(getInnermostDelegate, obj);
+            return (delegate != null ? delegate : obj);
+        } catch (NoSuchMethodException ex) {
+            return obj;
+        } catch (SecurityException ex) {
+            throw new IllegalStateException("Commons DBCP getInnermostDelegate method is not accessible: " + ex);
+        }
+    }
 
 
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		return (Connection) getInnermostDelegate(con);
-	}
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        return (Connection) getInnermostDelegate(con);
+    }
 
-	@Override
-	public Statement getNativeStatement(Statement stmt) throws SQLException {
-		return (Statement) getInnermostDelegate(stmt);
-	}
+    @Override
+    public Statement getNativeStatement(Statement stmt) throws SQLException {
+        return (Statement) getInnermostDelegate(stmt);
+    }
 
-	@Override
-	public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
-		return (PreparedStatement) getNativeStatement(ps);
-	}
+    @Override
+    public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
+        return (PreparedStatement) getNativeStatement(ps);
+    }
 
-	@Override
-	public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
-		return (CallableStatement) getNativeStatement(cs);
-	}
+    @Override
+    public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
+        return (CallableStatement) getNativeStatement(cs);
+    }
 
-	@Override
-	public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
-		return (ResultSet) getInnermostDelegate(rs);
-	}
+    @Override
+    public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
+        return (ResultSet) getInnermostDelegate(rs);
+    }
 
 }

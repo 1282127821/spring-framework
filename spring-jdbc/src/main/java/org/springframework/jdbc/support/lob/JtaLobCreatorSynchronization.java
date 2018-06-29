@@ -32,36 +32,36 @@ import org.springframework.util.Assert;
  */
 public class JtaLobCreatorSynchronization implements Synchronization {
 
-	private final LobCreator lobCreator;
+    private final LobCreator lobCreator;
 
-	private boolean beforeCompletionCalled = false;
+    private boolean beforeCompletionCalled = false;
 
 
-	/**
-	 * Create a JtaLobCreatorSynchronization for the given LobCreator.
-	 * @param lobCreator the LobCreator to close after transaction completion
-	 */
-	public JtaLobCreatorSynchronization(LobCreator lobCreator) {
-		Assert.notNull(lobCreator, "LobCreator must not be null");
-		this.lobCreator = lobCreator;
-	}
+    /**
+     * Create a JtaLobCreatorSynchronization for the given LobCreator.
+     * @param lobCreator the LobCreator to close after transaction completion
+     */
+    public JtaLobCreatorSynchronization(LobCreator lobCreator) {
+        Assert.notNull(lobCreator, "LobCreator must not be null");
+        this.lobCreator = lobCreator;
+    }
 
-	@Override
-	public void beforeCompletion() {
-		// Close the LobCreator early if possible, to avoid issues with strict JTA
-		// implementations that issue warnings when doing JDBC operations after
-		// transaction completion.
-		this.beforeCompletionCalled = true;
-		this.lobCreator.close();
-	}
+    @Override
+    public void beforeCompletion() {
+        // Close the LobCreator early if possible, to avoid issues with strict JTA
+        // implementations that issue warnings when doing JDBC operations after
+        // transaction completion.
+        this.beforeCompletionCalled = true;
+        this.lobCreator.close();
+    }
 
-	@Override
-	public void afterCompletion(int status) {
-		if (!this.beforeCompletionCalled) {
-			// beforeCompletion not called before (probably because of JTA rollback).
-			// Close the LobCreator here.
-			this.lobCreator.close();
-		}
-	}
+    @Override
+    public void afterCompletion(int status) {
+        if (!this.beforeCompletionCalled) {
+            // beforeCompletion not called before (probably because of JTA rollback).
+            // Close the LobCreator here.
+            this.lobCreator.close();
+        }
+    }
 
 }

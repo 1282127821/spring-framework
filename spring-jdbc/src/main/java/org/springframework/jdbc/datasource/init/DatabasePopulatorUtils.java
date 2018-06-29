@@ -17,6 +17,7 @@
 package org.springframework.jdbc.datasource.init;
 
 import java.sql.Connection;
+
 import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
@@ -33,33 +34,31 @@ import org.springframework.util.Assert;
  */
 public abstract class DatabasePopulatorUtils {
 
-	/**
-	 * Execute the given {@link DatabasePopulator} against the given {@link DataSource}.
-	 * @param populator the {@code DatabasePopulator} to execute
-	 * @param dataSource the {@code DataSource} to execute against
-	 * @throws DataAccessException if an error occurs, specifically a {@link ScriptException}
-	 */
-	public static void execute(DatabasePopulator populator, DataSource dataSource) throws DataAccessException {
-		Assert.notNull(populator, "DatabasePopulator must be provided");
-		Assert.notNull(dataSource, "DataSource must be provided");
-		try {
-			Connection connection = DataSourceUtils.getConnection(dataSource);
-			try {
-				populator.populate(connection);
-			}
-			finally {
-				if (connection != null) {
-					DataSourceUtils.releaseConnection(connection, dataSource);
-				}
-			}
-		}
-		catch (Exception ex) {
-			if (ex instanceof ScriptException) {
-				throw (ScriptException) ex;
-			}
+    /**
+     * Execute the given {@link DatabasePopulator} against the given {@link DataSource}.
+     * @param populator the {@code DatabasePopulator} to execute
+     * @param dataSource the {@code DataSource} to execute against
+     * @throws DataAccessException if an error occurs, specifically a {@link ScriptException}
+     */
+    public static void execute(DatabasePopulator populator, DataSource dataSource) throws DataAccessException {
+        Assert.notNull(populator, "DatabasePopulator must be provided");
+        Assert.notNull(dataSource, "DataSource must be provided");
+        try {
+            Connection connection = DataSourceUtils.getConnection(dataSource);
+            try {
+                populator.populate(connection);
+            } finally {
+                if (connection != null) {
+                    DataSourceUtils.releaseConnection(connection, dataSource);
+                }
+            }
+        } catch (Exception ex) {
+            if (ex instanceof ScriptException) {
+                throw (ScriptException) ex;
+            }
 
-			throw new UncategorizedScriptException("Failed to execute database script", ex);
-		}
-	}
+            throw new UncategorizedScriptException("Failed to execute database script", ex);
+        }
+    }
 
 }

@@ -29,18 +29,18 @@ import java.sql.SQLException;
  */
 public class DerbyCallMetaDataProvider extends GenericCallMetaDataProvider {
 
-	public DerbyCallMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
-		super(databaseMetaData);
-	}
+    public DerbyCallMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
+        super(databaseMetaData);
+    }
 
-	@Override
-	public String metaDataSchemaNameToUse(String schemaName) {
-		if (schemaName != null) {
-			return super.metaDataSchemaNameToUse(schemaName);
-		}
-		// Use current user schema if no schema specified...
-		String userName = getUserName();
-		return (userName != null ? userName.toUpperCase() : null);
-	}
+    @Override
+    public String metaDataSchemaNameToUse(String schemaName) {
+        if (schemaName != null) {
+            return super.metaDataSchemaNameToUse(schemaName);
+        }
+        // Use current user schema if no schema specified...
+        String userName = getUserName();
+        return (userName != null ? userName.toUpperCase() : null);
+    }
 
 }

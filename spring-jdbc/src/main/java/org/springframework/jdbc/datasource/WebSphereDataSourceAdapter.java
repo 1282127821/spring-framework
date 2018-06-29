@@ -19,11 +19,11 @@ package org.springframework.jdbc.datasource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -67,112 +67,114 @@ import org.springframework.util.StringUtils;
  */
 public class WebSphereDataSourceAdapter extends IsolationLevelDataSourceAdapter {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private Class<?> wsDataSourceClass;
+    private Class<?> wsDataSourceClass;
 
-	private Method newJdbcConnSpecMethod;
+    private Method newJdbcConnSpecMethod;
 
-	private Method wsDataSourceGetConnectionMethod;
+    private Method wsDataSourceGetConnectionMethod;
 
-	private Method setTransactionIsolationMethod;
+    private Method setTransactionIsolationMethod;
 
-	private Method setReadOnlyMethod;
+    private Method setReadOnlyMethod;
 
-	private Method setUserNameMethod;
+    private Method setUserNameMethod;
 
-	private Method setPasswordMethod;
-
-
-	/**
-	 * This constructor retrieves the WebSphere JDBC connection spec API,
-	 * so we can get obtain specific WebSphere Connections using reflection.
-	 */
-	public WebSphereDataSourceAdapter() {
-		try {
-			this.wsDataSourceClass = getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.WSDataSource");
-			Class<?> jdbcConnSpecClass = getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.JDBCConnectionSpec");
-			Class<?> wsrraFactoryClass = getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.WSRRAFactory");
-			this.newJdbcConnSpecMethod = wsrraFactoryClass.getMethod("createJDBCConnectionSpec", (Class<?>[]) null);
-			this.wsDataSourceGetConnectionMethod =
-					this.wsDataSourceClass.getMethod("getConnection", new Class<?>[] {jdbcConnSpecClass});
-			this.setTransactionIsolationMethod =
-					jdbcConnSpecClass.getMethod("setTransactionIsolation", new Class<?>[] {int.class});
-			this.setReadOnlyMethod = jdbcConnSpecClass.getMethod("setReadOnly", new Class<?>[] {Boolean.class});
-			this.setUserNameMethod = jdbcConnSpecClass.getMethod("setUserName", new Class<?>[] {String.class});
-			this.setPasswordMethod = jdbcConnSpecClass.getMethod("setPassword", new Class<?>[] {String.class});
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not initialize WebSphereDataSourceAdapter because WebSphere API classes are not available: " + ex);
-		}
-	}
-
-	/**
-	 * Checks that the specified 'targetDataSource' actually is
-	 * a WebSphere WSDataSource.
-	 */
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-
-		if (!this.wsDataSourceClass.isInstance(getTargetDataSource())) {
-			throw new IllegalStateException(
-					"Specified 'targetDataSource' is not a WebSphere WSDataSource: " + getTargetDataSource());
-		}
-	}
+    private Method setPasswordMethod;
 
 
-	/**
-	 * Builds a WebSphere JDBCConnectionSpec object for the current settings
-	 * and calls {@code WSDataSource.getConnection(JDBCConnectionSpec)}.
-	 * @see #createConnectionSpec
-	 * @see com.ibm.websphere.rsadapter.WSDataSource#getConnection(com.ibm.websphere.rsadapter.JDBCConnectionSpec)
-	 */
-	@Override
-	protected Connection doGetConnection(String username, String password) throws SQLException {
-		// Create JDBCConnectionSpec using current isolation level value and read-only flag.
-		Object connSpec = createConnectionSpec(
-				getCurrentIsolationLevel(), getCurrentReadOnlyFlag(), username, password);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Obtaining JDBC Connection from WebSphere DataSource [" +
-					getTargetDataSource() + "], using ConnectionSpec [" + connSpec + "]");
-		}
-		// Create Connection through invoking WSDataSource.getConnection(JDBCConnectionSpec)
-		return (Connection) ReflectionUtils.invokeJdbcMethod(
-				this.wsDataSourceGetConnectionMethod, getTargetDataSource(), connSpec);
-	}
+    /**
+     * This constructor retrieves the WebSphere JDBC connection spec API,
+     * so we can get obtain specific WebSphere Connections using reflection.
+     */
+    public WebSphereDataSourceAdapter() {
+        try {
+            this.wsDataSourceClass = getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.WSDataSource");
+            Class<?> jdbcConnSpecClass =
+                    getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.JDBCConnectionSpec");
+            Class<?> wsrraFactoryClass =
+                    getClass().getClassLoader().loadClass("com.ibm.websphere.rsadapter.WSRRAFactory");
+            this.newJdbcConnSpecMethod = wsrraFactoryClass.getMethod("createJDBCConnectionSpec", (Class<?>[]) null);
+            this.wsDataSourceGetConnectionMethod =
+                    this.wsDataSourceClass.getMethod("getConnection", new Class<?>[] {jdbcConnSpecClass});
+            this.setTransactionIsolationMethod =
+                    jdbcConnSpecClass.getMethod("setTransactionIsolation", new Class<?>[] {int.class});
+            this.setReadOnlyMethod = jdbcConnSpecClass.getMethod("setReadOnly", new Class<?>[] {Boolean.class});
+            this.setUserNameMethod = jdbcConnSpecClass.getMethod("setUserName", new Class<?>[] {String.class});
+            this.setPasswordMethod = jdbcConnSpecClass.getMethod("setPassword", new Class<?>[] {String.class});
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Could not initialize WebSphereDataSourceAdapter because WebSphere API classes are not available: "
+                            + ex);
+        }
+    }
 
-	/**
-	 * Create a WebSphere {@code JDBCConnectionSpec} object for the given charateristics.
-	 * <p>The default implementation uses reflection to apply the given settings.
-	 * Can be overridden in subclasses to customize the JDBCConnectionSpec object
-	 * (<a href="http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.ibm.websphere.javadoc.doc/public_html/api/com/ibm/websphere/rsadapter/JDBCConnectionSpec.html">JDBCConnectionSpec javadoc</a>;
-	 * <a href="http://www.ibm.com/developerworks/websphere/library/techarticles/0404_tang/0404_tang.html">IBM developerWorks article</a>).
-	 * @param isolationLevel the isolation level to apply (or {@code null} if none)
-	 * @param readOnlyFlag the read-only flag to apply (or {@code null} if none)
-	 * @param username the username to apply ({@code null} or empty indicates the default)
-	 * @param password the password to apply (may be {@code null} or empty)
-	 * @throws SQLException if thrown by JDBCConnectionSpec API methods
-	 * @see com.ibm.websphere.rsadapter.JDBCConnectionSpec
-	 */
-	protected Object createConnectionSpec(
-			Integer isolationLevel, Boolean readOnlyFlag, String username, String password) throws SQLException {
+    /**
+     * Checks that the specified 'targetDataSource' actually is
+     * a WebSphere WSDataSource.
+     */
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
 
-		Object connSpec = ReflectionUtils.invokeJdbcMethod(this.newJdbcConnSpecMethod, null);
-		if (isolationLevel != null) {
-			ReflectionUtils.invokeJdbcMethod(this.setTransactionIsolationMethod, connSpec, isolationLevel);
-		}
-		if (readOnlyFlag != null) {
-			ReflectionUtils.invokeJdbcMethod(this.setReadOnlyMethod, connSpec, readOnlyFlag);
-		}
-		// If the username is empty, we'll simply let the target DataSource
-		// use its default credentials.
-		if (StringUtils.hasLength(username)) {
-			ReflectionUtils.invokeJdbcMethod(this.setUserNameMethod, connSpec, username);
-			ReflectionUtils.invokeJdbcMethod(this.setPasswordMethod, connSpec, password);
-		}
-		return connSpec;
-	}
+        if (!this.wsDataSourceClass.isInstance(getTargetDataSource())) {
+            throw new IllegalStateException(
+                    "Specified 'targetDataSource' is not a WebSphere WSDataSource: " + getTargetDataSource());
+        }
+    }
+
+
+    /**
+     * Builds a WebSphere JDBCConnectionSpec object for the current settings
+     * and calls {@code WSDataSource.getConnection(JDBCConnectionSpec)}.
+     * @see #createConnectionSpec
+     * @see com.ibm.websphere.rsadapter.WSDataSource#getConnection(com.ibm.websphere.rsadapter.JDBCConnectionSpec)
+     */
+    @Override
+    protected Connection doGetConnection(String username, String password) throws SQLException {
+        // Create JDBCConnectionSpec using current isolation level value and read-only flag.
+        Object connSpec =
+                createConnectionSpec(getCurrentIsolationLevel(), getCurrentReadOnlyFlag(), username, password);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Obtaining JDBC Connection from WebSphere DataSource [" + getTargetDataSource()
+                    + "], using ConnectionSpec [" + connSpec + "]");
+        }
+        // Create Connection through invoking WSDataSource.getConnection(JDBCConnectionSpec)
+        return (Connection) ReflectionUtils.invokeJdbcMethod(this.wsDataSourceGetConnectionMethod,
+                getTargetDataSource(), connSpec);
+    }
+
+    /**
+     * Create a WebSphere {@code JDBCConnectionSpec} object for the given charateristics.
+     * <p>The default implementation uses reflection to apply the given settings.
+     * Can be overridden in subclasses to customize the JDBCConnectionSpec object
+     * (<a href="http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.ibm.websphere.javadoc.doc/public_html/api/com/ibm/websphere/rsadapter/JDBCConnectionSpec.html">JDBCConnectionSpec javadoc</a>;
+     * <a href="http://www.ibm.com/developerworks/websphere/library/techarticles/0404_tang/0404_tang.html">IBM developerWorks article</a>).
+     * @param isolationLevel the isolation level to apply (or {@code null} if none)
+     * @param readOnlyFlag the read-only flag to apply (or {@code null} if none)
+     * @param username the username to apply ({@code null} or empty indicates the default)
+     * @param password the password to apply (may be {@code null} or empty)
+     * @throws SQLException if thrown by JDBCConnectionSpec API methods
+     * @see com.ibm.websphere.rsadapter.JDBCConnectionSpec
+     */
+    protected Object createConnectionSpec(Integer isolationLevel, Boolean readOnlyFlag, String username,
+            String password) throws SQLException {
+
+        Object connSpec = ReflectionUtils.invokeJdbcMethod(this.newJdbcConnSpecMethod, null);
+        if (isolationLevel != null) {
+            ReflectionUtils.invokeJdbcMethod(this.setTransactionIsolationMethod, connSpec, isolationLevel);
+        }
+        if (readOnlyFlag != null) {
+            ReflectionUtils.invokeJdbcMethod(this.setReadOnlyMethod, connSpec, readOnlyFlag);
+        }
+        // If the username is empty, we'll simply let the target DataSource
+        // use its default credentials.
+        if (StringUtils.hasLength(username)) {
+            ReflectionUtils.invokeJdbcMethod(this.setUserNameMethod, connSpec, username);
+            ReflectionUtils.invokeJdbcMethod(this.setPasswordMethod, connSpec, password);
+        }
+        return connSpec;
+    }
 
 }

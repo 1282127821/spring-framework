@@ -31,78 +31,78 @@ import java.sql.SQLException;
  */
 class PassThroughBlob implements Blob {
 
-	private byte[] content;
+    private byte[] content;
 
-	private InputStream binaryStream;
+    private InputStream binaryStream;
 
-	private long contentLength;
-
-
-	public PassThroughBlob(byte[] content) {
-		this.content = content;
-		this.contentLength = content.length;
-	}
-
-	public PassThroughBlob(InputStream binaryStream, long contentLength) {
-		this.binaryStream = binaryStream;
-		this.contentLength = contentLength;
-	}
+    private long contentLength;
 
 
-	@Override
-	public long length() throws SQLException {
-		return this.contentLength;
-	}
+    public PassThroughBlob(byte[] content) {
+        this.content = content;
+        this.contentLength = content.length;
+    }
 
-	@Override
-	public InputStream getBinaryStream() throws SQLException {
-		return (this.content != null ? new ByteArrayInputStream(this.content) : this.binaryStream);
-	}
+    public PassThroughBlob(InputStream binaryStream, long contentLength) {
+        this.binaryStream = binaryStream;
+        this.contentLength = contentLength;
+    }
 
 
-	@Override
-	public InputStream getBinaryStream(long pos, long length) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public long length() throws SQLException {
+        return this.contentLength;
+    }
 
-	@Override
-	public OutputStream setBinaryStream(long pos) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public InputStream getBinaryStream() throws SQLException {
+        return (this.content != null ? new ByteArrayInputStream(this.content) : this.binaryStream);
+    }
 
-	@Override
-	public byte[] getBytes(long pos, int length) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
 
-	@Override
-	public int setBytes(long pos, byte[] bytes) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public InputStream getBinaryStream(long pos, long length) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public OutputStream setBinaryStream(long pos) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public long position(byte pattern[], long start) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public byte[] getBytes(long pos, int length) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public long position(Blob pattern, long start) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public int setBytes(long pos, byte[] bytes) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void truncate(long len) throws SQLException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void free() throws SQLException {
-		// no-op
-	}
+    @Override
+    public long position(byte pattern[], long start) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long position(Blob pattern, long start) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void truncate(long len) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void free() throws SQLException {
+        // no-op
+    }
 
 }

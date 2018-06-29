@@ -20,9 +20,9 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.mchange.v2.c3p0.C3P0ProxyConnection;
-
 import org.springframework.util.ReflectionUtils;
+
+import com.mchange.v2.c3p0.C3P0ProxyConnection;
 
 /**
  * Implementation of the {@link NativeJdbcExtractor} interface for the
@@ -47,67 +47,64 @@ import org.springframework.util.ReflectionUtils;
  */
 public class C3P0NativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	private final Method getRawConnectionMethod;
+    private final Method getRawConnectionMethod;
 
 
-	/**
-	 * This method is not meant to be used directly; it rather serves
-	 * as callback method for C3P0's "rawConnectionOperation" API.
-	 * @param con a native Connection handle
-	 * @return the native Connection handle, as-is
-	 */
-	public static Connection getRawConnection(Connection con) {
-		return con;
-	}
+    /**
+     * This method is not meant to be used directly; it rather serves
+     * as callback method for C3P0's "rawConnectionOperation" API.
+     * @param con a native Connection handle
+     * @return the native Connection handle, as-is
+     */
+    public static Connection getRawConnection(Connection con) {
+        return con;
+    }
 
 
-	public C3P0NativeJdbcExtractor() {
-		try {
-			this.getRawConnectionMethod = getClass().getMethod("getRawConnection", new Class<?>[] {Connection.class});
-		}
-		catch (NoSuchMethodException ex) {
-			throw new IllegalStateException("Internal error in C3P0NativeJdbcExtractor: " + ex.getMessage());
-		}
-	}
+    public C3P0NativeJdbcExtractor() {
+        try {
+            this.getRawConnectionMethod = getClass().getMethod("getRawConnection", new Class<?>[] {Connection.class});
+        } catch (NoSuchMethodException ex) {
+            throw new IllegalStateException("Internal error in C3P0NativeJdbcExtractor: " + ex.getMessage());
+        }
+    }
 
 
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeStatements() {
-		return true;
-	}
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeStatements() {
+        return true;
+    }
 
-	@Override
-	public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
-		return true;
-	}
+    @Override
+    public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
+        return true;
+    }
 
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
-		return true;
-	}
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
+        return true;
+    }
 
-	/**
-	 * Retrieve the Connection via C3P0's {@code rawConnectionOperation} API,
-	 * using the {@code getRawConnection} as callback to get access to the
-	 * raw Connection (which is otherwise not directly supported by C3P0).
-	 * @see #getRawConnection
-	 */
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		if (con instanceof C3P0ProxyConnection) {
-			C3P0ProxyConnection cpCon = (C3P0ProxyConnection) con;
-			try {
-				return (Connection) cpCon.rawConnectionOperation(
-						this.getRawConnectionMethod, null, new Object[] {C3P0ProxyConnection.RAW_CONNECTION});
-			}
-			catch (SQLException ex) {
-				throw ex;
-			}
-			catch (Exception ex) {
-				ReflectionUtils.handleReflectionException(ex);
-			}
-		}
-		return con;
-	}
+    /**
+     * Retrieve the Connection via C3P0's {@code rawConnectionOperation} API,
+     * using the {@code getRawConnection} as callback to get access to the
+     * raw Connection (which is otherwise not directly supported by C3P0).
+     * @see #getRawConnection
+     */
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        if (con instanceof C3P0ProxyConnection) {
+            C3P0ProxyConnection cpCon = (C3P0ProxyConnection) con;
+            try {
+                return (Connection) cpCon.rawConnectionOperation(this.getRawConnectionMethod, null,
+                        new Object[] {C3P0ProxyConnection.RAW_CONNECTION});
+            } catch (SQLException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                ReflectionUtils.handleReflectionException(ex);
+            }
+        }
+        return con;
+    }
 
 }

@@ -29,21 +29,21 @@ import org.springframework.dao.DataRetrievalFailureException;
 @SuppressWarnings("serial")
 public class LobRetrievalFailureException extends DataRetrievalFailureException {
 
-	/**
-	 * Constructor for LobRetrievalFailureException.
-	 * @param msg the detail message
-	 */
-	public LobRetrievalFailureException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor for LobRetrievalFailureException.
+     * @param msg the detail message
+     */
+    public LobRetrievalFailureException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Constructor for LobRetrievalFailureException.
-	 * @param msg the detail message
-	 * @param ex IOException root cause
-	 */
-	public LobRetrievalFailureException(String msg, IOException ex) {
-		super(msg, ex);
-	}
+    /**
+     * Constructor for LobRetrievalFailureException.
+     * @param msg the detail message
+     * @param ex IOException root cause
+     */
+    public LobRetrievalFailureException(String msg, IOException ex) {
+        super(msg, ex);
+    }
 
 }

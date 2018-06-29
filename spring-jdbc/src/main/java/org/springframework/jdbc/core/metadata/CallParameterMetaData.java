@@ -23,56 +23,56 @@ package org.springframework.jdbc.core.metadata;
  * @since 2.5
  */
 public class CallParameterMetaData {
-	private String parameterName;
-	private int parameterType;
-	private int sqlType;
-	private String typeName;
-	private boolean nullable;
+    private String parameterName;
+    private int parameterType;
+    private int sqlType;
+    private String typeName;
+    private boolean nullable;
 
-	/**
-	 * Constructor taking all the properties
-	 */
-	public CallParameterMetaData(String columnName, int columnType, int sqlType, String typeName, boolean nullable) {
-		this.parameterName = columnName;
-		this.parameterType = columnType;
-		this.sqlType = sqlType;
-		this.typeName = typeName;
-		this.nullable = nullable;
-	}
+    /**
+     * Constructor taking all the properties
+     */
+    public CallParameterMetaData(String columnName, int columnType, int sqlType, String typeName, boolean nullable) {
+        this.parameterName = columnName;
+        this.parameterType = columnType;
+        this.sqlType = sqlType;
+        this.typeName = typeName;
+        this.nullable = nullable;
+    }
 
 
-	/**
-	 * Get the parameter name.
-	 */
-	public String getParameterName() {
-		return parameterName;
-	}
+    /**
+     * Get the parameter name.
+     */
+    public String getParameterName() {
+        return parameterName;
+    }
 
-	/**
-	 * Get the parameter type.
-	 */
-	public int getParameterType() {
-		return parameterType;
-	}
+    /**
+     * Get the parameter type.
+     */
+    public int getParameterType() {
+        return parameterType;
+    }
 
-	/**
-	 * Get the parameter SQL type.
-	 */
-	public int getSqlType() {
-		return sqlType;
-	}
+    /**
+     * Get the parameter SQL type.
+     */
+    public int getSqlType() {
+        return sqlType;
+    }
 
-	/**
-	 * Get the parameter type name.
-	 */
-	public String getTypeName() {
-		return typeName;
-	}
+    /**
+     * Get the parameter type name.
+     */
+    public String getTypeName() {
+        return typeName;
+    }
 
-	/**
-	 * Get whether the parameter is nullable.
-	 */
-	public boolean isNullable() {
-		return nullable;
-	}
+    /**
+     * Get whether the parameter is nullable.
+     */
+    public boolean isNullable() {
+        return nullable;
+    }
 }

@@ -28,22 +28,22 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  */
 public class NamedParameterJdbcDaoSupport extends JdbcDaoSupport {
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
-	/**
-	 * Create a NamedParameterJdbcTemplate based on the configured JdbcTemplate.
-	 */
-	@Override
-	protected void initTemplateConfig() {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(getJdbcTemplate());
-	}
+    /**
+     * Create a NamedParameterJdbcTemplate based on the configured JdbcTemplate.
+     */
+    @Override
+    protected void initTemplateConfig() {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(getJdbcTemplate());
+    }
 
-	/**
-	 * Return a NamedParameterJdbcTemplate wrapping the configured JdbcTemplate.
-	 */
-	public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-	  return namedParameterJdbcTemplate;
-	}
+    /**
+     * Return a NamedParameterJdbcTemplate wrapping the configured JdbcTemplate.
+     */
+    public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return namedParameterJdbcTemplate;
+    }
 
 }

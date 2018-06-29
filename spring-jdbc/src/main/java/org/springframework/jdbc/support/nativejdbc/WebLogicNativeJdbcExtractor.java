@@ -43,63 +43,63 @@ import org.springframework.util.ReflectionUtils;
  */
 public class WebLogicNativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	private static final String JDBC_EXTENSION_NAME = "weblogic.jdbc.extensions.WLConnection";
+    private static final String JDBC_EXTENSION_NAME = "weblogic.jdbc.extensions.WLConnection";
 
 
-	private final Class<?> jdbcExtensionClass;
+    private final Class<?> jdbcExtensionClass;
 
-	private final Method getVendorConnectionMethod;
-
-
-	/**
-	 * This constructor retrieves the WebLogic JDBC extension interface,
-	 * so we can get the underlying vendor connection using reflection.
-	 */
-	public WebLogicNativeJdbcExtractor() {
-		try {
-			this.jdbcExtensionClass = getClass().getClassLoader().loadClass(JDBC_EXTENSION_NAME);
-			this.getVendorConnectionMethod = this.jdbcExtensionClass.getMethod("getVendorConnection", (Class[]) null);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not initialize WebLogicNativeJdbcExtractor because WebLogic API classes are not available: " + ex);
-		}
-	}
+    private final Method getVendorConnectionMethod;
 
 
-	/**
-	 * Return {@code true}, as WebLogic returns wrapped Statements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeStatements() {
-		return true;
-	}
+    /**
+     * This constructor retrieves the WebLogic JDBC extension interface,
+     * so we can get the underlying vendor connection using reflection.
+     */
+    public WebLogicNativeJdbcExtractor() {
+        try {
+            this.jdbcExtensionClass = getClass().getClassLoader().loadClass(JDBC_EXTENSION_NAME);
+            this.getVendorConnectionMethod = this.jdbcExtensionClass.getMethod("getVendorConnection", (Class[]) null);
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Could not initialize WebLogicNativeJdbcExtractor because WebLogic API classes are not available: "
+                            + ex);
+        }
+    }
 
-	/**
-	 * Return {@code true}, as WebLogic returns wrapped PreparedStatements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
-		return true;
-	}
 
-	/**
-	 * Return {@code true}, as WebLogic returns wrapped CallableStatements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
-		return true;
-	}
+    /**
+     * Return {@code true}, as WebLogic returns wrapped Statements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeStatements() {
+        return true;
+    }
 
-	/**
-	 * Retrieve the Connection via WebLogic's {@code getVendorConnection} method.
-	 */
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		if (this.jdbcExtensionClass.isAssignableFrom(con.getClass())) {
-			return (Connection) ReflectionUtils.invokeJdbcMethod(this.getVendorConnectionMethod, con);
-		}
-		return con;
-	}
+    /**
+     * Return {@code true}, as WebLogic returns wrapped PreparedStatements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
+        return true;
+    }
+
+    /**
+     * Return {@code true}, as WebLogic returns wrapped CallableStatements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
+        return true;
+    }
+
+    /**
+     * Retrieve the Connection via WebLogic's {@code getVendorConnection} method.
+     */
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        if (this.jdbcExtensionClass.isAssignableFrom(con.getClass())) {
+            return (Connection) ReflectionUtils.invokeJdbcMethod(this.getVendorConnectionMethod, con);
+        }
+        return con;
+    }
 
 }

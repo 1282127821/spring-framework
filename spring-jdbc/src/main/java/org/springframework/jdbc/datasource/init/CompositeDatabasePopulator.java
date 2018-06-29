@@ -33,32 +33,32 @@ import java.util.List;
  */
 public class CompositeDatabasePopulator implements DatabasePopulator {
 
-	private List<DatabasePopulator> populators = new ArrayList<DatabasePopulator>();
+    private List<DatabasePopulator> populators = new ArrayList<DatabasePopulator>();
 
 
-	/**
-	 * Specify a list of populators to delegate to.
-	 */
-	public void setPopulators(DatabasePopulator... populators) {
-		this.populators.clear();
-		this.populators.addAll(Arrays.asList(populators));
-	}
+    /**
+     * Specify a list of populators to delegate to.
+     */
+    public void setPopulators(DatabasePopulator... populators) {
+        this.populators.clear();
+        this.populators.addAll(Arrays.asList(populators));
+    }
 
-	/**
-	 * Add one or more populators to the list of delegates.
-	 */
-	public void addPopulators(DatabasePopulator... populators) {
-		this.populators.addAll(Arrays.asList(populators));
-	}
+    /**
+     * Add one or more populators to the list of delegates.
+     */
+    public void addPopulators(DatabasePopulator... populators) {
+        this.populators.addAll(Arrays.asList(populators));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void populate(Connection connection) throws SQLException, ScriptException {
-		for (DatabasePopulator populator : this.populators) {
-			populator.populate(connection);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void populate(Connection connection) throws SQLException, ScriptException {
+        for (DatabasePopulator populator : this.populators) {
+            populator.populate(connection);
+        }
+    }
 
 }

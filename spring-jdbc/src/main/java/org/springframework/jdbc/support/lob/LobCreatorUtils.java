@@ -21,7 +21,6 @@ import javax.transaction.TransactionManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -39,46 +38,43 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public abstract class LobCreatorUtils {
 
-	private static final Log logger = LogFactory.getLog(LobCreatorUtils.class);
+    private static final Log logger = LogFactory.getLog(LobCreatorUtils.class);
 
 
-	/**
-	 * Register a transaction synchronization for closing the given LobCreator,
-	 * preferring Spring transaction synchronization and falling back to
-	 * plain JTA transaction synchronization.
-	 * @param lobCreator the LobCreator to close after transaction completion
-	 * @param jtaTransactionManager the JTA TransactionManager to fall back to
-	 * when no Spring transaction synchronization is active (may be {@code null})
-	 * @throws IllegalStateException if there is neither active Spring transaction
-	 * synchronization nor active JTA transaction synchronization
-	 */
-	public static void registerTransactionSynchronization(
-			LobCreator lobCreator, TransactionManager jtaTransactionManager) throws IllegalStateException {
+    /**
+     * Register a transaction synchronization for closing the given LobCreator,
+     * preferring Spring transaction synchronization and falling back to
+     * plain JTA transaction synchronization.
+     * @param lobCreator the LobCreator to close after transaction completion
+     * @param jtaTransactionManager the JTA TransactionManager to fall back to
+     * when no Spring transaction synchronization is active (may be {@code null})
+     * @throws IllegalStateException if there is neither active Spring transaction
+     * synchronization nor active JTA transaction synchronization
+     */
+    public static void registerTransactionSynchronization(LobCreator lobCreator,
+            TransactionManager jtaTransactionManager) throws IllegalStateException {
 
-		if (TransactionSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering Spring transaction synchronization for LobCreator");
-			TransactionSynchronizationManager.registerSynchronization(
-				new SpringLobCreatorSynchronization(lobCreator));
-		}
-		else {
-			if (jtaTransactionManager != null) {
-				try {
-					int jtaStatus = jtaTransactionManager.getStatus();
-					if (jtaStatus == Status.STATUS_ACTIVE || jtaStatus == Status.STATUS_MARKED_ROLLBACK) {
-						logger.debug("Registering JTA transaction synchronization for LobCreator");
-						jtaTransactionManager.getTransaction().registerSynchronization(
-								new JtaLobCreatorSynchronization(lobCreator));
-						return;
-					}
-				}
-				catch (Throwable ex) {
-					throw new TransactionSystemException(
-							"Could not register synchronization with JTA TransactionManager", ex);
-				}
-			}
-			throw new IllegalStateException("Active Spring transaction synchronization or active " +
-				"JTA transaction with specified [javax.transaction.TransactionManager] required");
-		}
-	}
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            logger.debug("Registering Spring transaction synchronization for LobCreator");
+            TransactionSynchronizationManager.registerSynchronization(new SpringLobCreatorSynchronization(lobCreator));
+        } else {
+            if (jtaTransactionManager != null) {
+                try {
+                    int jtaStatus = jtaTransactionManager.getStatus();
+                    if (jtaStatus == Status.STATUS_ACTIVE || jtaStatus == Status.STATUS_MARKED_ROLLBACK) {
+                        logger.debug("Registering JTA transaction synchronization for LobCreator");
+                        jtaTransactionManager.getTransaction()
+                                .registerSynchronization(new JtaLobCreatorSynchronization(lobCreator));
+                        return;
+                    }
+                } catch (Throwable ex) {
+                    throw new TransactionSystemException(
+                            "Could not register synchronization with JTA TransactionManager", ex);
+                }
+            }
+            throw new IllegalStateException("Active Spring transaction synchronization or active "
+                    + "JTA transaction with specified [javax.transaction.TransactionManager] required");
+        }
+    }
 
 }

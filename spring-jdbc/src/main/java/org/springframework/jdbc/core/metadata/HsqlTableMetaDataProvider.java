@@ -29,18 +29,18 @@ import java.sql.SQLException;
  */
 public class HsqlTableMetaDataProvider extends GenericTableMetaDataProvider {
 
-	public HsqlTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
-		super(databaseMetaData);
-	}
+    public HsqlTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
+        super(databaseMetaData);
+    }
 
-	@Override
-	public boolean isGetGeneratedKeysSimulated() {
-		return true;
-	}
+    @Override
+    public boolean isGetGeneratedKeysSimulated() {
+        return true;
+    }
 
-	@Override
-	public String getSimpleQueryForGetGeneratedKey(String tableName, String keyColumnName) {
-		return "select max(identity()) from " + tableName;
-	}
+    @Override
+    public String getSimpleQueryForGetGeneratedKey(String tableName, String keyColumnName) {
+        return "select max(identity()) from " + tableName;
+    }
 
 }

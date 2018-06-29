@@ -19,6 +19,7 @@ package org.springframework.jdbc.object;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.RowMapper;
@@ -49,72 +50,70 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public abstract class MappingSqlQueryWithParameters<T> extends SqlQuery<T> {
 
-	/**
-	 * Constructor to allow use as a JavaBean
-	 */
-	public MappingSqlQueryWithParameters() {
-	}
+    /**
+     * Constructor to allow use as a JavaBean
+     */
+    public MappingSqlQueryWithParameters() {}
 
-	/**
-	 * Convenient constructor with DataSource and SQL string.
-	 * @param ds DataSource to use to get connections
-	 * @param sql SQL to run
-	 */
-	public MappingSqlQueryWithParameters(DataSource ds, String sql) {
-		super(ds, sql);
-	}
-
-
-	/**
-	 * Implementation of protected abstract method. This invokes the subclass's
-	 * implementation of the mapRow() method.
-	 */
-	@Override
-	protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
-		return new RowMapperImpl(parameters, context);
-	}
-
-	/**
-	 * Subclasses must implement this method to convert each row
-	 * of the ResultSet into an object of the result type.
-	 * @param rs ResultSet we're working through
-	 * @param rowNum row number (from 0) we're up to
-	 * @param parameters to the query (passed to the execute() method).
-	 * Subclasses are rarely interested in these.
-	 * It can be {@code null} if there are no parameters.
-	 * @param context passed to the execute() method.
-	 * It can be {@code null} if no contextual information is need.
-	 * @return an object of the result type
-	 * @throws SQLException if there's an error extracting data.
-	 * Subclasses can simply not catch SQLExceptions, relying on the
-	 * framework to clean up.
-	 */
-	protected abstract T mapRow(ResultSet rs, int rowNum, Object[] parameters, Map<?, ?> context)
-			throws SQLException;
+    /**
+     * Convenient constructor with DataSource and SQL string.
+     * @param ds DataSource to use to get connections
+     * @param sql SQL to run
+     */
+    public MappingSqlQueryWithParameters(DataSource ds, String sql) {
+        super(ds, sql);
+    }
 
 
-	/**
-	 * Implementation of RowMapper that calls the enclosing
-	 * class's {@code mapRow} method for each row.
-	 */
-	protected class RowMapperImpl implements RowMapper<T> {
+    /**
+     * Implementation of protected abstract method. This invokes the subclass's
+     * implementation of the mapRow() method.
+     */
+    @Override
+    protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
+        return new RowMapperImpl(parameters, context);
+    }
 
-		private final Object[] params;
+    /**
+     * Subclasses must implement this method to convert each row
+     * of the ResultSet into an object of the result type.
+     * @param rs ResultSet we're working through
+     * @param rowNum row number (from 0) we're up to
+     * @param parameters to the query (passed to the execute() method).
+     * Subclasses are rarely interested in these.
+     * It can be {@code null} if there are no parameters.
+     * @param context passed to the execute() method.
+     * It can be {@code null} if no contextual information is need.
+     * @return an object of the result type
+     * @throws SQLException if there's an error extracting data.
+     * Subclasses can simply not catch SQLExceptions, relying on the
+     * framework to clean up.
+     */
+    protected abstract T mapRow(ResultSet rs, int rowNum, Object[] parameters, Map<?, ?> context) throws SQLException;
 
-		private final Map<?, ?> context;
 
-		/**
-		 * Use an array results. More efficient if we know how many results to expect.
-		 */
-		public RowMapperImpl(Object[] parameters, Map<?, ?> context) {
-			this.params = parameters;
-			this.context = context;
-		}
+    /**
+     * Implementation of RowMapper that calls the enclosing
+     * class's {@code mapRow} method for each row.
+     */
+    protected class RowMapperImpl implements RowMapper<T> {
 
-		@Override
-		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return MappingSqlQueryWithParameters.this.mapRow(rs, rowNum, this.params, this.context);
-		}
-	}
+        private final Object[] params;
+
+        private final Map<?, ?> context;
+
+        /**
+         * Use an array results. More efficient if we know how many results to expect.
+         */
+        public RowMapperImpl(Object[] parameters, Map<?, ?> context) {
+            this.params = parameters;
+            this.context = context;
+        }
+
+        @Override
+        public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return MappingSqlQueryWithParameters.this.mapRow(rs, rowNum, this.params, this.context);
+        }
+    }
 
 }

@@ -61,130 +61,128 @@ import org.springframework.util.StringUtils;
  */
 public class UserCredentialsDataSourceAdapter extends DelegatingDataSource {
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	private final ThreadLocal<JdbcUserCredentials> threadBoundCredentials =
-			new NamedThreadLocal<JdbcUserCredentials>("Current JDBC user credentials");
-
-
-	/**
-	 * Set the default username that this adapter should use for retrieving Connections.
-	 * <p>Default is no specific user. Note that an explicitly specified username
-	 * will always override any username/password specified at the DataSource level.
-	 * @see #setPassword
-	 * @see #setCredentialsForCurrentThread(String, String)
-	 * @see #getConnection(String, String)
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	/**
-	 * Set the default user's password that this adapter should use for retrieving Connections.
-	 * <p>Default is no specific password. Note that an explicitly specified username
-	 * will always override any username/password specified at the DataSource level.
-	 * @see #setUsername
-	 * @see #setCredentialsForCurrentThread(String, String)
-	 * @see #getConnection(String, String)
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    private final ThreadLocal<JdbcUserCredentials> threadBoundCredentials =
+            new NamedThreadLocal<JdbcUserCredentials>("Current JDBC user credentials");
 
 
-	/**
-	 * Set user credententials for this proxy and the current thread.
-	 * The given username and password will be applied to all subsequent
-	 * {@code getConnection()} calls on this DataSource proxy.
-	 * <p>This will override any statically specified user credentials,
-	 * that is, values of the "username" and "password" bean properties.
-	 * @param username the username to apply
-	 * @param password the password to apply
-	 * @see #removeCredentialsFromCurrentThread
-	 */
-	public void setCredentialsForCurrentThread(String username, String password) {
-		this.threadBoundCredentials.set(new JdbcUserCredentials(username, password));
-	}
+    /**
+     * Set the default username that this adapter should use for retrieving Connections.
+     * <p>Default is no specific user. Note that an explicitly specified username
+     * will always override any username/password specified at the DataSource level.
+     * @see #setPassword
+     * @see #setCredentialsForCurrentThread(String, String)
+     * @see #getConnection(String, String)
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	/**
-	 * Remove any user credentials for this proxy from the current thread.
-	 * Statically specified user credentials apply again afterwards.
-	 * @see #setCredentialsForCurrentThread
-	 */
-	public void removeCredentialsFromCurrentThread() {
-		this.threadBoundCredentials.remove();
-	}
-
-
-	/**
-	 * Determine whether there are currently thread-bound credentials,
-	 * using them if available, falling back to the statically specified
-	 * username and password (i.e. values of the bean properties) else.
-	 * <p>Delegates to {@link #doGetConnection(String, String)} with the
-	 * determined credentials as parameters.
-	 */
-	@Override
-	public Connection getConnection() throws SQLException {
-		JdbcUserCredentials threadCredentials = this.threadBoundCredentials.get();
-		if (threadCredentials != null) {
-			return doGetConnection(threadCredentials.username, threadCredentials.password);
-		}
-		else {
-			return doGetConnection(this.username, this.password);
-		}
-	}
-
-	/**
-	 * Simply delegates to {@link #doGetConnection(String, String)},
-	 * keeping the given user credentials as-is.
-	 */
-	@Override
-	public Connection getConnection(String username, String password) throws SQLException {
-		return doGetConnection(username, password);
-	}
-
-	/**
-	 * This implementation delegates to the {@code getConnection(username, password)}
-	 * method of the target DataSource, passing in the specified user credentials.
-	 * If the specified username is empty, it will simply delegate to the standard
-	 * {@code getConnection()} method of the target DataSource.
-	 * @param username the username to use
-	 * @param password the password to use
-	 * @return the Connection
-	 * @see javax.sql.DataSource#getConnection(String, String)
-	 * @see javax.sql.DataSource#getConnection()
-	 */
-	protected Connection doGetConnection(String username, String password) throws SQLException {
-		Assert.state(getTargetDataSource() != null, "'targetDataSource' is required");
-		if (StringUtils.hasLength(username)) {
-			return getTargetDataSource().getConnection(username, password);
-		}
-		else {
-			return getTargetDataSource().getConnection();
-		}
-	}
+    /**
+     * Set the default user's password that this adapter should use for retrieving Connections.
+     * <p>Default is no specific password. Note that an explicitly specified username
+     * will always override any username/password specified at the DataSource level.
+     * @see #setUsername
+     * @see #setCredentialsForCurrentThread(String, String)
+     * @see #getConnection(String, String)
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 
-	/**
-	 * Inner class used as ThreadLocal value.
-	 */
-	private static class JdbcUserCredentials {
+    /**
+     * Set user credententials for this proxy and the current thread.
+     * The given username and password will be applied to all subsequent
+     * {@code getConnection()} calls on this DataSource proxy.
+     * <p>This will override any statically specified user credentials,
+     * that is, values of the "username" and "password" bean properties.
+     * @param username the username to apply
+     * @param password the password to apply
+     * @see #removeCredentialsFromCurrentThread
+     */
+    public void setCredentialsForCurrentThread(String username, String password) {
+        this.threadBoundCredentials.set(new JdbcUserCredentials(username, password));
+    }
 
-		public final String username;
+    /**
+     * Remove any user credentials for this proxy from the current thread.
+     * Statically specified user credentials apply again afterwards.
+     * @see #setCredentialsForCurrentThread
+     */
+    public void removeCredentialsFromCurrentThread() {
+        this.threadBoundCredentials.remove();
+    }
 
-		public final String password;
 
-		private JdbcUserCredentials(String username, String password) {
-			this.username = username;
-			this.password = password;
-		}
+    /**
+     * Determine whether there are currently thread-bound credentials,
+     * using them if available, falling back to the statically specified
+     * username and password (i.e. values of the bean properties) else.
+     * <p>Delegates to {@link #doGetConnection(String, String)} with the
+     * determined credentials as parameters.
+     */
+    @Override
+    public Connection getConnection() throws SQLException {
+        JdbcUserCredentials threadCredentials = this.threadBoundCredentials.get();
+        if (threadCredentials != null) {
+            return doGetConnection(threadCredentials.username, threadCredentials.password);
+        } else {
+            return doGetConnection(this.username, this.password);
+        }
+    }
 
-		@Override
-		public String toString() {
-			return "JdbcUserCredentials[username='" + this.username + "',password='" + this.password + "']";
-		}
-	}
+    /**
+     * Simply delegates to {@link #doGetConnection(String, String)},
+     * keeping the given user credentials as-is.
+     */
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+        return doGetConnection(username, password);
+    }
+
+    /**
+     * This implementation delegates to the {@code getConnection(username, password)}
+     * method of the target DataSource, passing in the specified user credentials.
+     * If the specified username is empty, it will simply delegate to the standard
+     * {@code getConnection()} method of the target DataSource.
+     * @param username the username to use
+     * @param password the password to use
+     * @return the Connection
+     * @see javax.sql.DataSource#getConnection(String, String)
+     * @see javax.sql.DataSource#getConnection()
+     */
+    protected Connection doGetConnection(String username, String password) throws SQLException {
+        Assert.state(getTargetDataSource() != null, "'targetDataSource' is required");
+        if (StringUtils.hasLength(username)) {
+            return getTargetDataSource().getConnection(username, password);
+        } else {
+            return getTargetDataSource().getConnection();
+        }
+    }
+
+
+    /**
+     * Inner class used as ThreadLocal value.
+     */
+    private static class JdbcUserCredentials {
+
+        public final String username;
+
+        public final String password;
+
+        private JdbcUserCredentials(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public String toString() {
+            return "JdbcUserCredentials[username='" + this.username + "',password='" + this.password + "']";
+        }
+    }
 
 }

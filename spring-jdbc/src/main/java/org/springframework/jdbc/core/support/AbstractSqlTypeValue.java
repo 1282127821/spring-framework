@@ -52,29 +52,28 @@ import org.springframework.jdbc.core.SqlTypeValue;
  */
 public abstract class AbstractSqlTypeValue implements SqlTypeValue {
 
-	@Override
-	public final void setTypeValue(PreparedStatement ps, int paramIndex, int sqlType, String typeName)
-			throws SQLException {
+    @Override
+    public final void setTypeValue(PreparedStatement ps, int paramIndex, int sqlType, String typeName)
+            throws SQLException {
 
-		Object value = createTypeValue(ps.getConnection(), sqlType, typeName);
-		if (sqlType == TYPE_UNKNOWN) {
-			ps.setObject(paramIndex, value);
-		}
-		else {
-			ps.setObject(paramIndex, value, sqlType);
-		}
-	}
+        Object value = createTypeValue(ps.getConnection(), sqlType, typeName);
+        if (sqlType == TYPE_UNKNOWN) {
+            ps.setObject(paramIndex, value);
+        } else {
+            ps.setObject(paramIndex, value, sqlType);
+        }
+    }
 
-	/**
-	 * Create the type value to be passed into {@code PreparedStatement.setObject}.
-	 * @param con the JDBC Connection, if needed to create any database-specific objects
-	 * @param sqlType SQL type of the parameter we are setting
-	 * @param typeName the type name of the parameter
-	 * @return the type value
-	 * @throws SQLException if a SQLException is encountered setting
-	 * parameter values (that is, there's no need to catch SQLException)
-	 * @see java.sql.PreparedStatement#setObject(int, Object, int)
-	 */
-	protected abstract Object createTypeValue(Connection con, int sqlType, String typeName) throws SQLException;
+    /**
+     * Create the type value to be passed into {@code PreparedStatement.setObject}.
+     * @param con the JDBC Connection, if needed to create any database-specific objects
+     * @param sqlType SQL type of the parameter we are setting
+     * @param typeName the type name of the parameter
+     * @return the type value
+     * @throws SQLException if a SQLException is encountered setting
+     * parameter values (that is, there's no need to catch SQLException)
+     * @see java.sql.PreparedStatement#setObject(int, Object, int)
+     */
+    protected abstract Object createTypeValue(Connection con, int sqlType, String typeName) throws SQLException;
 
 }

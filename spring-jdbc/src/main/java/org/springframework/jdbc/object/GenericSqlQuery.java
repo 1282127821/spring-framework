@@ -24,37 +24,34 @@ import org.springframework.util.Assert;
 
 public class GenericSqlQuery<T> extends SqlQuery<T> {
 
-	Class<?> rowMapperClass;
+    Class<?> rowMapperClass;
 
-	RowMapper<?> rowMapper;
+    RowMapper<?> rowMapper;
 
-	@SuppressWarnings("rawtypes")
-	public void setRowMapperClass(Class<? extends RowMapper> rowMapperClass)
-			throws IllegalAccessException, InstantiationException {
-		this.rowMapperClass = rowMapperClass;
-		if (!RowMapper.class.isAssignableFrom(rowMapperClass))
-			throw new IllegalStateException("The specified class '" +
-					rowMapperClass.getName() + " is not a sub class of " +
-					"'org.springframework.jdbc.core.RowMapper'");
-	}
+    @SuppressWarnings("rawtypes")
+    public void setRowMapperClass(Class<? extends RowMapper> rowMapperClass)
+            throws IllegalAccessException, InstantiationException {
+        this.rowMapperClass = rowMapperClass;
+        if (!RowMapper.class.isAssignableFrom(rowMapperClass))
+            throw new IllegalStateException("The specified class '" + rowMapperClass.getName()
+                    + " is not a sub class of " + "'org.springframework.jdbc.core.RowMapper'");
+    }
 
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-		Assert.notNull(rowMapperClass, "The 'rowMapperClass' property is required");
-	}
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
+        Assert.notNull(rowMapperClass, "The 'rowMapperClass' property is required");
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
-		try {
-			return (RowMapper<T>) rowMapperClass.newInstance();
-		}
-		catch (InstantiationException e) {
-			throw new InvalidDataAccessResourceUsageException("Unable to instantiate RowMapper", e);
-		}
-		catch (IllegalAccessException e) {
-			throw new InvalidDataAccessResourceUsageException("Unable to instantiate RowMapper", e);
-		}
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
+        try {
+            return (RowMapper<T>) rowMapperClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new InvalidDataAccessResourceUsageException("Unable to instantiate RowMapper", e);
+        } catch (IllegalAccessException e) {
+            throw new InvalidDataAccessResourceUsageException("Unable to instantiate RowMapper", e);
+        }
+    }
 }

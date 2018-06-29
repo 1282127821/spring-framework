@@ -42,19 +42,22 @@ import java.sql.Statement;
  */
 public class OracleJdbc4NativeJdbcExtractor extends Jdbc4NativeJdbcExtractor {
 
-	@SuppressWarnings("unchecked")
-	public OracleJdbc4NativeJdbcExtractor() {
-		try {
-			setConnectionType((Class<Connection>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleConnection"));
-			setStatementType((Class<Statement>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleStatement"));
-			setPreparedStatementType((Class<PreparedStatement>) getClass().getClassLoader().loadClass("oracle.jdbc.OraclePreparedStatement"));
-			setCallableStatementType((Class<CallableStatement>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleCallableStatement"));
-			setResultSetType((Class<ResultSet>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleResultSet"));
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not initialize OracleJdbc4NativeJdbcExtractor because Oracle API classes are not available: " + ex);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public OracleJdbc4NativeJdbcExtractor() {
+        try {
+            setConnectionType(
+                    (Class<Connection>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleConnection"));
+            setStatementType((Class<Statement>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleStatement"));
+            setPreparedStatementType((Class<PreparedStatement>) getClass().getClassLoader()
+                    .loadClass("oracle.jdbc.OraclePreparedStatement"));
+            setCallableStatementType((Class<CallableStatement>) getClass().getClassLoader()
+                    .loadClass("oracle.jdbc.OracleCallableStatement"));
+            setResultSetType((Class<ResultSet>) getClass().getClassLoader().loadClass("oracle.jdbc.OracleResultSet"));
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Could not initialize OracleJdbc4NativeJdbcExtractor because Oracle API classes are not available: "
+                            + ex);
+        }
+    }
 
 }
