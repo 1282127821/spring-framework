@@ -29,21 +29,21 @@ package org.springframework.dao;
 @SuppressWarnings("serial")
 public class OptimisticLockingFailureException extends ConcurrencyFailureException {
 
-	/**
-	 * Constructor for OptimisticLockingFailureException.
-	 * @param msg the detail message
-	 */
-	public OptimisticLockingFailureException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor for OptimisticLockingFailureException.
+     * @param msg the detail message
+     */
+    public OptimisticLockingFailureException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Constructor for OptimisticLockingFailureException.
-	 * @param msg the detail message
-	 * @param cause the root cause from the data access API in use
-	 */
-	public OptimisticLockingFailureException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Constructor for OptimisticLockingFailureException.
+     * @param msg the detail message
+     * @param cause the root cause from the data access API in use
+     */
+    public OptimisticLockingFailureException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

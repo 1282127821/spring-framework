@@ -35,28 +35,28 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  */
 class BootstrapContextAwareProcessor implements BeanPostProcessor {
 
-	private final BootstrapContext bootstrapContext;
+    private final BootstrapContext bootstrapContext;
 
 
-	/**
-	 * Create a new BootstrapContextAwareProcessor for the given context.
-	 */
-	public BootstrapContextAwareProcessor(BootstrapContext bootstrapContext) {
-		this.bootstrapContext = bootstrapContext;
-	}
+    /**
+     * Create a new BootstrapContextAwareProcessor for the given context.
+     */
+    public BootstrapContextAwareProcessor(BootstrapContext bootstrapContext) {
+        this.bootstrapContext = bootstrapContext;
+    }
 
 
-	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		if (this.bootstrapContext != null && bean instanceof BootstrapContextAware) {
-			((BootstrapContextAware) bean).setBootstrapContext(this.bootstrapContext);
-		}
-		return bean;
-	}
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (this.bootstrapContext != null && bean instanceof BootstrapContextAware) {
+            ((BootstrapContextAware) bean).setBootstrapContext(this.bootstrapContext);
+        }
+        return bean;
+    }
 
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
 
 }

@@ -28,22 +28,22 @@ package org.springframework.dao;
 @SuppressWarnings("serial")
 public abstract class NonTransientDataAccessException extends DataAccessException {
 
-	/**
-	 * Constructor for NonTransientDataAccessException.
-	 * @param msg the detail message
-	 */
-	public NonTransientDataAccessException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor for NonTransientDataAccessException.
+     * @param msg the detail message
+     */
+    public NonTransientDataAccessException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Constructor for NonTransientDataAccessException.
-	 * @param msg the detail message
-	 * @param cause the root cause (usually from using a underlying
-	 * data access API such as JDBC)
-	 */
-	public NonTransientDataAccessException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Constructor for NonTransientDataAccessException.
+     * @param msg the detail message
+     * @param cause the root cause (usually from using a underlying
+     * data access API such as JDBC)
+     */
+    public NonTransientDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

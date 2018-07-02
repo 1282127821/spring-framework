@@ -37,49 +37,48 @@ import org.springframework.transaction.interceptor.TransactionAttribute;
 @SuppressWarnings("serial")
 public class JtaTransactionAnnotationParser implements TransactionAnnotationParser, Serializable {
 
-	@Override
-	public TransactionAttribute parseTransactionAnnotation(AnnotatedElement ae) {
-		AnnotationAttributes attributes =
-				AnnotatedElementUtils.getMergedAnnotationAttributes(ae, javax.transaction.Transactional.class);
-		if (attributes != null) {
-			return parseTransactionAnnotation(attributes);
-		}
-		else {
-			return null;
-		}
-	}
+    @Override
+    public TransactionAttribute parseTransactionAnnotation(AnnotatedElement ae) {
+        AnnotationAttributes attributes =
+                AnnotatedElementUtils.getMergedAnnotationAttributes(ae, javax.transaction.Transactional.class);
+        if (attributes != null) {
+            return parseTransactionAnnotation(attributes);
+        } else {
+            return null;
+        }
+    }
 
-	public TransactionAttribute parseTransactionAnnotation(javax.transaction.Transactional ann) {
-		return parseTransactionAnnotation(AnnotationUtils.getAnnotationAttributes(ann, false, false));
-	}
+    public TransactionAttribute parseTransactionAnnotation(javax.transaction.Transactional ann) {
+        return parseTransactionAnnotation(AnnotationUtils.getAnnotationAttributes(ann, false, false));
+    }
 
-	protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) {
-		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
-		rbta.setPropagationBehaviorName(
-				RuleBasedTransactionAttribute.PREFIX_PROPAGATION + attributes.getEnum("value").toString());
-		ArrayList<RollbackRuleAttribute> rollBackRules = new ArrayList<RollbackRuleAttribute>();
-		Class<?>[] rbf = attributes.getClassArray("rollbackOn");
-		for (Class<?> rbRule : rbf) {
-			RollbackRuleAttribute rule = new RollbackRuleAttribute(rbRule);
-			rollBackRules.add(rule);
-		}
-		Class<?>[] nrbf = attributes.getClassArray("dontRollbackOn");
-		for (Class<?> rbRule : nrbf) {
-			NoRollbackRuleAttribute rule = new NoRollbackRuleAttribute(rbRule);
-			rollBackRules.add(rule);
-		}
-		rbta.getRollbackRules().addAll(rollBackRules);
-		return rbta;
-	}
+    protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) {
+        RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
+        rbta.setPropagationBehaviorName(
+                RuleBasedTransactionAttribute.PREFIX_PROPAGATION + attributes.getEnum("value").toString());
+        ArrayList<RollbackRuleAttribute> rollBackRules = new ArrayList<RollbackRuleAttribute>();
+        Class<?>[] rbf = attributes.getClassArray("rollbackOn");
+        for (Class<?> rbRule : rbf) {
+            RollbackRuleAttribute rule = new RollbackRuleAttribute(rbRule);
+            rollBackRules.add(rule);
+        }
+        Class<?>[] nrbf = attributes.getClassArray("dontRollbackOn");
+        for (Class<?> rbRule : nrbf) {
+            NoRollbackRuleAttribute rule = new NoRollbackRuleAttribute(rbRule);
+            rollBackRules.add(rule);
+        }
+        rbta.getRollbackRules().addAll(rollBackRules);
+        return rbta;
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		return (this == other || other instanceof JtaTransactionAnnotationParser);
-	}
+    @Override
+    public boolean equals(Object other) {
+        return (this == other || other instanceof JtaTransactionAnnotationParser);
+    }
 
-	@Override
-	public int hashCode() {
-		return JtaTransactionAnnotationParser.class.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return JtaTransactionAnnotationParser.class.hashCode();
+    }
 
 }

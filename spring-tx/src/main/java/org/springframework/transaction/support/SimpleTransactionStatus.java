@@ -37,29 +37,29 @@ package org.springframework.transaction.support;
  */
 public class SimpleTransactionStatus extends AbstractTransactionStatus {
 
-	private final boolean newTransaction;
+    private final boolean newTransaction;
 
 
-	/**
-	 * Create a new instance of the {@link SimpleTransactionStatus} class,
-	 * indicating a new transaction.
-	 */
-	public SimpleTransactionStatus() {
-		this(true);
-	}
+    /**
+     * Create a new instance of the {@link SimpleTransactionStatus} class,
+     * indicating a new transaction.
+     */
+    public SimpleTransactionStatus() {
+        this(true);
+    }
 
-	/**
-	 * Create a new instance of the {@link SimpleTransactionStatus} class.
-	 * @param newTransaction whether to indicate a new transaction
-	 */
-	public SimpleTransactionStatus(boolean newTransaction) {
-		this.newTransaction = newTransaction;
-	}
+    /**
+     * Create a new instance of the {@link SimpleTransactionStatus} class.
+     * @param newTransaction whether to indicate a new transaction
+     */
+    public SimpleTransactionStatus(boolean newTransaction) {
+        this.newTransaction = newTransaction;
+    }
 
 
-	@Override
-	public boolean isNewTransaction() {
-		return this.newTransaction;
-	}
+    @Override
+    public boolean isNewTransaction() {
+        return this.newTransaction;
+    }
 
 }
