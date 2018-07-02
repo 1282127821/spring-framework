@@ -29,28 +29,28 @@ import java.sql.SQLException;
  */
 public class DerbyTableMetaDataProvider extends GenericTableMetaDataProvider {
 
-	private boolean supportsGeneratedKeysOverride = false;
+    private boolean supportsGeneratedKeysOverride = false;
 
 
-	public DerbyTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
-		super(databaseMetaData);
-	}
+    public DerbyTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
+        super(databaseMetaData);
+    }
 
 
-	@Override
-	public void initializeWithMetaData(DatabaseMetaData databaseMetaData) throws SQLException {
-		super.initializeWithMetaData(databaseMetaData);
-		if (!databaseMetaData.supportsGetGeneratedKeys()) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Overriding supportsGetGeneratedKeys from DatabaseMetaData to 'true'; it was reported as " +
-						"'false' by " + databaseMetaData.getDriverName() + " " + databaseMetaData.getDriverVersion());
-			}
-			this.supportsGeneratedKeysOverride = true;
-		}
-	}
+    @Override
+    public void initializeWithMetaData(DatabaseMetaData databaseMetaData) throws SQLException {
+        super.initializeWithMetaData(databaseMetaData);
+        if (!databaseMetaData.supportsGetGeneratedKeys()) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Overriding supportsGetGeneratedKeys from DatabaseMetaData to 'true'; it was reported as "
+                        + "'false' by " + databaseMetaData.getDriverName() + " " + databaseMetaData.getDriverVersion());
+            }
+            this.supportsGeneratedKeysOverride = true;
+        }
+    }
 
-	@Override
-	public boolean isGetGeneratedKeysSupported() {
-		return (super.isGetGeneratedKeysSupported() || this.supportsGeneratedKeysOverride);
-	}
+    @Override
+    public boolean isGetGeneratedKeysSupported() {
+        return (super.isGetGeneratedKeysSupported() || this.supportsGeneratedKeysOverride);
+    }
 }

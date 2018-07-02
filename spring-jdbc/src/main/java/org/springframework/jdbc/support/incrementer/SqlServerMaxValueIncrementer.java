@@ -54,34 +54,33 @@ import javax.sql.DataSource;
  */
 public class SqlServerMaxValueIncrementer extends AbstractIdentityColumnMaxValueIncrementer {
 
-	/**
-	 * Default constructor for bean property style usage.
-	 * @see #setDataSource
-	 * @see #setIncrementerName
-	 * @see #setColumnName
-	 */
-	public SqlServerMaxValueIncrementer() {
-	}
+    /**
+     * Default constructor for bean property style usage.
+     * @see #setDataSource
+     * @see #setIncrementerName
+     * @see #setColumnName
+     */
+    public SqlServerMaxValueIncrementer() {}
 
-	/**
-	 * Convenience constructor.
-	 * @param dataSource the DataSource to use
-	 * @param incrementerName the name of the sequence/table to use
-	 * @param columnName the name of the column in the sequence table to use
-	 */
-	public SqlServerMaxValueIncrementer(DataSource dataSource, String incrementerName, String columnName) {
-		super(dataSource, incrementerName, columnName);
-	}
+    /**
+     * Convenience constructor.
+     * @param dataSource the DataSource to use
+     * @param incrementerName the name of the sequence/table to use
+     * @param columnName the name of the column in the sequence table to use
+     */
+    public SqlServerMaxValueIncrementer(DataSource dataSource, String incrementerName, String columnName) {
+        super(dataSource, incrementerName, columnName);
+    }
 
 
-	@Override
-	protected String getIncrementStatement() {
-		return "insert into " + getIncrementerName() + " default values";
-	}
+    @Override
+    protected String getIncrementStatement() {
+        return "insert into " + getIncrementerName() + " default values";
+    }
 
-	@Override
-	protected String getIdentityStatement() {
-		return "select @@identity";
-	}
+    @Override
+    protected String getIdentityStatement() {
+        return "select @@identity";
+    }
 
 }

@@ -40,67 +40,67 @@ import org.springframework.util.ReflectionUtils;
  */
 public class WebSphereNativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	private static final String JDBC_ADAPTER_CONNECTION_NAME = "com.ibm.ws.rsadapter.jdbc.WSJdbcConnection";
+    private static final String JDBC_ADAPTER_CONNECTION_NAME = "com.ibm.ws.rsadapter.jdbc.WSJdbcConnection";
 
-	private static final String JDBC_ADAPTER_UTIL_NAME = "com.ibm.ws.rsadapter.jdbc.WSJdbcUtil";
-
-
-	private Class<?> webSphereConnectionClass;
-
-	private Method webSphereNativeConnectionMethod;
+    private static final String JDBC_ADAPTER_UTIL_NAME = "com.ibm.ws.rsadapter.jdbc.WSJdbcUtil";
 
 
-	/**
-	 * This constructor retrieves WebSphere JDBC adapter classes,
-	 * so we can get the underlying vendor connection using reflection.
-	 */
-	public WebSphereNativeJdbcExtractor() {
-		try {
-			this.webSphereConnectionClass = getClass().getClassLoader().loadClass(JDBC_ADAPTER_CONNECTION_NAME);
-			Class<?> jdbcAdapterUtilClass = getClass().getClassLoader().loadClass(JDBC_ADAPTER_UTIL_NAME);
-			this.webSphereNativeConnectionMethod =
-					jdbcAdapterUtilClass.getMethod("getNativeConnection", new Class<?>[] {this.webSphereConnectionClass});
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not initialize WebSphereNativeJdbcExtractor because WebSphere API classes are not available: " + ex);
-		}
-	}
+    private Class<?> webSphereConnectionClass;
+
+    private Method webSphereNativeConnectionMethod;
 
 
-	/**
-	 * Return {@code true}, as WebSphere returns wrapped Statements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeStatements() {
-		return true;
-	}
+    /**
+     * This constructor retrieves WebSphere JDBC adapter classes,
+     * so we can get the underlying vendor connection using reflection.
+     */
+    public WebSphereNativeJdbcExtractor() {
+        try {
+            this.webSphereConnectionClass = getClass().getClassLoader().loadClass(JDBC_ADAPTER_CONNECTION_NAME);
+            Class<?> jdbcAdapterUtilClass = getClass().getClassLoader().loadClass(JDBC_ADAPTER_UTIL_NAME);
+            this.webSphereNativeConnectionMethod = jdbcAdapterUtilClass.getMethod("getNativeConnection",
+                    new Class<?>[] {this.webSphereConnectionClass});
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Could not initialize WebSphereNativeJdbcExtractor because WebSphere API classes are not available: "
+                            + ex);
+        }
+    }
 
-	/**
-	 * Return {@code true}, as WebSphere returns wrapped PreparedStatements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
-		return true;
-	}
 
-	/**
-	 * Return {@code true}, as WebSphere returns wrapped CallableStatements.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
-		return true;
-	}
+    /**
+     * Return {@code true}, as WebSphere returns wrapped Statements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeStatements() {
+        return true;
+    }
 
-	/**
-	 * Retrieve the Connection via WebSphere's {@code getNativeConnection} method.
-	 */
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		if (this.webSphereConnectionClass.isAssignableFrom(con.getClass())) {
-			return (Connection) ReflectionUtils.invokeJdbcMethod(this.webSphereNativeConnectionMethod, null, con);
-		}
-		return con;
-	}
+    /**
+     * Return {@code true}, as WebSphere returns wrapped PreparedStatements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
+        return true;
+    }
+
+    /**
+     * Return {@code true}, as WebSphere returns wrapped CallableStatements.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
+        return true;
+    }
+
+    /**
+     * Retrieve the Connection via WebSphere's {@code getNativeConnection} method.
+     */
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        if (this.webSphereConnectionClass.isAssignableFrom(con.getClass())) {
+            return (Connection) ReflectionUtils.invokeJdbcMethod(this.webSphereNativeConnectionMethod, null, con);
+        }
+        return con;
+    }
 
 }

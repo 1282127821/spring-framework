@@ -25,62 +25,62 @@ package org.springframework.jdbc.core.metadata;
  */
 public class CallParameterMetaData {
 
-	private String parameterName;
+    private String parameterName;
 
-	private int parameterType;
+    private int parameterType;
 
-	private int sqlType;
+    private int sqlType;
 
-	private String typeName;
+    private String typeName;
 
-	private boolean nullable;
-
-
-	/**
-	 * Constructor taking all the properties.
-	 */
-	public CallParameterMetaData(String columnName, int columnType, int sqlType, String typeName, boolean nullable) {
-		this.parameterName = columnName;
-		this.parameterType = columnType;
-		this.sqlType = sqlType;
-		this.typeName = typeName;
-		this.nullable = nullable;
-	}
+    private boolean nullable;
 
 
-	/**
-	 * Get the parameter name.
-	 */
-	public String getParameterName() {
-		return this.parameterName;
-	}
+    /**
+     * Constructor taking all the properties.
+     */
+    public CallParameterMetaData(String columnName, int columnType, int sqlType, String typeName, boolean nullable) {
+        this.parameterName = columnName;
+        this.parameterType = columnType;
+        this.sqlType = sqlType;
+        this.typeName = typeName;
+        this.nullable = nullable;
+    }
 
-	/**
-	 * Get the parameter type.
-	 */
-	public int getParameterType() {
-		return this.parameterType;
-	}
 
-	/**
-	 * Get the parameter SQL type.
-	 */
-	public int getSqlType() {
-		return this.sqlType;
-	}
+    /**
+     * Get the parameter name.
+     */
+    public String getParameterName() {
+        return this.parameterName;
+    }
 
-	/**
-	 * Get the parameter type name.
-	 */
-	public String getTypeName() {
-		return this.typeName;
-	}
+    /**
+     * Get the parameter type.
+     */
+    public int getParameterType() {
+        return this.parameterType;
+    }
 
-	/**
-	 * Get whether the parameter is nullable.
-	 */
-	public boolean isNullable() {
-		return this.nullable;
-	}
+    /**
+     * Get the parameter SQL type.
+     */
+    public int getSqlType() {
+        return this.sqlType;
+    }
+
+    /**
+     * Get the parameter type name.
+     */
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    /**
+     * Get whether the parameter is nullable.
+     */
+    public boolean isNullable() {
+        return this.nullable;
+    }
 
 }

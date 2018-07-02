@@ -58,118 +58,118 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  */
 public abstract class NativeJdbcExtractorAdapter implements NativeJdbcExtractor {
 
-	/**
-	 * Return {@code false} by default.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeStatements() {
-		return false;
-	}
+    /**
+     * Return {@code false} by default.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeStatements() {
+        return false;
+    }
 
-	/**
-	 * Return {@code false} by default.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
-		return false;
-	}
+    /**
+     * Return {@code false} by default.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativePreparedStatements() {
+        return false;
+    }
 
-	/**
-	 * Return {@code false} by default.
-	 */
-	@Override
-	public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
-		return false;
-	}
+    /**
+     * Return {@code false} by default.
+     */
+    @Override
+    public boolean isNativeConnectionNecessaryForNativeCallableStatements() {
+        return false;
+    }
 
-	/**
-	 * Check for a ConnectionProxy chain, then delegate to doGetNativeConnection.
-	 * <p>ConnectionProxy is used by Spring's TransactionAwareDataSourceProxy
-	 * and LazyConnectionDataSourceProxy. The target connection behind it is
-	 * typically one from a local connection pool, to be unwrapped by the
-	 * doGetNativeConnection implementation of a concrete subclass.
-	 * @see #doGetNativeConnection
-	 * @see org.springframework.jdbc.datasource.ConnectionProxy
-	 * @see org.springframework.jdbc.datasource.DataSourceUtils#getTargetConnection
-	 * @see org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
-	 * @see org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy
-	 */
-	@Override
-	public Connection getNativeConnection(Connection con) throws SQLException {
-		if (con == null) {
-			return null;
-		}
-		Connection targetCon = DataSourceUtils.getTargetConnection(con);
-		Connection nativeCon = doGetNativeConnection(targetCon);
-		if (nativeCon == targetCon) {
-			// We haven't received a different Connection, so we'll assume that there's
-			// some additional proxying going on. Let's check whether we get something
-			// different back from the DatabaseMetaData.getConnection() call.
-			DatabaseMetaData metaData = targetCon.getMetaData();
-			// The following check is only really there for mock Connections
-			// which might not carry a DatabaseMetaData instance.
-			if (metaData != null) {
-				Connection metaCon = metaData.getConnection();
-				if (metaCon != null && metaCon != targetCon) {
-					// We've received a different Connection there:
-					// Let's retry the native extraction process with it.
-					nativeCon = doGetNativeConnection(metaCon);
-				}
-			}
-		}
-		return nativeCon;
-	}
+    /**
+     * Check for a ConnectionProxy chain, then delegate to doGetNativeConnection.
+     * <p>ConnectionProxy is used by Spring's TransactionAwareDataSourceProxy
+     * and LazyConnectionDataSourceProxy. The target connection behind it is
+     * typically one from a local connection pool, to be unwrapped by the
+     * doGetNativeConnection implementation of a concrete subclass.
+     * @see #doGetNativeConnection
+     * @see org.springframework.jdbc.datasource.ConnectionProxy
+     * @see org.springframework.jdbc.datasource.DataSourceUtils#getTargetConnection
+     * @see org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
+     * @see org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy
+     */
+    @Override
+    public Connection getNativeConnection(Connection con) throws SQLException {
+        if (con == null) {
+            return null;
+        }
+        Connection targetCon = DataSourceUtils.getTargetConnection(con);
+        Connection nativeCon = doGetNativeConnection(targetCon);
+        if (nativeCon == targetCon) {
+            // We haven't received a different Connection, so we'll assume that there's
+            // some additional proxying going on. Let's check whether we get something
+            // different back from the DatabaseMetaData.getConnection() call.
+            DatabaseMetaData metaData = targetCon.getMetaData();
+            // The following check is only really there for mock Connections
+            // which might not carry a DatabaseMetaData instance.
+            if (metaData != null) {
+                Connection metaCon = metaData.getConnection();
+                if (metaCon != null && metaCon != targetCon) {
+                    // We've received a different Connection there:
+                    // Let's retry the native extraction process with it.
+                    nativeCon = doGetNativeConnection(metaCon);
+                }
+            }
+        }
+        return nativeCon;
+    }
 
-	/**
-	 * Not able to unwrap: return passed-in Connection.
-	 */
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		return con;
-	}
+    /**
+     * Not able to unwrap: return passed-in Connection.
+     */
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        return con;
+    }
 
-	/**
-	 * Retrieve the Connection via the Statement's Connection.
-	 * @see #getNativeConnection
-	 * @see Statement#getConnection
-	 */
-	@Override
-	public Connection getNativeConnectionFromStatement(Statement stmt) throws SQLException {
-		if (stmt == null) {
-			return null;
-		}
-		return getNativeConnection(stmt.getConnection());
-	}
+    /**
+     * Retrieve the Connection via the Statement's Connection.
+     * @see #getNativeConnection
+     * @see Statement#getConnection
+     */
+    @Override
+    public Connection getNativeConnectionFromStatement(Statement stmt) throws SQLException {
+        if (stmt == null) {
+            return null;
+        }
+        return getNativeConnection(stmt.getConnection());
+    }
 
-	/**
-	 * Not able to unwrap: return passed-in Statement.
-	 */
-	@Override
-	public Statement getNativeStatement(Statement stmt) throws SQLException {
-		return stmt;
-	}
+    /**
+     * Not able to unwrap: return passed-in Statement.
+     */
+    @Override
+    public Statement getNativeStatement(Statement stmt) throws SQLException {
+        return stmt;
+    }
 
-	/**
-	 * Not able to unwrap: return passed-in PreparedStatement.
-	 */
-	@Override
-	public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
-		return ps;
-	}
+    /**
+     * Not able to unwrap: return passed-in PreparedStatement.
+     */
+    @Override
+    public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
+        return ps;
+    }
 
-	/**
-	 * Not able to unwrap: return passed-in CallableStatement.
-	 */
-	@Override
-	public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
-		return cs;
-	}
+    /**
+     * Not able to unwrap: return passed-in CallableStatement.
+     */
+    @Override
+    public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
+        return cs;
+    }
 
-	/**
-	 * Not able to unwrap: return passed-in ResultSet.
-	 */
-	@Override
-	public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
-		return rs;
-	}
+    /**
+     * Not able to unwrap: return passed-in ResultSet.
+     */
+    @Override
+    public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
+        return rs;
+    }
 
 }

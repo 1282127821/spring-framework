@@ -34,41 +34,41 @@ import org.springframework.util.Assert;
  */
 public class GenericSqlQuery<T> extends SqlQuery<T> {
 
-	private RowMapper<T> rowMapper;
+    private RowMapper<T> rowMapper;
 
-	@SuppressWarnings("rawtypes")
-	private Class<? extends RowMapper> rowMapperClass;
-
-
-	/**
-	 * Set a specific {@link RowMapper} instance to use for this query.
-	 * @since 4.3.2
-	 */
-	public void setRowMapper(RowMapper<T> rowMapper) {
-		this.rowMapper = rowMapper;
-	}
-
-	/**
-	 * Set a {@link RowMapper} class for this query, creating a fresh
-	 * {@link RowMapper} instance per execution.
-	 */
-	@SuppressWarnings("rawtypes")
-	public void setRowMapperClass(Class<? extends RowMapper> rowMapperClass) {
-		this.rowMapperClass = rowMapperClass;
-	}
-
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-		Assert.isTrue(this.rowMapper != null || this.rowMapperClass != null,
-				"'rowMapper' or 'rowMapperClass' is required");
-	}
+    @SuppressWarnings("rawtypes")
+    private Class<? extends RowMapper> rowMapperClass;
 
 
-	@Override
-	@SuppressWarnings("unchecked")
-	protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
-		return (this.rowMapper != null ? this.rowMapper : BeanUtils.instantiateClass(this.rowMapperClass));
-	}
+    /**
+     * Set a specific {@link RowMapper} instance to use for this query.
+     * @since 4.3.2
+     */
+    public void setRowMapper(RowMapper<T> rowMapper) {
+        this.rowMapper = rowMapper;
+    }
+
+    /**
+     * Set a {@link RowMapper} class for this query, creating a fresh
+     * {@link RowMapper} instance per execution.
+     */
+    @SuppressWarnings("rawtypes")
+    public void setRowMapperClass(Class<? extends RowMapper> rowMapperClass) {
+        this.rowMapperClass = rowMapperClass;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
+        Assert.isTrue(this.rowMapper != null || this.rowMapperClass != null,
+                "'rowMapper' or 'rowMapperClass' is required");
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected RowMapper<T> newRowMapper(Object[] parameters, Map<?, ?> context) {
+        return (this.rowMapper != null ? this.rowMapper : BeanUtils.instantiateClass(this.rowMapperClass));
+    }
 
 }

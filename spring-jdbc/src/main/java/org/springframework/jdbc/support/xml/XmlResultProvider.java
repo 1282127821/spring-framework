@@ -28,12 +28,12 @@ import javax.xml.transform.Result;
  */
 public interface XmlResultProvider {
 
-	/**
-	 * Implementations must implement this method to provide the XML content
-	 * for the {@code Result}. Implementations will vary depending on
-	 * the {@code Result} implementation used.
-	 * @param result the {@code Result} object being used to provide the XML input
-	 */
-	void provideXml(Result result);
+    /**
+     * Implementations must implement this method to provide the XML content
+     * for the {@code Result}. Implementations will vary depending on
+     * the {@code Result} implementation used.
+     * @param result the {@code Result} object being used to provide the XML input
+     */
+    void provideXml(Result result);
 
 }

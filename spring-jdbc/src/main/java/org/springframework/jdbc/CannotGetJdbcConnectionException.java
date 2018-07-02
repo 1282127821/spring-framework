@@ -28,13 +28,13 @@ import org.springframework.dao.DataAccessResourceFailureException;
 @SuppressWarnings("serial")
 public class CannotGetJdbcConnectionException extends DataAccessResourceFailureException {
 
-	/**
-	 * Constructor for CannotGetJdbcConnectionException.
-	 * @param msg the detail message
-	 * @param ex SQLException root cause
-	 */
-	public CannotGetJdbcConnectionException(String msg, SQLException ex) {
-		super(msg, ex);
-	}
+    /**
+     * Constructor for CannotGetJdbcConnectionException.
+     * @param msg the detail message
+     * @param ex SQLException root cause
+     */
+    public CannotGetJdbcConnectionException(String msg, SQLException ex) {
+        super(msg, ex);
+    }
 
 }

@@ -48,112 +48,110 @@ import org.springframework.util.ReflectionUtils;
  */
 public class JBossNativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	// JBoss 7
-	private static final String JBOSS_JCA_PREFIX = "org.jboss.jca.adapters.jdbc.";
+    // JBoss 7
+    private static final String JBOSS_JCA_PREFIX = "org.jboss.jca.adapters.jdbc.";
 
-	// JBoss <= 6
-	private static final String JBOSS_RESOURCE_PREFIX = "org.jboss.resource.adapter.jdbc.";
-
-
-	private Class<?> wrappedConnectionClass;
-
-	private Class<?> wrappedStatementClass;
-
-	private Class<?> wrappedResultSetClass;
-
-	private Method getUnderlyingConnectionMethod;
-
-	private Method getUnderlyingStatementMethod;
-
-	private Method getUnderlyingResultSetMethod;
+    // JBoss <= 6
+    private static final String JBOSS_RESOURCE_PREFIX = "org.jboss.resource.adapter.jdbc.";
 
 
-	/**
-	 * This constructor retrieves JBoss JDBC wrapper classes,
-	 * so we can get the underlying vendor connection using reflection.
-	 */
-	public JBossNativeJdbcExtractor() {
-		String prefix = JBOSS_JCA_PREFIX;
-		try {
-			// trying JBoss 7 jca package first...
-			this.wrappedConnectionClass = getClass().getClassLoader().loadClass(prefix + "WrappedConnection");
-		}
-		catch (ClassNotFoundException ex) {
-			// JBoss 7 jca package not found -> try traditional resource package.
-			prefix = JBOSS_RESOURCE_PREFIX;
-			try {
-				this.wrappedConnectionClass = getClass().getClassLoader().loadClass(prefix + "WrappedConnection");
-			}
-			catch (ClassNotFoundException ex2) {
-				throw new IllegalStateException("Could not initialize JBossNativeJdbcExtractor: neither JBoss 7's [" +
-						JBOSS_JCA_PREFIX + ".WrappedConnection] nor traditional JBoss [" + JBOSS_RESOURCE_PREFIX +
-						".WrappedConnection] found");
-			}
-		}
-		try {
-			this.wrappedStatementClass = getClass().getClassLoader().loadClass(prefix + "WrappedStatement");
-			this.wrappedResultSetClass = getClass().getClassLoader().loadClass(prefix + "WrappedResultSet");
-			this.getUnderlyingConnectionMethod =
-				this.wrappedConnectionClass.getMethod("getUnderlyingConnection", (Class[]) null);
-			this.getUnderlyingStatementMethod =
-				this.wrappedStatementClass.getMethod("getUnderlyingStatement", (Class[]) null);
-			this.getUnderlyingResultSetMethod =
-				this.wrappedResultSetClass.getMethod("getUnderlyingResultSet", (Class[]) null);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not initialize JBossNativeJdbcExtractor because of missing JBoss API methods/classes: " + ex);
-		}
-	}
+    private Class<?> wrappedConnectionClass;
+
+    private Class<?> wrappedStatementClass;
+
+    private Class<?> wrappedResultSetClass;
+
+    private Method getUnderlyingConnectionMethod;
+
+    private Method getUnderlyingStatementMethod;
+
+    private Method getUnderlyingResultSetMethod;
 
 
-	/**
-	 * Retrieve the Connection via JBoss' {@code getUnderlyingConnection} method.
-	 */
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		if (this.wrappedConnectionClass.isAssignableFrom(con.getClass())) {
-			return (Connection) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingConnectionMethod, con);
-		}
-		return con;
-	}
+    /**
+     * This constructor retrieves JBoss JDBC wrapper classes,
+     * so we can get the underlying vendor connection using reflection.
+     */
+    public JBossNativeJdbcExtractor() {
+        String prefix = JBOSS_JCA_PREFIX;
+        try {
+            // trying JBoss 7 jca package first...
+            this.wrappedConnectionClass = getClass().getClassLoader().loadClass(prefix + "WrappedConnection");
+        } catch (ClassNotFoundException ex) {
+            // JBoss 7 jca package not found -> try traditional resource package.
+            prefix = JBOSS_RESOURCE_PREFIX;
+            try {
+                this.wrappedConnectionClass = getClass().getClassLoader().loadClass(prefix + "WrappedConnection");
+            } catch (ClassNotFoundException ex2) {
+                throw new IllegalStateException("Could not initialize JBossNativeJdbcExtractor: neither JBoss 7's ["
+                        + JBOSS_JCA_PREFIX + ".WrappedConnection] nor traditional JBoss [" + JBOSS_RESOURCE_PREFIX
+                        + ".WrappedConnection] found");
+            }
+        }
+        try {
+            this.wrappedStatementClass = getClass().getClassLoader().loadClass(prefix + "WrappedStatement");
+            this.wrappedResultSetClass = getClass().getClassLoader().loadClass(prefix + "WrappedResultSet");
+            this.getUnderlyingConnectionMethod =
+                    this.wrappedConnectionClass.getMethod("getUnderlyingConnection", (Class[]) null);
+            this.getUnderlyingStatementMethod =
+                    this.wrappedStatementClass.getMethod("getUnderlyingStatement", (Class[]) null);
+            this.getUnderlyingResultSetMethod =
+                    this.wrappedResultSetClass.getMethod("getUnderlyingResultSet", (Class[]) null);
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Could not initialize JBossNativeJdbcExtractor because of missing JBoss API methods/classes: "
+                            + ex);
+        }
+    }
 
-	/**
-	 * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
-	 */
-	@Override
-	public Statement getNativeStatement(Statement stmt) throws SQLException {
-		if (this.wrappedStatementClass.isAssignableFrom(stmt.getClass())) {
-			return (Statement) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingStatementMethod, stmt);
-		}
-		return stmt;
-	}
 
-	/**
-	 * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
-	 */
-	@Override
-	public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
-		return (PreparedStatement) getNativeStatement(ps);
-	}
+    /**
+     * Retrieve the Connection via JBoss' {@code getUnderlyingConnection} method.
+     */
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        if (this.wrappedConnectionClass.isAssignableFrom(con.getClass())) {
+            return (Connection) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingConnectionMethod, con);
+        }
+        return con;
+    }
 
-	/**
-	 * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
-	 */
-	@Override
-	public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
-		return (CallableStatement) getNativeStatement(cs);
-	}
+    /**
+     * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
+     */
+    @Override
+    public Statement getNativeStatement(Statement stmt) throws SQLException {
+        if (this.wrappedStatementClass.isAssignableFrom(stmt.getClass())) {
+            return (Statement) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingStatementMethod, stmt);
+        }
+        return stmt;
+    }
 
-	/**
-	 * Retrieve the Connection via JBoss' {@code getUnderlyingResultSet} method.
-	 */
-	@Override
-	public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
-		if (this.wrappedResultSetClass.isAssignableFrom(rs.getClass())) {
-			return (ResultSet) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingResultSetMethod, rs);
-		}
-		return rs;
-	}
+    /**
+     * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
+     */
+    @Override
+    public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
+        return (PreparedStatement) getNativeStatement(ps);
+    }
+
+    /**
+     * Retrieve the Connection via JBoss' {@code getUnderlyingStatement} method.
+     */
+    @Override
+    public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
+        return (CallableStatement) getNativeStatement(cs);
+    }
+
+    /**
+     * Retrieve the Connection via JBoss' {@code getUnderlyingResultSet} method.
+     */
+    @Override
+    public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
+        if (this.wrappedResultSetClass.isAssignableFrom(rs.getClass())) {
+            return (ResultSet) ReflectionUtils.invokeJdbcMethod(this.getUnderlyingResultSetMethod, rs);
+        }
+        return rs;
+    }
 
 }

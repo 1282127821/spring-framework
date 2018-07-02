@@ -41,66 +41,65 @@ import org.springframework.jdbc.core.StatementCreatorUtils;
  */
 public class BeanPropertySqlParameterSource extends AbstractSqlParameterSource {
 
-	private final BeanWrapper beanWrapper;
+    private final BeanWrapper beanWrapper;
 
-	private String[] propertyNames;
-
-
-	/**
-	 * Create a new BeanPropertySqlParameterSource for the given bean.
-	 * @param object the bean instance to wrap
-	 */
-	public BeanPropertySqlParameterSource(Object object) {
-		this.beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
-	}
+    private String[] propertyNames;
 
 
-	@Override
-	public boolean hasValue(String paramName) {
-		return this.beanWrapper.isReadableProperty(paramName);
-	}
+    /**
+     * Create a new BeanPropertySqlParameterSource for the given bean.
+     * @param object the bean instance to wrap
+     */
+    public BeanPropertySqlParameterSource(Object object) {
+        this.beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+    }
 
-	@Override
-	public Object getValue(String paramName) throws IllegalArgumentException {
-		try {
-			return this.beanWrapper.getPropertyValue(paramName);
-		}
-		catch (NotReadablePropertyException ex) {
-			throw new IllegalArgumentException(ex.getMessage());
-		}
-	}
 
-	/**
-	 * Provide access to the property names of the wrapped bean.
-	 * Uses support provided in the {@link PropertyAccessor} interface.
-	 * @return an array containing all the known property names
-	 */
-	public String[] getReadablePropertyNames() {
-		if (this.propertyNames == null) {
-			List<String> names = new ArrayList<String>();
-			PropertyDescriptor[] props = this.beanWrapper.getPropertyDescriptors();
-			for (PropertyDescriptor pd : props) {
-				if (this.beanWrapper.isReadableProperty(pd.getName())) {
-					names.add(pd.getName());
-				}
-			}
-			this.propertyNames = names.toArray(new String[names.size()]);
-		}
-		return this.propertyNames;
-	}
+    @Override
+    public boolean hasValue(String paramName) {
+        return this.beanWrapper.isReadableProperty(paramName);
+    }
 
-	/**
-	 * Derives a default SQL type from the corresponding property type.
-	 * @see org.springframework.jdbc.core.StatementCreatorUtils#javaTypeToSqlParameterType
-	 */
-	@Override
-	public int getSqlType(String paramName) {
-		int sqlType = super.getSqlType(paramName);
-		if (sqlType != TYPE_UNKNOWN) {
-			return sqlType;
-		}
-		Class<?> propType = this.beanWrapper.getPropertyType(paramName);
-		return StatementCreatorUtils.javaTypeToSqlParameterType(propType);
-	}
+    @Override
+    public Object getValue(String paramName) throws IllegalArgumentException {
+        try {
+            return this.beanWrapper.getPropertyValue(paramName);
+        } catch (NotReadablePropertyException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Provide access to the property names of the wrapped bean.
+     * Uses support provided in the {@link PropertyAccessor} interface.
+     * @return an array containing all the known property names
+     */
+    public String[] getReadablePropertyNames() {
+        if (this.propertyNames == null) {
+            List<String> names = new ArrayList<String>();
+            PropertyDescriptor[] props = this.beanWrapper.getPropertyDescriptors();
+            for (PropertyDescriptor pd : props) {
+                if (this.beanWrapper.isReadableProperty(pd.getName())) {
+                    names.add(pd.getName());
+                }
+            }
+            this.propertyNames = names.toArray(new String[names.size()]);
+        }
+        return this.propertyNames;
+    }
+
+    /**
+     * Derives a default SQL type from the corresponding property type.
+     * @see org.springframework.jdbc.core.StatementCreatorUtils#javaTypeToSqlParameterType
+     */
+    @Override
+    public int getSqlType(String paramName) {
+        int sqlType = super.getSqlType(paramName);
+        if (sqlType != TYPE_UNKNOWN) {
+            return sqlType;
+        }
+        Class<?> propType = this.beanWrapper.getPropertyType(paramName);
+        return StatementCreatorUtils.javaTypeToSqlParameterType(propType);
+    }
 
 }

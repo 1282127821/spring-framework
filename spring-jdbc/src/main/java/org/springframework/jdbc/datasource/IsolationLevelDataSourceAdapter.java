@@ -54,112 +54,112 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class IsolationLevelDataSourceAdapter extends UserCredentialsDataSourceAdapter {
 
-	/** Constants instance for TransactionDefinition */
-	private static final Constants constants = new Constants(TransactionDefinition.class);
+    /** Constants instance for TransactionDefinition */
+    private static final Constants constants = new Constants(TransactionDefinition.class);
 
-	private Integer isolationLevel;
-
-
-	/**
-	 * Set the default isolation level by the name of the corresponding constant
-	 * in {@link org.springframework.transaction.TransactionDefinition}, e.g.
-	 * "ISOLATION_SERIALIZABLE".
-	 * <p>If not specified, the target DataSource's default will be used.
-	 * Note that a transaction-specific isolation value will always override
-	 * any isolation setting specified at the DataSource level.
-	 * @param constantName name of the constant
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_UNCOMMITTED
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_COMMITTED
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_REPEATABLE_READ
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_SERIALIZABLE
-	 * @see #setIsolationLevel
-	 */
-	public final void setIsolationLevelName(String constantName) throws IllegalArgumentException {
-		if (constantName == null || !constantName.startsWith(DefaultTransactionDefinition.PREFIX_ISOLATION)) {
-			throw new IllegalArgumentException("Only isolation constants allowed");
-		}
-		setIsolationLevel(constants.asNumber(constantName).intValue());
-	}
-
-	/**
-	 * Specify the default isolation level to use for Connection retrieval,
-	 * according to the JDBC {@link java.sql.Connection} constants
-	 * (equivalent to the corresponding Spring
-	 * {@link org.springframework.transaction.TransactionDefinition} constants).
-	 * <p>If not specified, the target DataSource's default will be used.
-	 * Note that a transaction-specific isolation value will always override
-	 * any isolation setting specified at the DataSource level.
-	 * @see java.sql.Connection#TRANSACTION_READ_UNCOMMITTED
-	 * @see java.sql.Connection#TRANSACTION_READ_COMMITTED
-	 * @see java.sql.Connection#TRANSACTION_REPEATABLE_READ
-	 * @see java.sql.Connection#TRANSACTION_SERIALIZABLE
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_UNCOMMITTED
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_COMMITTED
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_REPEATABLE_READ
-	 * @see org.springframework.transaction.TransactionDefinition#ISOLATION_SERIALIZABLE
-	 * @see org.springframework.transaction.TransactionDefinition#getIsolationLevel()
-	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#getCurrentTransactionIsolationLevel()
-	 */
-	public void setIsolationLevel(int isolationLevel) {
-		if (!constants.getValues(DefaultTransactionDefinition.PREFIX_ISOLATION).contains(isolationLevel)) {
-			throw new IllegalArgumentException("Only values of isolation constants allowed");
-		}
-		this.isolationLevel = (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT ? isolationLevel : null);
-	}
-
-	/**
-	 * Return the statically specified isolation level,
-	 * or {@code null} if none.
-	 */
-	protected Integer getIsolationLevel() {
-		return this.isolationLevel;
-	}
+    private Integer isolationLevel;
 
 
-	/**
-	 * Applies the current isolation level value and read-only flag
-	 * to the returned Connection.
-	 * @see #getCurrentIsolationLevel()
-	 * @see #getCurrentReadOnlyFlag()
-	 */
-	@Override
-	protected Connection doGetConnection(String username, String password) throws SQLException {
-		Connection con = super.doGetConnection(username, password);
-		Boolean readOnlyToUse = getCurrentReadOnlyFlag();
-		if (readOnlyToUse != null) {
-			con.setReadOnly(readOnlyToUse);
-		}
-		Integer isolationLevelToUse = getCurrentIsolationLevel();
-		if (isolationLevelToUse != null) {
-			con.setTransactionIsolation(isolationLevelToUse);
-		}
-		return con;
-	}
+    /**
+     * Set the default isolation level by the name of the corresponding constant
+     * in {@link org.springframework.transaction.TransactionDefinition}, e.g.
+     * "ISOLATION_SERIALIZABLE".
+     * <p>If not specified, the target DataSource's default will be used.
+     * Note that a transaction-specific isolation value will always override
+     * any isolation setting specified at the DataSource level.
+     * @param constantName name of the constant
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_UNCOMMITTED
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_COMMITTED
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_REPEATABLE_READ
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_SERIALIZABLE
+     * @see #setIsolationLevel
+     */
+    public final void setIsolationLevelName(String constantName) throws IllegalArgumentException {
+        if (constantName == null || !constantName.startsWith(DefaultTransactionDefinition.PREFIX_ISOLATION)) {
+            throw new IllegalArgumentException("Only isolation constants allowed");
+        }
+        setIsolationLevel(constants.asNumber(constantName).intValue());
+    }
 
-	/**
-	 * Determine the current isolation level: either the transaction's
-	 * isolation level or a statically defined isolation level.
-	 * @return the current isolation level, or {@code null} if none
-	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#getCurrentTransactionIsolationLevel()
-	 * @see #setIsolationLevel
-	 */
-	protected Integer getCurrentIsolationLevel() {
-		Integer isolationLevelToUse = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
-		if (isolationLevelToUse == null) {
-			isolationLevelToUse = getIsolationLevel();
-		}
-		return isolationLevelToUse;
-	}
+    /**
+     * Specify the default isolation level to use for Connection retrieval,
+     * according to the JDBC {@link java.sql.Connection} constants
+     * (equivalent to the corresponding Spring
+     * {@link org.springframework.transaction.TransactionDefinition} constants).
+     * <p>If not specified, the target DataSource's default will be used.
+     * Note that a transaction-specific isolation value will always override
+     * any isolation setting specified at the DataSource level.
+     * @see java.sql.Connection#TRANSACTION_READ_UNCOMMITTED
+     * @see java.sql.Connection#TRANSACTION_READ_COMMITTED
+     * @see java.sql.Connection#TRANSACTION_REPEATABLE_READ
+     * @see java.sql.Connection#TRANSACTION_SERIALIZABLE
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_UNCOMMITTED
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_READ_COMMITTED
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_REPEATABLE_READ
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_SERIALIZABLE
+     * @see org.springframework.transaction.TransactionDefinition#getIsolationLevel()
+     * @see org.springframework.transaction.support.TransactionSynchronizationManager#getCurrentTransactionIsolationLevel()
+     */
+    public void setIsolationLevel(int isolationLevel) {
+        if (!constants.getValues(DefaultTransactionDefinition.PREFIX_ISOLATION).contains(isolationLevel)) {
+            throw new IllegalArgumentException("Only values of isolation constants allowed");
+        }
+        this.isolationLevel = (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT ? isolationLevel : null);
+    }
 
-	/**
-	 * Determine the current read-only flag: by default,
-	 * the transaction's read-only hint.
-	 * @return whether there is a read-only hint for the current scope
-	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#isCurrentTransactionReadOnly()
-	 */
-	protected Boolean getCurrentReadOnlyFlag() {
-		boolean txReadOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
-		return (txReadOnly ? Boolean.TRUE : null);
-	}
+    /**
+     * Return the statically specified isolation level,
+     * or {@code null} if none.
+     */
+    protected Integer getIsolationLevel() {
+        return this.isolationLevel;
+    }
+
+
+    /**
+     * Applies the current isolation level value and read-only flag
+     * to the returned Connection.
+     * @see #getCurrentIsolationLevel()
+     * @see #getCurrentReadOnlyFlag()
+     */
+    @Override
+    protected Connection doGetConnection(String username, String password) throws SQLException {
+        Connection con = super.doGetConnection(username, password);
+        Boolean readOnlyToUse = getCurrentReadOnlyFlag();
+        if (readOnlyToUse != null) {
+            con.setReadOnly(readOnlyToUse);
+        }
+        Integer isolationLevelToUse = getCurrentIsolationLevel();
+        if (isolationLevelToUse != null) {
+            con.setTransactionIsolation(isolationLevelToUse);
+        }
+        return con;
+    }
+
+    /**
+     * Determine the current isolation level: either the transaction's
+     * isolation level or a statically defined isolation level.
+     * @return the current isolation level, or {@code null} if none
+     * @see org.springframework.transaction.support.TransactionSynchronizationManager#getCurrentTransactionIsolationLevel()
+     * @see #setIsolationLevel
+     */
+    protected Integer getCurrentIsolationLevel() {
+        Integer isolationLevelToUse = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+        if (isolationLevelToUse == null) {
+            isolationLevelToUse = getIsolationLevel();
+        }
+        return isolationLevelToUse;
+    }
+
+    /**
+     * Determine the current read-only flag: by default,
+     * the transaction's read-only hint.
+     * @return whether there is a read-only hint for the current scope
+     * @see org.springframework.transaction.support.TransactionSynchronizationManager#isCurrentTransactionReadOnly()
+     */
+    protected Boolean getCurrentReadOnlyFlag() {
+        boolean txReadOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+        return (txReadOnly ? Boolean.TRUE : null);
+    }
 
 }

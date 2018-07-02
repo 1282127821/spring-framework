@@ -25,42 +25,42 @@ package org.springframework.jdbc.core.metadata;
  */
 public class TableParameterMetaData {
 
-	private final String parameterName;
+    private final String parameterName;
 
-	private final int sqlType;
+    private final int sqlType;
 
-	private final boolean nullable;
-
-
-	/**
-	 * Constructor taking all the properties.
-	 */
-	public TableParameterMetaData(String columnName, int sqlType, boolean nullable) {
-		this.parameterName = columnName;
-		this.sqlType = sqlType;
-		this.nullable = nullable;
-	}
+    private final boolean nullable;
 
 
-	/**
-	 * Get the parameter name.
-	 */
-	public String getParameterName() {
-		return this.parameterName;
-	}
+    /**
+     * Constructor taking all the properties.
+     */
+    public TableParameterMetaData(String columnName, int sqlType, boolean nullable) {
+        this.parameterName = columnName;
+        this.sqlType = sqlType;
+        this.nullable = nullable;
+    }
 
-	/**
-	 * Get the parameter SQL type.
-	 */
-	public int getSqlType() {
-		return this.sqlType;
-	}
 
-	/**
-	 * Get whether the parameter/column is nullable.
-	 */
-	public boolean isNullable() {
-		return this.nullable;
-	}
+    /**
+     * Get the parameter name.
+     */
+    public String getParameterName() {
+        return this.parameterName;
+    }
+
+    /**
+     * Get the parameter SQL type.
+     */
+    public int getSqlType() {
+        return this.sqlType;
+    }
+
+    /**
+     * Get whether the parameter/column is nullable.
+     */
+    public boolean isNullable() {
+        return this.nullable;
+    }
 
 }

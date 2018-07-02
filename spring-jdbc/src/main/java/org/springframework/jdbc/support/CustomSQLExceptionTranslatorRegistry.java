@@ -33,61 +33,59 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CustomSQLExceptionTranslatorRegistry {
 
-	private static final Log logger = LogFactory.getLog(CustomSQLExceptionTranslatorRegistry.class);
+    private static final Log logger = LogFactory.getLog(CustomSQLExceptionTranslatorRegistry.class);
 
-	/**
-	 * Keep track of a single instance so we can return it to classes that request it.
-	 */
-	private static final CustomSQLExceptionTranslatorRegistry instance = new CustomSQLExceptionTranslatorRegistry();
-
-
-	/**
-	 * Return the singleton instance.
-	 */
-	public static CustomSQLExceptionTranslatorRegistry getInstance() {
-		return instance;
-	}
+    /**
+     * Keep track of a single instance so we can return it to classes that request it.
+     */
+    private static final CustomSQLExceptionTranslatorRegistry instance = new CustomSQLExceptionTranslatorRegistry();
 
 
-	/**
-	 * Map registry to hold custom translators specific databases.
-	 * Key is the database product name as defined in the
-	 * {@link org.springframework.jdbc.support.SQLErrorCodesFactory}.
-	 */
-	private final Map<String, SQLExceptionTranslator> translatorMap = new HashMap<String, SQLExceptionTranslator>();
+    /**
+     * Return the singleton instance.
+     */
+    public static CustomSQLExceptionTranslatorRegistry getInstance() {
+        return instance;
+    }
 
 
-	/**
-	 * Create a new instance of the {@link CustomSQLExceptionTranslatorRegistry} class.
-	 * <p>Not public to enforce Singleton design pattern.
-	 */
-	private CustomSQLExceptionTranslatorRegistry() {
-	}
+    /**
+     * Map registry to hold custom translators specific databases.
+     * Key is the database product name as defined in the
+     * {@link org.springframework.jdbc.support.SQLErrorCodesFactory}.
+     */
+    private final Map<String, SQLExceptionTranslator> translatorMap = new HashMap<String, SQLExceptionTranslator>();
 
-	/**
-	 * Register a new custom translator for the specified database name.
-	 * @param dbName the database name
-	 * @param translator the custom translator
-	 */
-	public void registerTranslator(String dbName, SQLExceptionTranslator translator) {
-		SQLExceptionTranslator replaced = translatorMap.put(dbName, translator);
-		if (replaced != null) {
-			logger.warn("Replacing custom translator [" + replaced + "] for database '" + dbName +
-					"' with [" + translator + "]");
-		}
-		else {
-			logger.info("Adding custom translator of type [" + translator.getClass().getName() +
-					"] for database '" + dbName + "'");
-		}
-	}
 
-	/**
-	 * Find a custom translator for the specified database.
-	 * @param dbName the database name
-	 * @return the custom translator, or {@code null} if none found
-	 */
-	public SQLExceptionTranslator findTranslatorForDatabase(String dbName) {
-		return this.translatorMap.get(dbName);
-	}
+    /**
+     * Create a new instance of the {@link CustomSQLExceptionTranslatorRegistry} class.
+     * <p>Not public to enforce Singleton design pattern.
+     */
+    private CustomSQLExceptionTranslatorRegistry() {}
+
+    /**
+     * Register a new custom translator for the specified database name.
+     * @param dbName the database name
+     * @param translator the custom translator
+     */
+    public void registerTranslator(String dbName, SQLExceptionTranslator translator) {
+        SQLExceptionTranslator replaced = translatorMap.put(dbName, translator);
+        if (replaced != null) {
+            logger.warn("Replacing custom translator [" + replaced + "] for database '" + dbName + "' with ["
+                    + translator + "]");
+        } else {
+            logger.info("Adding custom translator of type [" + translator.getClass().getName() + "] for database '"
+                    + dbName + "'");
+        }
+    }
+
+    /**
+     * Find a custom translator for the specified database.
+     * @param dbName the database name
+     * @return the custom translator, or {@code null} if none found
+     */
+    public SQLExceptionTranslator findTranslatorForDatabase(String dbName) {
+        return this.translatorMap.get(dbName);
+    }
 
 }

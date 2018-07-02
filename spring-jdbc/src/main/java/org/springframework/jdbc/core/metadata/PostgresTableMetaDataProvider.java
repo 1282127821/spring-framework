@@ -29,27 +29,26 @@ import java.sql.SQLException;
  */
 public class PostgresTableMetaDataProvider extends GenericTableMetaDataProvider {
 
-	public PostgresTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
-		super(databaseMetaData);
-	}
+    public PostgresTableMetaDataProvider(DatabaseMetaData databaseMetaData) throws SQLException {
+        super(databaseMetaData);
+    }
 
-	@Override
-	public boolean isGetGeneratedKeysSimulated() {
-		if (getDatabaseVersion().compareTo("8.2.0") >= 0) {
-			return true;
-		}
-		else {
-			if (logger.isWarnEnabled()) {
-				logger.warn("PostgreSQL does not support getGeneratedKeys or INSERT ... RETURNING in version " +
-						getDatabaseVersion());
-			}
-			return false;
-		}
-	}
+    @Override
+    public boolean isGetGeneratedKeysSimulated() {
+        if (getDatabaseVersion().compareTo("8.2.0") >= 0) {
+            return true;
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("PostgreSQL does not support getGeneratedKeys or INSERT ... RETURNING in version "
+                        + getDatabaseVersion());
+            }
+            return false;
+        }
+    }
 
-	@Override
-	public String getSimpleQueryForGetGeneratedKey(String tableName, String keyColumnName) {
-		return "RETURNING " + keyColumnName;
-	}
+    @Override
+    public String getSimpleQueryForGetGeneratedKey(String tableName, String keyColumnName) {
+        return "RETURNING " + keyColumnName;
+    }
 
 }

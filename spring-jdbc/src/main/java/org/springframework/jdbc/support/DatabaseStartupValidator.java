@@ -19,11 +19,11 @@ package org.springframework.jdbc.support;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
@@ -40,115 +40,112 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
  */
 public class DatabaseStartupValidator implements InitializingBean {
 
-	public static final int DEFAULT_INTERVAL = 1;
+    public static final int DEFAULT_INTERVAL = 1;
 
-	public static final int DEFAULT_TIMEOUT = 60;
-
-
-	protected final Log logger = LogFactory.getLog(getClass());
-
-	private DataSource dataSource;
-
-	private String validationQuery;
-
-	private int interval = DEFAULT_INTERVAL;
-
-	private int timeout = DEFAULT_TIMEOUT;
+    public static final int DEFAULT_TIMEOUT = 60;
 
 
-	/**
-	 * Set the DataSource to validate.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	/**
-	 * Set the SQL query string to use for validation.
-	 */
-	public void setValidationQuery(String validationQuery) {
-		this.validationQuery = validationQuery;
-	}
+    private DataSource dataSource;
 
-	/**
-	 * Set the interval between validation runs (in seconds).
-	 * Default is 1.
-	 */
-	public void setInterval(int interval) {
-		this.interval = interval;
-	}
+    private String validationQuery;
 
-	/**
-	 * Set the timeout (in seconds) after which a fatal exception
-	 * will be thrown. Default is 60.
-	 */
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
+    private int interval = DEFAULT_INTERVAL;
+
+    private int timeout = DEFAULT_TIMEOUT;
 
 
-	/**
-	 * Check whether the validation query can be executed on a Connection
-	 * from the specified DataSource, with the specified interval between
-	 * checks, until the specified timeout.
-	 */
-	@Override
-	public void afterPropertiesSet() {
-		if (this.dataSource == null) {
-			throw new IllegalArgumentException("dataSource is required");
-		}
-		if (this.validationQuery == null) {
-			throw new IllegalArgumentException("validationQuery is required");
-		}
+    /**
+     * Set the DataSource to validate.
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-		try {
-			boolean validated = false;
-			long beginTime = System.currentTimeMillis();
-			long deadLine = beginTime + this.timeout * 1000;
-			SQLException latestEx = null;
+    /**
+     * Set the SQL query string to use for validation.
+     */
+    public void setValidationQuery(String validationQuery) {
+        this.validationQuery = validationQuery;
+    }
 
-			while (!validated && System.currentTimeMillis() < deadLine) {
-				Connection con = null;
-				Statement stmt = null;
-				try {
-					con = this.dataSource.getConnection();
-					stmt = con.createStatement();
-					stmt.execute(this.validationQuery);
-					validated = true;
-				}
-				catch (SQLException ex) {
-					latestEx = ex;
-					logger.debug("Validation query [" + this.validationQuery + "] threw exception", ex);
-					float rest = ((float) (deadLine - System.currentTimeMillis())) / 1000;
-					if (rest > this.interval) {
-						logger.warn("Database has not started up yet - retrying in " + this.interval +
-								" seconds (timeout in " + rest + " seconds)");
-					}
-				}
-				finally {
-					JdbcUtils.closeStatement(stmt);
-					JdbcUtils.closeConnection(con);
-				}
+    /**
+     * Set the interval between validation runs (in seconds).
+     * Default is 1.
+     */
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
 
-				if (!validated) {
-					Thread.sleep(this.interval * 1000);
-				}
-			}
+    /**
+     * Set the timeout (in seconds) after which a fatal exception
+     * will be thrown. Default is 60.
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 
-			if (!validated) {
-				throw new CannotGetJdbcConnectionException(
-						"Database has not started up within " + this.timeout + " seconds", latestEx);
-			}
 
-			float duration = (System.currentTimeMillis() - beginTime) / 1000;
-			if (logger.isInfoEnabled()) {
-				logger.info("Database startup detected after " + duration + " seconds");
-			}
-		}
-		catch (InterruptedException ex) {
-			// Re-interrupt current thread, to allow other threads to react.
-			Thread.currentThread().interrupt();
-		}
-	}
+    /**
+     * Check whether the validation query can be executed on a Connection
+     * from the specified DataSource, with the specified interval between
+     * checks, until the specified timeout.
+     */
+    @Override
+    public void afterPropertiesSet() {
+        if (this.dataSource == null) {
+            throw new IllegalArgumentException("dataSource is required");
+        }
+        if (this.validationQuery == null) {
+            throw new IllegalArgumentException("validationQuery is required");
+        }
+
+        try {
+            boolean validated = false;
+            long beginTime = System.currentTimeMillis();
+            long deadLine = beginTime + this.timeout * 1000;
+            SQLException latestEx = null;
+
+            while (!validated && System.currentTimeMillis() < deadLine) {
+                Connection con = null;
+                Statement stmt = null;
+                try {
+                    con = this.dataSource.getConnection();
+                    stmt = con.createStatement();
+                    stmt.execute(this.validationQuery);
+                    validated = true;
+                } catch (SQLException ex) {
+                    latestEx = ex;
+                    logger.debug("Validation query [" + this.validationQuery + "] threw exception", ex);
+                    float rest = ((float) (deadLine - System.currentTimeMillis())) / 1000;
+                    if (rest > this.interval) {
+                        logger.warn("Database has not started up yet - retrying in " + this.interval
+                                + " seconds (timeout in " + rest + " seconds)");
+                    }
+                } finally {
+                    JdbcUtils.closeStatement(stmt);
+                    JdbcUtils.closeConnection(con);
+                }
+
+                if (!validated) {
+                    Thread.sleep(this.interval * 1000);
+                }
+            }
+
+            if (!validated) {
+                throw new CannotGetJdbcConnectionException(
+                        "Database has not started up within " + this.timeout + " seconds", latestEx);
+            }
+
+            float duration = (System.currentTimeMillis() - beginTime) / 1000;
+            if (logger.isInfoEnabled()) {
+                logger.info("Database startup detected after " + duration + " seconds");
+            }
+        } catch (InterruptedException ex) {
+            // Re-interrupt current thread, to allow other threads to react.
+            Thread.currentThread().interrupt();
+        }
+    }
 
 }

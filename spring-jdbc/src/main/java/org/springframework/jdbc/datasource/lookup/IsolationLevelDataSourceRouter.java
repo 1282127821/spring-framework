@@ -91,36 +91,35 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class IsolationLevelDataSourceRouter extends AbstractRoutingDataSource {
 
-	/** Constants instance for TransactionDefinition */
-	private static final Constants constants = new Constants(TransactionDefinition.class);
+    /** Constants instance for TransactionDefinition */
+    private static final Constants constants = new Constants(TransactionDefinition.class);
 
 
-	/**
-	 * Supports Integer values for the isolation level constants
-	 * as well as isolation level names as defined on the
-	 * {@link org.springframework.transaction.TransactionDefinition TransactionDefinition interface}.
-	 */
-	@Override
-	protected Object resolveSpecifiedLookupKey(Object lookupKey) {
-		if (lookupKey instanceof Integer) {
-			return lookupKey;
-		}
-		else if (lookupKey instanceof String) {
-			String constantName = (String) lookupKey;
-			if (!constantName.startsWith(DefaultTransactionDefinition.PREFIX_ISOLATION)) {
-				throw new IllegalArgumentException("Only isolation constants allowed");
-			}
-			return constants.asNumber(constantName);
-		}
-		else {
-			throw new IllegalArgumentException(
-					"Invalid lookup key - needs to be isolation level Integer or isolation level name String: " + lookupKey);
-		}
-	}
+    /**
+     * Supports Integer values for the isolation level constants
+     * as well as isolation level names as defined on the
+     * {@link org.springframework.transaction.TransactionDefinition TransactionDefinition interface}.
+     */
+    @Override
+    protected Object resolveSpecifiedLookupKey(Object lookupKey) {
+        if (lookupKey instanceof Integer) {
+            return lookupKey;
+        } else if (lookupKey instanceof String) {
+            String constantName = (String) lookupKey;
+            if (!constantName.startsWith(DefaultTransactionDefinition.PREFIX_ISOLATION)) {
+                throw new IllegalArgumentException("Only isolation constants allowed");
+            }
+            return constants.asNumber(constantName);
+        } else {
+            throw new IllegalArgumentException(
+                    "Invalid lookup key - needs to be isolation level Integer or isolation level name String: "
+                            + lookupKey);
+        }
+    }
 
-	@Override
-	protected Object determineCurrentLookupKey() {
-		return TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
-	}
+    @Override
+    protected Object determineCurrentLookupKey() {
+        return TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+    }
 
 }

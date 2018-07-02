@@ -19,6 +19,7 @@ package org.springframework.jdbc.object;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 /**
@@ -37,47 +38,45 @@ import javax.sql.DataSource;
  */
 public abstract class MappingSqlQuery<T> extends MappingSqlQueryWithParameters<T> {
 
-	/**
-	 * Constructor that allows use as a JavaBean.
-	 */
-	public MappingSqlQuery() {
-	}
+    /**
+     * Constructor that allows use as a JavaBean.
+     */
+    public MappingSqlQuery() {}
 
-	/**
-	 * Convenient constructor with DataSource and SQL string.
-	 * @param ds DataSource to use to obtain connections
-	 * @param sql SQL to run
-	 */
-	public MappingSqlQuery(DataSource ds, String sql) {
-		super(ds, sql);
-	}
+    /**
+     * Convenient constructor with DataSource and SQL string.
+     * @param ds DataSource to use to obtain connections
+     * @param sql SQL to run
+     */
+    public MappingSqlQuery(DataSource ds, String sql) {
+        super(ds, sql);
+    }
 
 
-	/**
-	 * This method is implemented to invoke the simpler mapRow
-	 * template method, ignoring parameters.
-	 * @see #mapRow(ResultSet, int)
-	 */
-	@Override
-	protected final T mapRow(ResultSet rs, int rowNum, Object[] parameters, Map<?, ?> context)
-			throws SQLException {
+    /**
+     * This method is implemented to invoke the simpler mapRow
+     * template method, ignoring parameters.
+     * @see #mapRow(ResultSet, int)
+     */
+    @Override
+    protected final T mapRow(ResultSet rs, int rowNum, Object[] parameters, Map<?, ?> context) throws SQLException {
 
-		return mapRow(rs, rowNum);
-	}
+        return mapRow(rs, rowNum);
+    }
 
-	/**
-	 * Subclasses must implement this method to convert each row of the
-	 * ResultSet into an object of the result type.
-	 * <p>Subclasses of this class, as opposed to direct subclasses of
-	 * MappingSqlQueryWithParameters, don't need to concern themselves
-	 * with the parameters to the execute method of the query object.
-	 * @param rs ResultSet we're working through
-	 * @param rowNum row number (from 0) we're up to
-	 * @return an object of the result type
-	 * @throws SQLException if there's an error extracting data.
-	 * Subclasses can simply not catch SQLExceptions, relying on the
-	 * framework to clean up.
-	 */
-	protected abstract T mapRow(ResultSet rs, int rowNum) throws SQLException;
+    /**
+     * Subclasses must implement this method to convert each row of the
+     * ResultSet into an object of the result type.
+     * <p>Subclasses of this class, as opposed to direct subclasses of
+     * MappingSqlQueryWithParameters, don't need to concern themselves
+     * with the parameters to the execute method of the query object.
+     * @param rs ResultSet we're working through
+     * @param rowNum row number (from 0) we're up to
+     * @return an object of the result type
+     * @throws SQLException if there's an error extracting data.
+     * Subclasses can simply not catch SQLExceptions, relying on the
+     * framework to clean up.
+     */
+    protected abstract T mapRow(ResultSet rs, int rowNum) throws SQLException;
 
 }

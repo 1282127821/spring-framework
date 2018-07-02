@@ -46,76 +46,76 @@ import java.sql.Statement;
  */
 public class Jdbc4NativeJdbcExtractor extends NativeJdbcExtractorAdapter {
 
-	private Class<? extends Connection> connectionType = Connection.class;
+    private Class<? extends Connection> connectionType = Connection.class;
 
-	private Class<? extends Statement> statementType = Statement.class;
+    private Class<? extends Statement> statementType = Statement.class;
 
-	private Class<? extends PreparedStatement> preparedStatementType = PreparedStatement.class;
+    private Class<? extends PreparedStatement> preparedStatementType = PreparedStatement.class;
 
-	private Class<? extends CallableStatement> callableStatementType = CallableStatement.class;
+    private Class<? extends CallableStatement> callableStatementType = CallableStatement.class;
 
-	private Class<? extends ResultSet> resultSetType = ResultSet.class;
-
-
-	/**
-	 * Set the vendor's Connection type, e.g. {@code oracle.jdbc.OracleConnection}.
-	 */
-	public void setConnectionType(Class<? extends Connection> connectionType) {
-		this.connectionType = connectionType;
-	}
-
-	/**
-	 * Set the vendor's Statement type, e.g. {@code oracle.jdbc.OracleStatement}.
-	 */
-	public void setStatementType(Class<? extends Statement> statementType) {
-		this.statementType = statementType;
-	}
-
-	/**
-	 * Set the vendor's PreparedStatement type, e.g. {@code oracle.jdbc.OraclePreparedStatement}.
-	 */
-	public void setPreparedStatementType(Class<? extends PreparedStatement> preparedStatementType) {
-		this.preparedStatementType = preparedStatementType;
-	}
-
-	/**
-	 * Set the vendor's CallableStatement type, e.g. {@code oracle.jdbc.OracleCallableStatement}.
-	 */
-	public void setCallableStatementType(Class<? extends CallableStatement> callableStatementType) {
-		this.callableStatementType = callableStatementType;
-	}
-
-	/**
-	 * Set the vendor's ResultSet type, e.g. {@code oracle.jdbc.OracleResultSet}.
-	 */
-	public void setResultSetType(Class<? extends ResultSet> resultSetType) {
-		this.resultSetType = resultSetType;
-	}
+    private Class<? extends ResultSet> resultSetType = ResultSet.class;
 
 
-	@Override
-	protected Connection doGetNativeConnection(Connection con) throws SQLException {
-		return con.unwrap(this.connectionType);
-	}
+    /**
+     * Set the vendor's Connection type, e.g. {@code oracle.jdbc.OracleConnection}.
+     */
+    public void setConnectionType(Class<? extends Connection> connectionType) {
+        this.connectionType = connectionType;
+    }
 
-	@Override
-	public Statement getNativeStatement(Statement stmt) throws SQLException {
-		return stmt.unwrap(this.statementType);
-	}
+    /**
+     * Set the vendor's Statement type, e.g. {@code oracle.jdbc.OracleStatement}.
+     */
+    public void setStatementType(Class<? extends Statement> statementType) {
+        this.statementType = statementType;
+    }
 
-	@Override
-	public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
-		return ps.unwrap(this.preparedStatementType);
-	}
+    /**
+     * Set the vendor's PreparedStatement type, e.g. {@code oracle.jdbc.OraclePreparedStatement}.
+     */
+    public void setPreparedStatementType(Class<? extends PreparedStatement> preparedStatementType) {
+        this.preparedStatementType = preparedStatementType;
+    }
 
-	@Override
-	public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
-		return cs.unwrap(this.callableStatementType);
-	}
+    /**
+     * Set the vendor's CallableStatement type, e.g. {@code oracle.jdbc.OracleCallableStatement}.
+     */
+    public void setCallableStatementType(Class<? extends CallableStatement> callableStatementType) {
+        this.callableStatementType = callableStatementType;
+    }
 
-	@Override
-	public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
-		return rs.unwrap(this.resultSetType);
-	}
+    /**
+     * Set the vendor's ResultSet type, e.g. {@code oracle.jdbc.OracleResultSet}.
+     */
+    public void setResultSetType(Class<? extends ResultSet> resultSetType) {
+        this.resultSetType = resultSetType;
+    }
+
+
+    @Override
+    protected Connection doGetNativeConnection(Connection con) throws SQLException {
+        return con.unwrap(this.connectionType);
+    }
+
+    @Override
+    public Statement getNativeStatement(Statement stmt) throws SQLException {
+        return stmt.unwrap(this.statementType);
+    }
+
+    @Override
+    public PreparedStatement getNativePreparedStatement(PreparedStatement ps) throws SQLException {
+        return ps.unwrap(this.preparedStatementType);
+    }
+
+    @Override
+    public CallableStatement getNativeCallableStatement(CallableStatement cs) throws SQLException {
+        return cs.unwrap(this.callableStatementType);
+    }
+
+    @Override
+    public ResultSet getNativeResultSet(ResultSet rs) throws SQLException {
+        return rs.unwrap(this.resultSetType);
+    }
 
 }
