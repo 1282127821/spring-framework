@@ -34,13 +34,13 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 @SuppressWarnings("serial")
 public class InvalidResultSetAccessException extends InvalidDataAccessResourceUsageException {
 
-	/**
-	 * Constructor for InvalidResultSetAccessException.
-	 * @param msg message
-	 * @param ex the root cause
-	 */
-	public InvalidResultSetAccessException(String msg, SQLException ex) {
-		super(ex.getMessage(), ex);
-	}
+    /**
+     * Constructor for InvalidResultSetAccessException.
+     * @param msg message
+     * @param ex the root cause
+     */
+    public InvalidResultSetAccessException(String msg, SQLException ex) {
+        super(ex.getMessage(), ex);
+    }
 
 }

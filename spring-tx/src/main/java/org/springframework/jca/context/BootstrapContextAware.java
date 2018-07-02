@@ -32,16 +32,16 @@ import org.springframework.beans.factory.Aware;
  */
 public interface BootstrapContextAware extends Aware {
 
-	/**
-	 * Set the BootstrapContext that this object runs in.
-	 * <p>Invoked after population of normal bean properties but before an init
-	 * callback like InitializingBean's {@code afterPropertiesSet} or a
-	 * custom init-method. Invoked after ApplicationContextAware's
-	 * {@code setApplicationContext}.
-	 * @param bootstrapContext BootstrapContext object to be used by this object
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
-	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext
-	 */
-	void setBootstrapContext(BootstrapContext bootstrapContext);
+    /**
+     * Set the BootstrapContext that this object runs in.
+     * <p>Invoked after population of normal bean properties but before an init
+     * callback like InitializingBean's {@code afterPropertiesSet} or a
+     * custom init-method. Invoked after ApplicationContextAware's
+     * {@code setApplicationContext}.
+     * @param bootstrapContext BootstrapContext object to be used by this object
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext
+     */
+    void setBootstrapContext(BootstrapContext bootstrapContext);
 
 }

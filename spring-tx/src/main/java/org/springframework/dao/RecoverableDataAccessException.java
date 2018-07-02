@@ -30,22 +30,22 @@ package org.springframework.dao;
 @SuppressWarnings("serial")
 public class RecoverableDataAccessException extends DataAccessException {
 
-	/**
-	 * Constructor for RecoverableDataAccessException.
-	 * @param msg the detail message
-	 */
-	public RecoverableDataAccessException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor for RecoverableDataAccessException.
+     * @param msg the detail message
+     */
+    public RecoverableDataAccessException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Constructor for RecoverableDataAccessException.
-	 * @param msg the detail message
-	 * @param cause the root cause (usually from using a underlying
-	 * data access API such as JDBC)
-	 */
-	public RecoverableDataAccessException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Constructor for RecoverableDataAccessException.
+     * @param msg the detail message
+     * @param cause the root cause (usually from using a underlying
+     * data access API such as JDBC)
+     */
+    public RecoverableDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

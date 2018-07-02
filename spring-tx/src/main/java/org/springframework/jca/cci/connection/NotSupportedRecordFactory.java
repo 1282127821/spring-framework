@@ -41,14 +41,14 @@ import javax.resource.cci.RecordFactory;
  */
 public class NotSupportedRecordFactory implements RecordFactory {
 
-	@Override
-	public MappedRecord createMappedRecord(String name) throws ResourceException {
-		throw new NotSupportedException("The RecordFactory facility is not supported by the connector");
-	}
+    @Override
+    public MappedRecord createMappedRecord(String name) throws ResourceException {
+        throw new NotSupportedException("The RecordFactory facility is not supported by the connector");
+    }
 
-	@Override
-	public IndexedRecord createIndexedRecord(String name) throws ResourceException {
-		throw new NotSupportedException("The RecordFactory facility is not supported by the connector");
-	}
+    @Override
+    public IndexedRecord createIndexedRecord(String name) throws ResourceException {
+        throw new NotSupportedException("The RecordFactory facility is not supported by the connector");
+    }
 
 }

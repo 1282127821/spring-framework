@@ -42,60 +42,60 @@ import org.springframework.beans.factory.InitializingBean;
 @SuppressWarnings("serial")
 public class DelegatingConnectionFactory implements ConnectionFactory, InitializingBean {
 
-	private ConnectionFactory targetConnectionFactory;
+    private ConnectionFactory targetConnectionFactory;
 
 
-	/**
-	 * Set the target ConnectionFactory that this ConnectionFactory should delegate to.
-	 */
-	public void setTargetConnectionFactory(ConnectionFactory targetConnectionFactory) {
-		this.targetConnectionFactory = targetConnectionFactory;
-	}
+    /**
+     * Set the target ConnectionFactory that this ConnectionFactory should delegate to.
+     */
+    public void setTargetConnectionFactory(ConnectionFactory targetConnectionFactory) {
+        this.targetConnectionFactory = targetConnectionFactory;
+    }
 
-	/**
-	 * Return the target ConnectionFactory that this ConnectionFactory should delegate to.
-	 */
-	public ConnectionFactory getTargetConnectionFactory() {
-		return this.targetConnectionFactory;
-	}
-
-
-	@Override
-	public void afterPropertiesSet() {
-		if (getTargetConnectionFactory() == null) {
-			throw new IllegalArgumentException("Property 'targetConnectionFactory' is required");
-		}
-	}
+    /**
+     * Return the target ConnectionFactory that this ConnectionFactory should delegate to.
+     */
+    public ConnectionFactory getTargetConnectionFactory() {
+        return this.targetConnectionFactory;
+    }
 
 
-	@Override
-	public Connection getConnection() throws ResourceException {
-		return getTargetConnectionFactory().getConnection();
-	}
+    @Override
+    public void afterPropertiesSet() {
+        if (getTargetConnectionFactory() == null) {
+            throw new IllegalArgumentException("Property 'targetConnectionFactory' is required");
+        }
+    }
 
-	@Override
-	public Connection getConnection(ConnectionSpec connectionSpec) throws ResourceException {
-		return getTargetConnectionFactory().getConnection(connectionSpec);
-	}
 
-	@Override
-	public RecordFactory getRecordFactory() throws ResourceException {
-		return getTargetConnectionFactory().getRecordFactory();
-	}
+    @Override
+    public Connection getConnection() throws ResourceException {
+        return getTargetConnectionFactory().getConnection();
+    }
 
-	@Override
-	public ResourceAdapterMetaData getMetaData() throws ResourceException {
-		return getTargetConnectionFactory().getMetaData();
-	}
+    @Override
+    public Connection getConnection(ConnectionSpec connectionSpec) throws ResourceException {
+        return getTargetConnectionFactory().getConnection(connectionSpec);
+    }
 
-	@Override
-	public Reference getReference() throws NamingException {
-		return getTargetConnectionFactory().getReference();
-	}
+    @Override
+    public RecordFactory getRecordFactory() throws ResourceException {
+        return getTargetConnectionFactory().getRecordFactory();
+    }
 
-	@Override
-	public void setReference(Reference reference) {
-		getTargetConnectionFactory().setReference(reference);
-	}
+    @Override
+    public ResourceAdapterMetaData getMetaData() throws ResourceException {
+        return getTargetConnectionFactory().getMetaData();
+    }
+
+    @Override
+    public Reference getReference() throws NamingException {
+        return getTargetConnectionFactory().getReference();
+    }
+
+    @Override
+    public void setReference(Reference reference) {
+        getTargetConnectionFactory().setReference(reference);
+    }
 
 }

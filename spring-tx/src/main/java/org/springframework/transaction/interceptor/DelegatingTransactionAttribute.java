@@ -31,29 +31,29 @@ import org.springframework.transaction.support.DelegatingTransactionDefinition;
  */
 @SuppressWarnings("serial")
 public abstract class DelegatingTransactionAttribute extends DelegatingTransactionDefinition
-		implements TransactionAttribute, Serializable {
+        implements TransactionAttribute, Serializable {
 
-	private final TransactionAttribute targetAttribute;
-
-
-	/**
-	 * Create a DelegatingTransactionAttribute for the given target attribute.
-	 * @param targetAttribute the target TransactionAttribute to delegate to
-	 */
-	public DelegatingTransactionAttribute(TransactionAttribute targetAttribute) {
-		super(targetAttribute);
-		this.targetAttribute = targetAttribute;
-	}
+    private final TransactionAttribute targetAttribute;
 
 
-	@Override
-	public String getQualifier() {
-		return this.targetAttribute.getQualifier();
-	}
+    /**
+     * Create a DelegatingTransactionAttribute for the given target attribute.
+     * @param targetAttribute the target TransactionAttribute to delegate to
+     */
+    public DelegatingTransactionAttribute(TransactionAttribute targetAttribute) {
+        super(targetAttribute);
+        this.targetAttribute = targetAttribute;
+    }
 
-	@Override
-	public boolean rollbackOn(Throwable ex) {
-		return this.targetAttribute.rollbackOn(ex);
-	}
+
+    @Override
+    public String getQualifier() {
+        return this.targetAttribute.getQualifier();
+    }
+
+    @Override
+    public boolean rollbackOn(Throwable ex) {
+        return this.targetAttribute.rollbackOn(ex);
+    }
 
 }

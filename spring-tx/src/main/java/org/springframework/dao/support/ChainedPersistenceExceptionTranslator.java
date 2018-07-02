@@ -33,35 +33,35 @@ import org.springframework.util.Assert;
  */
 public class ChainedPersistenceExceptionTranslator implements PersistenceExceptionTranslator {
 
-	/** List of PersistenceExceptionTranslators */
-	private final List<PersistenceExceptionTranslator> delegates = new ArrayList<PersistenceExceptionTranslator>(4);
+    /** List of PersistenceExceptionTranslators */
+    private final List<PersistenceExceptionTranslator> delegates = new ArrayList<PersistenceExceptionTranslator>(4);
 
 
-	/**
-	 * Add a PersistenceExceptionTranslator to the chained delegate list.
-	 */
-	public final void addDelegate(PersistenceExceptionTranslator pet) {
-		Assert.notNull(pet, "PersistenceExceptionTranslator must not be null");
-		this.delegates.add(pet);
-	}
+    /**
+     * Add a PersistenceExceptionTranslator to the chained delegate list.
+     */
+    public final void addDelegate(PersistenceExceptionTranslator pet) {
+        Assert.notNull(pet, "PersistenceExceptionTranslator must not be null");
+        this.delegates.add(pet);
+    }
 
-	/**
-	 * Return all registered PersistenceExceptionTranslator delegates (as array).
-	 */
-	public final PersistenceExceptionTranslator[] getDelegates() {
-		return this.delegates.toArray(new PersistenceExceptionTranslator[this.delegates.size()]);
-	}
+    /**
+     * Return all registered PersistenceExceptionTranslator delegates (as array).
+     */
+    public final PersistenceExceptionTranslator[] getDelegates() {
+        return this.delegates.toArray(new PersistenceExceptionTranslator[this.delegates.size()]);
+    }
 
 
-	@Override
-	public DataAccessException translateExceptionIfPossible(RuntimeException ex) {
-		for (PersistenceExceptionTranslator pet : this.delegates) {
-			DataAccessException translatedDex = pet.translateExceptionIfPossible(ex);
-			if (translatedDex != null) {
-				return translatedDex;
-			}
-		}
-		return null;
-	}
+    @Override
+    public DataAccessException translateExceptionIfPossible(RuntimeException ex) {
+        for (PersistenceExceptionTranslator pet : this.delegates) {
+            DataAccessException translatedDex = pet.translateExceptionIfPossible(ex);
+            if (translatedDex != null) {
+                return translatedDex;
+            }
+        }
+        return null;
+    }
 
 }

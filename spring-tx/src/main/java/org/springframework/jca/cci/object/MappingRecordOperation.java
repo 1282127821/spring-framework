@@ -17,6 +17,7 @@
 package org.springframework.jca.cci.object;
 
 import java.sql.SQLException;
+
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.InteractionSpec;
@@ -45,106 +46,105 @@ import org.springframework.jca.cci.core.RecordExtractor;
  */
 public abstract class MappingRecordOperation extends EisOperation {
 
-	/**
-	 * Constructor that allows use as a JavaBean.
-	 */
-	public MappingRecordOperation() {
-	}
+    /**
+     * Constructor that allows use as a JavaBean.
+     */
+    public MappingRecordOperation() {}
 
-	/**
-	 * Convenient constructor with ConnectionFactory and specifications
-	 * (connection and interaction).
-	 * @param connectionFactory ConnectionFactory to use to obtain connections
-	 */
-	public MappingRecordOperation(ConnectionFactory connectionFactory, InteractionSpec interactionSpec) {
-		getCciTemplate().setConnectionFactory(connectionFactory);
-		setInteractionSpec(interactionSpec);
-	}
+    /**
+     * Convenient constructor with ConnectionFactory and specifications
+     * (connection and interaction).
+     * @param connectionFactory ConnectionFactory to use to obtain connections
+     */
+    public MappingRecordOperation(ConnectionFactory connectionFactory, InteractionSpec interactionSpec) {
+        getCciTemplate().setConnectionFactory(connectionFactory);
+        setInteractionSpec(interactionSpec);
+    }
 
-	/**
-	 * Set a RecordCreator that should be used for creating default output Records.
-	 * <p>Default is none: CCI's {@code Interaction.execute} variant
-	 * that returns an output Record will be called.
-	 * <p>Specify a RecordCreator here if you always need to call CCI's
-	 * {@code Interaction.execute} variant with a passed-in output Record.
-	 * This RecordCreator will then be invoked to create a default output Record instance.
-	 * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record)
-	 * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record, Record)
-	 * @see org.springframework.jca.cci.core.CciTemplate#setOutputRecordCreator
-	 */
-	public void setOutputRecordCreator(RecordCreator creator) {
-		getCciTemplate().setOutputRecordCreator(creator);
-	}
+    /**
+     * Set a RecordCreator that should be used for creating default output Records.
+     * <p>Default is none: CCI's {@code Interaction.execute} variant
+     * that returns an output Record will be called.
+     * <p>Specify a RecordCreator here if you always need to call CCI's
+     * {@code Interaction.execute} variant with a passed-in output Record.
+     * This RecordCreator will then be invoked to create a default output Record instance.
+     * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record)
+     * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record, Record)
+     * @see org.springframework.jca.cci.core.CciTemplate#setOutputRecordCreator
+     */
+    public void setOutputRecordCreator(RecordCreator creator) {
+        getCciTemplate().setOutputRecordCreator(creator);
+    }
 
-	/**
-	 * Execute the interaction encapsulated by this operation object.
-	 * @param inputObject the input data, to be converted to a Record
-	 * by the {@code createInputRecord} method
-	 * @return the output data extracted with the {@code extractOutputData} method
-	 * @throws DataAccessException if there is any problem
-	 * @see #createInputRecord
-	 * @see #extractOutputData
-	 */
-	public Object execute(Object inputObject) throws DataAccessException {
-		return getCciTemplate().execute(
-				getInteractionSpec(), new RecordCreatorImpl(inputObject), new RecordExtractorImpl());
-	}
-
-
-	/**
-	 * Subclasses must implement this method to generate an input Record
-	 * from an input object passed into the {@code execute} method.
-	 * @param inputObject the passed-in input object
-	 * @return the CCI input Record
-	 * @throws ResourceException if thrown by a CCI method, to be auto-converted
-	 * to a DataAccessException
-	 * @see #execute(Object)
-	 */
-	protected abstract Record createInputRecord(RecordFactory recordFactory, Object inputObject)
-			throws ResourceException, DataAccessException;
-
-	/**
-	 * Subclasses must implement this method to convert the Record returned
-	 * by CCI execution into a result object for the {@code execute} method.
-	 * @param outputRecord the Record returned by CCI execution
-	 * @return the result object
-	 * @throws ResourceException if thrown by a CCI method, to be auto-converted
-	 * to a DataAccessException
-	 * @see #execute(Object)
-	 */
-	protected abstract Object extractOutputData(Record outputRecord)
-			throws ResourceException, SQLException, DataAccessException;
+    /**
+     * Execute the interaction encapsulated by this operation object.
+     * @param inputObject the input data, to be converted to a Record
+     * by the {@code createInputRecord} method
+     * @return the output data extracted with the {@code extractOutputData} method
+     * @throws DataAccessException if there is any problem
+     * @see #createInputRecord
+     * @see #extractOutputData
+     */
+    public Object execute(Object inputObject) throws DataAccessException {
+        return getCciTemplate().execute(getInteractionSpec(), new RecordCreatorImpl(inputObject),
+                new RecordExtractorImpl());
+    }
 
 
-	/**
-	 * Implementation of RecordCreator that calls the enclosing
-	 * class's {@code createInputRecord} method.
-	 */
-	protected class RecordCreatorImpl implements RecordCreator {
+    /**
+     * Subclasses must implement this method to generate an input Record
+     * from an input object passed into the {@code execute} method.
+     * @param inputObject the passed-in input object
+     * @return the CCI input Record
+     * @throws ResourceException if thrown by a CCI method, to be auto-converted
+     * to a DataAccessException
+     * @see #execute(Object)
+     */
+    protected abstract Record createInputRecord(RecordFactory recordFactory, Object inputObject)
+            throws ResourceException, DataAccessException;
 
-		private final Object inputObject;
+    /**
+     * Subclasses must implement this method to convert the Record returned
+     * by CCI execution into a result object for the {@code execute} method.
+     * @param outputRecord the Record returned by CCI execution
+     * @return the result object
+     * @throws ResourceException if thrown by a CCI method, to be auto-converted
+     * to a DataAccessException
+     * @see #execute(Object)
+     */
+    protected abstract Object extractOutputData(Record outputRecord)
+            throws ResourceException, SQLException, DataAccessException;
 
-		public RecordCreatorImpl(Object inObject) {
-			this.inputObject = inObject;
-		}
 
-		@Override
-		public Record createRecord(RecordFactory recordFactory) throws ResourceException, DataAccessException {
-			return createInputRecord(recordFactory, this.inputObject);
-		}
-	}
+    /**
+     * Implementation of RecordCreator that calls the enclosing
+     * class's {@code createInputRecord} method.
+     */
+    protected class RecordCreatorImpl implements RecordCreator {
+
+        private final Object inputObject;
+
+        public RecordCreatorImpl(Object inObject) {
+            this.inputObject = inObject;
+        }
+
+        @Override
+        public Record createRecord(RecordFactory recordFactory) throws ResourceException, DataAccessException {
+            return createInputRecord(recordFactory, this.inputObject);
+        }
+    }
 
 
-	/**
-	 * Implementation of RecordExtractor that calls the enclosing
-	 * class's {@code extractOutputData} method.
-	 */
-	protected class RecordExtractorImpl implements RecordExtractor<Object> {
+    /**
+     * Implementation of RecordExtractor that calls the enclosing
+     * class's {@code extractOutputData} method.
+     */
+    protected class RecordExtractorImpl implements RecordExtractor<Object> {
 
-		@Override
-		public Object extractData(Record record) throws ResourceException, SQLException, DataAccessException {
-			return extractOutputData(record);
-		}
-	}
+        @Override
+        public Object extractData(Record record) throws ResourceException, SQLException, DataAccessException {
+            return extractOutputData(record);
+        }
+    }
 
 }

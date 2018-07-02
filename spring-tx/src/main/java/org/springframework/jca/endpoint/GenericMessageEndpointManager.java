@@ -146,189 +146,187 @@ import org.springframework.context.SmartLifecycle;
  */
 public class GenericMessageEndpointManager implements SmartLifecycle, InitializingBean, DisposableBean {
 
-	private ResourceAdapter resourceAdapter;
+    private ResourceAdapter resourceAdapter;
 
-	private MessageEndpointFactory messageEndpointFactory;
+    private MessageEndpointFactory messageEndpointFactory;
 
-	private ActivationSpec activationSpec;
+    private ActivationSpec activationSpec;
 
-	private boolean autoStartup = true;
+    private boolean autoStartup = true;
 
-	private int phase = Integer.MAX_VALUE;
+    private int phase = Integer.MAX_VALUE;
 
-	private boolean running = false;
+    private boolean running = false;
 
-	private final Object lifecycleMonitor = new Object();
+    private final Object lifecycleMonitor = new Object();
 
 
-	/**
-	 * Set the JCA ResourceAdapter to manage endpoints for.
-	 */
-	public void setResourceAdapter(ResourceAdapter resourceAdapter) {
-		this.resourceAdapter = resourceAdapter;
-	}
+    /**
+     * Set the JCA ResourceAdapter to manage endpoints for.
+     */
+    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+        this.resourceAdapter = resourceAdapter;
+    }
 
-	/**
-	 * Return the JCA ResourceAdapter to manage endpoints for.
-	 */
-	public ResourceAdapter getResourceAdapter() {
-		return this.resourceAdapter;
-	}
+    /**
+     * Return the JCA ResourceAdapter to manage endpoints for.
+     */
+    public ResourceAdapter getResourceAdapter() {
+        return this.resourceAdapter;
+    }
 
-	/**
-	 * Set the JCA MessageEndpointFactory to activate, pointing to a
-	 * MessageListener object that the endpoints will delegate to.
-	 * <p>A MessageEndpointFactory instance may be shared across multiple
-	 * endpoints (i.e. multiple GenericMessageEndpointManager instances),
-	 * with different {@link #setActivationSpec ActivationSpec} objects applied.
-	 * @see GenericMessageEndpointFactory#setMessageListener
-	 */
-	public void setMessageEndpointFactory(MessageEndpointFactory messageEndpointFactory) {
-		this.messageEndpointFactory = messageEndpointFactory;
-	}
+    /**
+     * Set the JCA MessageEndpointFactory to activate, pointing to a
+     * MessageListener object that the endpoints will delegate to.
+     * <p>A MessageEndpointFactory instance may be shared across multiple
+     * endpoints (i.e. multiple GenericMessageEndpointManager instances),
+     * with different {@link #setActivationSpec ActivationSpec} objects applied.
+     * @see GenericMessageEndpointFactory#setMessageListener
+     */
+    public void setMessageEndpointFactory(MessageEndpointFactory messageEndpointFactory) {
+        this.messageEndpointFactory = messageEndpointFactory;
+    }
 
-	/**
-	 * Return the JCA MessageEndpointFactory to activate.
-	 */
-	public MessageEndpointFactory getMessageEndpointFactory() {
-		return this.messageEndpointFactory;
-	}
+    /**
+     * Return the JCA MessageEndpointFactory to activate.
+     */
+    public MessageEndpointFactory getMessageEndpointFactory() {
+        return this.messageEndpointFactory;
+    }
 
-	/**
-	 * Set the JCA ActivationSpec to use for activating the endpoint.
-	 * <p>Note that this ActivationSpec instance should not be shared
-	 * across multiple ResourceAdapter instances.
-	 */
-	public void setActivationSpec(ActivationSpec activationSpec) {
-		this.activationSpec = activationSpec;
-	}
+    /**
+     * Set the JCA ActivationSpec to use for activating the endpoint.
+     * <p>Note that this ActivationSpec instance should not be shared
+     * across multiple ResourceAdapter instances.
+     */
+    public void setActivationSpec(ActivationSpec activationSpec) {
+        this.activationSpec = activationSpec;
+    }
 
-	/**
-	 * Return the JCA ActivationSpec to use for activating the endpoint.
-	 */
-	public ActivationSpec getActivationSpec() {
-		return this.activationSpec;
-	}
+    /**
+     * Return the JCA ActivationSpec to use for activating the endpoint.
+     */
+    public ActivationSpec getActivationSpec() {
+        return this.activationSpec;
+    }
 
-	/**
-	 * Set whether to auto-start the endpoint activation after this endpoint
-	 * manager has been initialized and the context has been refreshed.
-	 * <p>Default is "true". Turn this flag off to defer the endpoint
-	 * activation until an explicit {@link #start()} call.
-	 */
-	public void setAutoStartup(boolean autoStartup) {
-		this.autoStartup = autoStartup;
-	}
+    /**
+     * Set whether to auto-start the endpoint activation after this endpoint
+     * manager has been initialized and the context has been refreshed.
+     * <p>Default is "true". Turn this flag off to defer the endpoint
+     * activation until an explicit {@link #start()} call.
+     */
+    public void setAutoStartup(boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
 
-	/**
-	 * Return the value for the 'autoStartup' property.	If "true", this
-	 * endpoint manager will start upon a ContextRefreshedEvent.
-	 */
-	@Override
-	public boolean isAutoStartup() {
-		return this.autoStartup;
-	}
+    /**
+     * Return the value for the 'autoStartup' property.	If "true", this
+     * endpoint manager will start upon a ContextRefreshedEvent.
+     */
+    @Override
+    public boolean isAutoStartup() {
+        return this.autoStartup;
+    }
 
-	/**
-	 * Specify the phase in which this endpoint manager should be started
-	 * and stopped. The startup order proceeds from lowest to highest, and
-	 * the shutdown order is the reverse of that. By default this value is
-	 * Integer.MAX_VALUE meaning that this endpoint manager starts as late
-	 * as possible and stops as soon as possible.
-	 */
-	public void setPhase(int phase) {
-		this.phase = phase;
-	}
+    /**
+     * Specify the phase in which this endpoint manager should be started
+     * and stopped. The startup order proceeds from lowest to highest, and
+     * the shutdown order is the reverse of that. By default this value is
+     * Integer.MAX_VALUE meaning that this endpoint manager starts as late
+     * as possible and stops as soon as possible.
+     */
+    public void setPhase(int phase) {
+        this.phase = phase;
+    }
 
-	/**
-	 * Return the phase in which this endpoint manager will be started and stopped.
-	 */
-	@Override
-	public int getPhase() {
-		return this.phase;
-	}
+    /**
+     * Return the phase in which this endpoint manager will be started and stopped.
+     */
+    @Override
+    public int getPhase() {
+        return this.phase;
+    }
 
-	/**
-	 * Prepares the message endpoint, and automatically activates it
-	 * if the "autoStartup" flag is set to "true".
-	 */
-	@Override
-	public void afterPropertiesSet() throws ResourceException {
-		if (getResourceAdapter() == null) {
-			throw new IllegalArgumentException("Property 'resourceAdapter' is required");
-		}
-		if (getMessageEndpointFactory() == null) {
-			throw new IllegalArgumentException("Property 'messageEndpointFactory' is required");
-		}
-		ActivationSpec activationSpec = getActivationSpec();
-		if (activationSpec == null) {
-			throw new IllegalArgumentException("Property 'activationSpec' is required");
-		}
+    /**
+     * Prepares the message endpoint, and automatically activates it
+     * if the "autoStartup" flag is set to "true".
+     */
+    @Override
+    public void afterPropertiesSet() throws ResourceException {
+        if (getResourceAdapter() == null) {
+            throw new IllegalArgumentException("Property 'resourceAdapter' is required");
+        }
+        if (getMessageEndpointFactory() == null) {
+            throw new IllegalArgumentException("Property 'messageEndpointFactory' is required");
+        }
+        ActivationSpec activationSpec = getActivationSpec();
+        if (activationSpec == null) {
+            throw new IllegalArgumentException("Property 'activationSpec' is required");
+        }
 
-		if (activationSpec.getResourceAdapter() == null) {
-			activationSpec.setResourceAdapter(getResourceAdapter());
-		}
-		else if (activationSpec.getResourceAdapter() != getResourceAdapter()) {
-			throw new IllegalArgumentException("ActivationSpec [" + activationSpec +
-					"] is associated with a different ResourceAdapter: " + activationSpec.getResourceAdapter());
-		}
-	}
+        if (activationSpec.getResourceAdapter() == null) {
+            activationSpec.setResourceAdapter(getResourceAdapter());
+        } else if (activationSpec.getResourceAdapter() != getResourceAdapter()) {
+            throw new IllegalArgumentException("ActivationSpec [" + activationSpec
+                    + "] is associated with a different ResourceAdapter: " + activationSpec.getResourceAdapter());
+        }
+    }
 
-	/**
-	 * Activates the configured message endpoint.
-	 */
-	@Override
-	public void start() {
-		synchronized (this.lifecycleMonitor) {
-			if (!this.running) {
-				try {
-					getResourceAdapter().endpointActivation(getMessageEndpointFactory(), getActivationSpec());
-				}
-				catch (ResourceException ex) {
-					throw new IllegalStateException("Could not activate message endpoint", ex);
-				}
-				this.running = true;
-			}
-		}
-	}
+    /**
+     * Activates the configured message endpoint.
+     */
+    @Override
+    public void start() {
+        synchronized (this.lifecycleMonitor) {
+            if (!this.running) {
+                try {
+                    getResourceAdapter().endpointActivation(getMessageEndpointFactory(), getActivationSpec());
+                } catch (ResourceException ex) {
+                    throw new IllegalStateException("Could not activate message endpoint", ex);
+                }
+                this.running = true;
+            }
+        }
+    }
 
-	/**
-	 * Deactivates the configured message endpoint.
-	 */
-	@Override
-	public void stop() {
-		synchronized (this.lifecycleMonitor) {
-			if (this.running) {
-				getResourceAdapter().endpointDeactivation(getMessageEndpointFactory(), getActivationSpec());
-				this.running = false;
-			}
-		}
-	}
+    /**
+     * Deactivates the configured message endpoint.
+     */
+    @Override
+    public void stop() {
+        synchronized (this.lifecycleMonitor) {
+            if (this.running) {
+                getResourceAdapter().endpointDeactivation(getMessageEndpointFactory(), getActivationSpec());
+                this.running = false;
+            }
+        }
+    }
 
-	@Override
-	public void stop(Runnable callback) {
-		synchronized (this.lifecycleMonitor) {
-			stop();
-			callback.run();
-		}
-	}
+    @Override
+    public void stop(Runnable callback) {
+        synchronized (this.lifecycleMonitor) {
+            stop();
+            callback.run();
+        }
+    }
 
-	/**
-	 * Return whether the configured message endpoint is currently active.
-	 */
-	@Override
-	public boolean isRunning() {
-		synchronized (this.lifecycleMonitor) {
-			return this.running;
-		}
-	}
+    /**
+     * Return whether the configured message endpoint is currently active.
+     */
+    @Override
+    public boolean isRunning() {
+        synchronized (this.lifecycleMonitor) {
+            return this.running;
+        }
+    }
 
-	/**
-	 * Deactivates the message endpoint, preparing it for shutdown.
-	 */
-	@Override
-	public void destroy() {
-		stop();
-	}
+    /**
+     * Deactivates the message endpoint, preparing it for shutdown.
+     */
+    @Override
+    public void destroy() {
+        stop();
+    }
 
 }
