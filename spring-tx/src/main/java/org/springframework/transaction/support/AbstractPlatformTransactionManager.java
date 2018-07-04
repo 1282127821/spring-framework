@@ -810,6 +810,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
      */
     @Override
     public final void rollback(TransactionStatus status) throws TransactionException {
+        // 如果事务已经完成，那么再次回滚会抛出异常
         if (status.isCompleted()) {
             throw new IllegalTransactionStateException(
                     "Transaction is already completed - do not call commit or rollback more than once per transaction");
@@ -828,29 +829,27 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
     private void processRollback(DefaultTransactionStatus status) {
         try {
             try {
+                // 激活所有 TransactionSynchronization 中对应的方法
                 triggerBeforeCompletion(status);
                 if (status.hasSavepoint()) {
                     if (status.isDebug()) {
                         logger.debug("Rolling back transaction to savepoint");
                     }
+                    // 如果有保存点，即当前事务是单独的线程，则会退到保存点
                     status.rollbackToHeldSavepoint();
                 } else if (status.isNewTransaction()) {
                     if (status.isDebug()) {
                         logger.debug("Initiating transaction rollback");
                     }
+                    // 如果当前事务是独立的新事务，则直接回退
                     doRollback(status);
                 } else if (status.hasTransaction()) {
                     if (status.isLocalRollbackOnly() || isGlobalRollbackOnParticipationFailure()) {
-                        if (status.isDebug()) {
-                            logger.debug(
-                                    "Participating transaction failed - marking existing transaction as rollback-only");
-                        }
+                        // 如果当前事务不是独立的事务，那么只能标记状态，等到事务链执行完毕后统一回滚
+                        logger.debug("Participating transaction failed - marking existing transaction as rollback-only");
                         doSetRollbackOnly(status);
                     } else {
-                        if (status.isDebug()) {
-                            logger.debug(
-                                    "Participating transaction failed - letting transaction originator decide on rollback");
-                        }
+                        logger.debug("Participating transaction failed - letting transaction originator decide on rollback");
                     }
                 } else {
                     logger.debug("Should roll back transaction but cannot - no transaction available");
@@ -864,6 +863,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
             }
             triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);
         } finally {
+            // 清空记录的资料并将挂起的资料恢复
             cleanupAfterCompletion(status);
         }
     }
@@ -990,6 +990,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
      * @see #doCleanupAfterCompletion
      */
     private void cleanupAfterCompletion(DefaultTransactionStatus status) {
+        // 设置完成状态
         status.setCompleted();
         if (status.isNewSynchronization()) {
             TransactionSynchronizationManager.clear();
@@ -1001,6 +1002,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
             if (status.isDebug()) {
                 logger.debug("Resuming suspended transaction after completion of inner transaction");
             }
+            // 结束之前事务的挂起状态
             resume(status.getTransaction(), (SuspendedResourcesHolder) status.getSuspendedResources());
         }
     }
