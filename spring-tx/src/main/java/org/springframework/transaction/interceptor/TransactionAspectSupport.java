@@ -265,32 +265,41 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
     protected Object invokeWithinTransaction(Method method, Class<?> targetClass, final InvocationCallback invocation)
             throws Throwable {
 
+        // 获取对应事务属性
         // If the transaction attribute is null, the method is non-transactional.
         final TransactionAttribute txAttr =
                 getTransactionAttributeSource().getTransactionAttribute(method, targetClass);
+        // 获取 BeanFactory 中的 TransactionManager
         final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+        // 构造方法唯一标识（类.方法，如 com.test.service.UserServiceImpl.save）
         final String joinpointIdentification = methodIdentification(method, targetClass);
 
+        // 声明式事务
         if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
+            // 创建 TransactionInfo
             // Standard transaction demarcation with getTransaction and commit/rollback calls.
             TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
             Object retVal = null;
             try {
+                // 执行被增强的方法
                 // This is an around advice: Invoke the next interceptor in the chain.
                 // This will normally result in a target object being invoked.
                 retVal = invocation.proceedWithInvocation();
             } catch (Throwable ex) {
-                // target invocation exception
+                // 异常回滚 target invocation exception
                 completeTransactionAfterThrowing(txInfo, ex);
                 throw ex;
             } finally {
+                // 清除信息
                 cleanupTransactionInfo(txInfo);
             }
+            // 提交事务
             commitTransactionAfterReturning(txInfo);
             return retVal;
         }
 
         else {
+            // 编程式事务
             // It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
             try {
                 Object result = ((CallbackPreferringPlatformTransactionManager) tm).execute(txAttr,
@@ -401,6 +410,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
     protected TransactionInfo createTransactionIfNecessary(PlatformTransactionManager tm, TransactionAttribute txAttr,
             final String joinpointIdentification) {
 
+        // 如果没有指定名称，则使用方法唯一标识，并使用DelegatingTransactionAttribute封装txAttr
         // If no name specified, apply method identification as transaction name.
         if (txAttr != null && txAttr.getName() == null) {
             txAttr = new DelegatingTransactionAttribute(txAttr) {
@@ -414,6 +424,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
         TransactionStatus status = null;
         if (txAttr != null) {
             if (tm != null) {
+                // 获取TransactionStatus
                 status = tm.getTransaction(txAttr);
             } else {
                 if (logger.isDebugEnabled()) {
@@ -422,6 +433,8 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
                 }
             }
         }
+
+        // 根据指定的属性与status准备一个TransactionInfo
         return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
     }
 

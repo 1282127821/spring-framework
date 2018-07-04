@@ -343,16 +343,19 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
             definition = new DefaultTransactionDefinition();
         }
 
+        // 判断当前线程是否存在事务，判断依据为当前线程记录的连接不为空，且连接中(connectionHolder)的transactionActive属性不为空
         if (isExistingTransaction(transaction)) {
+            // 当前线程已经存在事务
             // Existing transaction found -> check propagation behavior to find out how to behave.
             return handleExistingTransaction(definition, transaction, debugEnabled);
         }
 
-        // Check definition settings for new transaction.
+        // 事务超时设置验证 Check definition settings for new transaction.
         if (definition.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
             throw new InvalidTimeoutException("Invalid transaction timeout", definition.getTimeout());
         }
 
+        // 如果当前线程不存在事务，但是 propagationBehavior 却被声明为 PROPAGATION_MANDATORY --> 抛出异常
         // No existing transaction found -> check propagation behavior to find out how to proceed.
         if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
             throw new IllegalTransactionStateException(
@@ -360,6 +363,8 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
         } else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED
                 || definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW
                 || definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+            // PROPAGATION_REQUIRED  PROPAGATION_REQUIRES_NEW  PROPAGATION_NESTED 都需要新建事务
+            // 空挂起
             SuspendedResourcesHolder suspendedResources = suspend(null);
             if (debugEnabled) {
                 logger.debug("Creating new transaction with name [" + definition.getName() + "]: " + definition);
@@ -368,7 +373,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
                 boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
                 DefaultTransactionStatus status = newTransactionStatus(definition, transaction, true,
                         newSynchronization, debugEnabled, suspendedResources);
+                /*
+                 * 构造 Transaction，包括ConnectionHolder、隔离级别、Timeout
+                 * 如果是新连接，绑定到当前线程
+                 */
                 doBegin(transaction, definition);
+                // 新同步事务的属性，针对于当前线程的设置
                 prepareSynchronization(status, definition);
                 return status;
             } catch (RuntimeException ex) {
