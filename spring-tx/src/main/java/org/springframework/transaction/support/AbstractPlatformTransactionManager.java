@@ -703,6 +703,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
         }
 
         DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
+        // 如果在事务链中已经被标记回滚，那么不会尝试提交事务，直接回滚
         if (defStatus.isLocalRollbackOnly()) {
             if (defStatus.isDebug()) {
                 logger.debug("Transactional code has requested rollback");
@@ -724,6 +725,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
             return;
         }
 
+        // 处理事务提交
         processCommit(defStatus);
     }
 
@@ -749,11 +751,13 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
                     if (status.isDebug()) {
                         logger.debug("Releasing transaction savepoint");
                     }
+                    // 如果存在保存点，则清除保存点信息
                     status.releaseHeldSavepoint();
                 } else if (status.isNewTransaction()) {
                     if (status.isDebug()) {
                         logger.debug("Initiating transaction commit");
                     }
+                    // 如果是独立的事务，则直接提交
                     doCommit(status);
                 }
                 // Throw UnexpectedRollbackException if we have a global rollback-only
@@ -784,6 +788,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
                 if (!beforeCompletionInvoked) {
                     triggerBeforeCompletion(status);
                 }
+                // 提交过程中出现异常，则回滚
                 doRollbackOnCommitException(status, err);
                 throw err;
             }
