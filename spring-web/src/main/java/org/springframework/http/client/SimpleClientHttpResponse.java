@@ -33,57 +33,57 @@ import org.springframework.util.StringUtils;
  */
 final class SimpleClientHttpResponse extends AbstractClientHttpResponse {
 
-	private final HttpURLConnection connection;
+    private final HttpURLConnection connection;
 
-	private HttpHeaders headers;
-
-
-	SimpleClientHttpResponse(HttpURLConnection connection) {
-		this.connection = connection;
-	}
+    private HttpHeaders headers;
 
 
-	@Override
-	public int getRawStatusCode() throws IOException {
-		return this.connection.getResponseCode();
-	}
+    SimpleClientHttpResponse(HttpURLConnection connection) {
+        this.connection = connection;
+    }
 
-	@Override
-	public String getStatusText() throws IOException {
-		return this.connection.getResponseMessage();
-	}
 
-	@Override
-	public HttpHeaders getHeaders() {
-		if (this.headers == null) {
-			this.headers = new HttpHeaders();
-			// Header field 0 is the status line for most HttpURLConnections, but not on GAE
-			String name = this.connection.getHeaderFieldKey(0);
-			if (StringUtils.hasLength(name)) {
-				this.headers.add(name, this.connection.getHeaderField(0));
-			}
-			int i = 1;
-			while (true) {
-				name = this.connection.getHeaderFieldKey(i);
-				if (!StringUtils.hasLength(name)) {
-					break;
-				}
-				this.headers.add(name, this.connection.getHeaderField(i));
-				i++;
-			}
-		}
-		return this.headers;
-	}
+    @Override
+    public int getRawStatusCode() throws IOException {
+        return this.connection.getResponseCode();
+    }
 
-	@Override
-	public InputStream getBody() throws IOException {
-		InputStream errorStream = this.connection.getErrorStream();
-		return (errorStream != null ? errorStream : this.connection.getInputStream());
-	}
+    @Override
+    public String getStatusText() throws IOException {
+        return this.connection.getResponseMessage();
+    }
 
-	@Override
-	public void close() {
-		this.connection.disconnect();
-	}
+    @Override
+    public HttpHeaders getHeaders() {
+        if (this.headers == null) {
+            this.headers = new HttpHeaders();
+            // Header field 0 is the status line for most HttpURLConnections, but not on GAE
+            String name = this.connection.getHeaderFieldKey(0);
+            if (StringUtils.hasLength(name)) {
+                this.headers.add(name, this.connection.getHeaderField(0));
+            }
+            int i = 1;
+            while (true) {
+                name = this.connection.getHeaderFieldKey(i);
+                if (!StringUtils.hasLength(name)) {
+                    break;
+                }
+                this.headers.add(name, this.connection.getHeaderField(i));
+                i++;
+            }
+        }
+        return this.headers;
+    }
+
+    @Override
+    public InputStream getBody() throws IOException {
+        InputStream errorStream = this.connection.getErrorStream();
+        return (errorStream != null ? errorStream : this.connection.getInputStream());
+    }
+
+    @Override
+    public void close() {
+        this.connection.disconnect();
+    }
 
 }

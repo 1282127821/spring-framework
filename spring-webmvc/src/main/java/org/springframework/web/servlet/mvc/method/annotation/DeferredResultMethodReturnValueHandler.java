@@ -31,27 +31,27 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class DeferredResultMethodReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return DeferredResult.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return DeferredResult.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		return (returnValue != null && returnValue instanceof DeferredResult);
-	}
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        return (returnValue != null && returnValue instanceof DeferredResult);
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		DeferredResult<?> deferredResult = (DeferredResult<?>) returnValue;
-		WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
-	}
+        DeferredResult<?> deferredResult = (DeferredResult<?>) returnValue;
+        WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
+    }
 
 }

@@ -17,6 +17,7 @@
 package org.springframework.web.context.support;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,34 +49,32 @@ import org.springframework.web.context.WebApplicationContext;
 @SuppressWarnings("serial")
 public class HttpRequestHandlerServlet extends HttpServlet {
 
-	private HttpRequestHandler target;
+    private HttpRequestHandler target;
 
 
-	@Override
-	public void init() throws ServletException {
-		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		this.target = wac.getBean(getServletName(), HttpRequestHandler.class);
-	}
+    @Override
+    public void init() throws ServletException {
+        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+        this.target = wac.getBean(getServletName(), HttpRequestHandler.class);
+    }
 
 
-	@Override
-	protected void service(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		LocaleContextHolder.setLocale(request.getLocale());
-		try {
-			this.target.handleRequest(request, response);
-		}
-		catch (HttpRequestMethodNotSupportedException ex) {
-			String[] supportedMethods = ex.getSupportedMethods();
-			if (supportedMethods != null) {
-				response.setHeader("Allow", StringUtils.arrayToDelimitedString(supportedMethods, ", "));
-			}
-			response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ex.getMessage());
-		}
-		finally {
-			LocaleContextHolder.resetLocaleContext();
-		}
-	}
+        LocaleContextHolder.setLocale(request.getLocale());
+        try {
+            this.target.handleRequest(request, response);
+        } catch (HttpRequestMethodNotSupportedException ex) {
+            String[] supportedMethods = ex.getSupportedMethods();
+            if (supportedMethods != null) {
+                response.setHeader("Allow", StringUtils.arrayToDelimitedString(supportedMethods, ", "));
+            }
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ex.getMessage());
+        } finally {
+            LocaleContextHolder.resetLocaleContext();
+        }
+    }
 
 }

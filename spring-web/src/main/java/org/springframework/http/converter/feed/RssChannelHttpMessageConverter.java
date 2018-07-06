@@ -16,9 +16,9 @@
 
 package org.springframework.http.converter.feed;
 
-import com.rometools.rome.feed.rss.Channel;
-
 import org.springframework.http.MediaType;
+
+import com.rometools.rome.feed.rss.Channel;
 
 /**
  * Implementation of {@link org.springframework.http.converter.HttpMessageConverter}
@@ -37,13 +37,13 @@ import org.springframework.http.MediaType;
  */
 public class RssChannelHttpMessageConverter extends AbstractWireFeedHttpMessageConverter<Channel> {
 
-	public RssChannelHttpMessageConverter() {
-		super(new MediaType("application", "rss+xml"));
-	}
+    public RssChannelHttpMessageConverter() {
+        super(new MediaType("application", "rss+xml"));
+    }
 
-	@Override
-	protected boolean supports(Class<?> clazz) {
-		return Channel.class.isAssignableFrom(clazz);
-	}
+    @Override
+    protected boolean supports(Class<?> clazz) {
+        return Channel.class.isAssignableFrom(clazz);
+    }
 
 }

@@ -33,42 +33,42 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
  */
 public class InterceptorRegistry {
 
-	private final List<InterceptorRegistration> registrations = new ArrayList<InterceptorRegistration>();
+    private final List<InterceptorRegistration> registrations = new ArrayList<InterceptorRegistration>();
 
-	/**
-	 * Adds the provided {@link HandlerInterceptor}.
-	 * @param interceptor the interceptor to add
-	 * @return An {@link InterceptorRegistration} that allows you optionally configure the
-	 * registered interceptor further for example adding URL patterns it should apply to.
-	 */
-	public InterceptorRegistration addInterceptor(HandlerInterceptor interceptor) {
-		InterceptorRegistration registration = new InterceptorRegistration(interceptor);
-		registrations.add(registration);
-		return registration;
-	}
+    /**
+     * Adds the provided {@link HandlerInterceptor}.
+     * @param interceptor the interceptor to add
+     * @return An {@link InterceptorRegistration} that allows you optionally configure the
+     * registered interceptor further for example adding URL patterns it should apply to.
+     */
+    public InterceptorRegistration addInterceptor(HandlerInterceptor interceptor) {
+        InterceptorRegistration registration = new InterceptorRegistration(interceptor);
+        registrations.add(registration);
+        return registration;
+    }
 
-	/**
-	 * Adds the provided {@link WebRequestInterceptor}.
-	 * @param interceptor the interceptor to add
-	 * @return An {@link InterceptorRegistration} that allows you optionally configure the
-	 * registered interceptor further for example adding URL patterns it should apply to.
-	 */
-	public InterceptorRegistration addWebRequestInterceptor(WebRequestInterceptor interceptor) {
-		WebRequestHandlerInterceptorAdapter adapted = new WebRequestHandlerInterceptorAdapter(interceptor);
-		InterceptorRegistration registration = new InterceptorRegistration(adapted);
-		registrations.add(registration);
-		return registration;
-	}
+    /**
+     * Adds the provided {@link WebRequestInterceptor}.
+     * @param interceptor the interceptor to add
+     * @return An {@link InterceptorRegistration} that allows you optionally configure the
+     * registered interceptor further for example adding URL patterns it should apply to.
+     */
+    public InterceptorRegistration addWebRequestInterceptor(WebRequestInterceptor interceptor) {
+        WebRequestHandlerInterceptorAdapter adapted = new WebRequestHandlerInterceptorAdapter(interceptor);
+        InterceptorRegistration registration = new InterceptorRegistration(adapted);
+        registrations.add(registration);
+        return registration;
+    }
 
-	/**
-	 * Returns all registered interceptors.
-	 */
-	protected List<Object> getInterceptors() {
-		List<Object> interceptors = new ArrayList<Object>();
-		for (InterceptorRegistration registration : registrations) {
-			interceptors.add(registration.getInterceptor());
-		}
-		return interceptors ;
-	}
+    /**
+     * Returns all registered interceptors.
+     */
+    protected List<Object> getInterceptors() {
+        List<Object> interceptors = new ArrayList<Object>();
+        for (InterceptorRegistration registration : registrations) {
+            interceptors.add(registration.getInterceptor());
+        }
+        return interceptors;
+    }
 
 }

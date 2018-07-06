@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.view.document;
 
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,21 +35,21 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public abstract class AbstractXlsxView extends AbstractXlsView {
 
-	/**
-	 * Default Constructor.
-	 * <p>Sets the content type of the view to
-	 * {@code "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}.
-	 */
-	public AbstractXlsxView() {
-		setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	}
+    /**
+     * Default Constructor.
+     * <p>Sets the content type of the view to
+     * {@code "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}.
+     */
+    public AbstractXlsxView() {
+        setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
 
-	/**
-	 * This implementation creates an {@link XSSFWorkbook} for the XLSX format.
-	 */
-	@Override
-	protected Workbook createWorkbook(Map<String, Object> model, HttpServletRequest request) {
-		return new XSSFWorkbook();
-	}
+    /**
+     * This implementation creates an {@link XSSFWorkbook} for the XLSX format.
+     */
+    @Override
+    protected Workbook createWorkbook(Map<String, Object> model, HttpServletRequest request) {
+        return new XSSFWorkbook();
+    }
 
 }

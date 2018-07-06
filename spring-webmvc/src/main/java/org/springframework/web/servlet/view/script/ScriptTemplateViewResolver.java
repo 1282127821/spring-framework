@@ -35,13 +35,13 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
  */
 public class ScriptTemplateViewResolver extends UrlBasedViewResolver {
 
-	public ScriptTemplateViewResolver() {
-		setViewClass(requiredViewClass());
-	}
+    public ScriptTemplateViewResolver() {
+        setViewClass(requiredViewClass());
+    }
 
-	@Override
-	protected Class<?> requiredViewClass() {
-		return ScriptTemplateView.class;
-	}
+    @Override
+    protected Class<?> requiredViewClass() {
+        return ScriptTemplateView.class;
+    }
 
 }

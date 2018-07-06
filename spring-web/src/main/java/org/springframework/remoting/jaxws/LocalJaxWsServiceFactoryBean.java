@@ -36,29 +36,29 @@ import org.springframework.beans.factory.InitializingBean;
  * @see JaxWsPortProxyFactoryBean
  */
 public class LocalJaxWsServiceFactoryBean extends LocalJaxWsServiceFactory
-		implements FactoryBean<Service>, InitializingBean {
+        implements FactoryBean<Service>, InitializingBean {
 
-	private Service service;
+    private Service service;
 
 
-	@Override
-	public void afterPropertiesSet() {
-		this.service = createJaxWsService();
-	}
+    @Override
+    public void afterPropertiesSet() {
+        this.service = createJaxWsService();
+    }
 
-	@Override
-	public Service getObject() {
-		return this.service;
-	}
+    @Override
+    public Service getObject() {
+        return this.service;
+    }
 
-	@Override
-	public Class<? extends Service> getObjectType() {
-		return (this.service != null ? this.service.getClass() : Service.class);
-	}
+    @Override
+    public Class<? extends Service> getObjectType() {
+        return (this.service != null ? this.service.getClass() : Service.class);
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

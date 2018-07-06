@@ -17,11 +17,11 @@
 package org.springframework.web.context.support;
 
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -46,37 +46,37 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ServletContextAttributeExporter implements ServletContextAware {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
 
-	/**
-	 * Set the ServletContext attributes to expose as key-value pairs.
-	 * Each key will be considered a ServletContext attributes key,
-	 * and each value will be used as corresponding attribute value.
-	 * <p>Usually, you will use bean references for the values,
-	 * to export Spring-defined beans as ServletContext attributes.
-	 * Of course, it is also possible to define plain values to export.
-	 */
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * Set the ServletContext attributes to expose as key-value pairs.
+     * Each key will be considered a ServletContext attributes key,
+     * and each value will be used as corresponding attribute value.
+     * <p>Usually, you will use bean references for the values,
+     * to export Spring-defined beans as ServletContext attributes.
+     * Of course, it is also possible to define plain values to export.
+     */
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-			String attributeName = entry.getKey();
-			if (logger.isWarnEnabled()) {
-				if (servletContext.getAttribute(attributeName) != null) {
-					logger.warn("Replacing existing ServletContext attribute with name '" + attributeName + "'");
-				}
-			}
-			servletContext.setAttribute(attributeName, entry.getValue());
-			if (logger.isInfoEnabled()) {
-				logger.info("Exported ServletContext attribute with name '" + attributeName + "'");
-			}
-		}
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            String attributeName = entry.getKey();
+            if (logger.isWarnEnabled()) {
+                if (servletContext.getAttribute(attributeName) != null) {
+                    logger.warn("Replacing existing ServletContext attribute with name '" + attributeName + "'");
+                }
+            }
+            servletContext.setAttribute(attributeName, entry.getValue());
+            if (logger.isInfoEnabled()) {
+                logger.info("Exported ServletContext attribute with name '" + attributeName + "'");
+            }
+        }
+    }
 
 }

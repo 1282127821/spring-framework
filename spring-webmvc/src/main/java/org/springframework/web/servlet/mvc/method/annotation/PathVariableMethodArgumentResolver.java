@@ -60,98 +60,93 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @since 3.1
  */
 public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver
-		implements UriComponentsContributor {
+        implements UriComponentsContributor {
 
-	private static final TypeDescriptor STRING_TYPE_DESCRIPTOR = TypeDescriptor.valueOf(String.class);
-
-
-	public PathVariableMethodArgumentResolver() {
-	}
+    private static final TypeDescriptor STRING_TYPE_DESCRIPTOR = TypeDescriptor.valueOf(String.class);
 
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		if (!parameter.hasParameterAnnotation(PathVariable.class)) {
-			return false;
-		}
-		if (Map.class.isAssignableFrom(parameter.getParameterType())) {
-			String paramName = parameter.getParameterAnnotation(PathVariable.class).value();
-			return StringUtils.hasText(paramName);
-		}
-		return true;
-	}
-
-	@Override
-	protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
-		PathVariable annotation = parameter.getParameterAnnotation(PathVariable.class);
-		return new PathVariableNamedValueInfo(annotation);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
-		Map<String, String> uriTemplateVars = (Map<String, String>) request.getAttribute(
-				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-		return (uriTemplateVars != null ? uriTemplateVars.get(name) : null);
-	}
-
-	@Override
-	protected void handleMissingValue(String name, MethodParameter parameter)
-			throws ServletRequestBindingException {
-
-		throw new MissingPathVariableException(name, parameter);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected void handleResolvedValue(Object arg, String name, MethodParameter parameter,
-			ModelAndViewContainer mavContainer, NativeWebRequest request) {
-
-		String key = View.PATH_VARIABLES;
-		int scope = RequestAttributes.SCOPE_REQUEST;
-		Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(key, scope);
-		if (pathVars == null) {
-			pathVars = new HashMap<String, Object>();
-			request.setAttribute(key, pathVars, scope);
-		}
-		pathVars.put(name, arg);
-	}
-
-	@Override
-	public void contributeMethodArgument(MethodParameter parameter, Object value,
-			UriComponentsBuilder builder, Map<String, Object> uriVariables, ConversionService conversionService) {
-
-		if (Map.class.isAssignableFrom(parameter.getParameterType())) {
-			return;
-		}
-
-		PathVariable ann = parameter.getParameterAnnotation(PathVariable.class);
-		String name = (ann == null || StringUtils.isEmpty(ann.value()) ? parameter.getParameterName() : ann.value());
-		value = formatUriValue(conversionService, new TypeDescriptor(parameter), value);
-		uriVariables.put(name, value);
-	}
-
-	protected String formatUriValue(ConversionService cs, TypeDescriptor sourceType, Object value) {
-		if (value == null) {
-			return null;
-		}
-		else if (value instanceof String) {
-			return (String) value;
-		}
-		else if (cs != null) {
-			return (String) cs.convert(value, sourceType, STRING_TYPE_DESCRIPTOR);
-		}
-		else {
-			return value.toString();
-		}
-	}
+    public PathVariableMethodArgumentResolver() {}
 
 
-	private static class PathVariableNamedValueInfo extends NamedValueInfo {
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        if (!parameter.hasParameterAnnotation(PathVariable.class)) {
+            return false;
+        }
+        if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+            String paramName = parameter.getParameterAnnotation(PathVariable.class).value();
+            return StringUtils.hasText(paramName);
+        }
+        return true;
+    }
 
-		public PathVariableNamedValueInfo(PathVariable annotation) {
-			super(annotation.value(), true, ValueConstants.DEFAULT_NONE);
-		}
-	}
+    @Override
+    protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
+        PathVariable annotation = parameter.getParameterAnnotation(PathVariable.class);
+        return new PathVariableNamedValueInfo(annotation);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
+        Map<String, String> uriTemplateVars = (Map<String, String>) request
+                .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+        return (uriTemplateVars != null ? uriTemplateVars.get(name) : null);
+    }
+
+    @Override
+    protected void handleMissingValue(String name, MethodParameter parameter) throws ServletRequestBindingException {
+
+        throw new MissingPathVariableException(name, parameter);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void handleResolvedValue(Object arg, String name, MethodParameter parameter,
+            ModelAndViewContainer mavContainer, NativeWebRequest request) {
+
+        String key = View.PATH_VARIABLES;
+        int scope = RequestAttributes.SCOPE_REQUEST;
+        Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(key, scope);
+        if (pathVars == null) {
+            pathVars = new HashMap<String, Object>();
+            request.setAttribute(key, pathVars, scope);
+        }
+        pathVars.put(name, arg);
+    }
+
+    @Override
+    public void contributeMethodArgument(MethodParameter parameter, Object value, UriComponentsBuilder builder,
+            Map<String, Object> uriVariables, ConversionService conversionService) {
+
+        if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+            return;
+        }
+
+        PathVariable ann = parameter.getParameterAnnotation(PathVariable.class);
+        String name = (ann == null || StringUtils.isEmpty(ann.value()) ? parameter.getParameterName() : ann.value());
+        value = formatUriValue(conversionService, new TypeDescriptor(parameter), value);
+        uriVariables.put(name, value);
+    }
+
+    protected String formatUriValue(ConversionService cs, TypeDescriptor sourceType, Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof String) {
+            return (String) value;
+        } else if (cs != null) {
+            return (String) cs.convert(value, sourceType, STRING_TYPE_DESCRIPTOR);
+        } else {
+            return value.toString();
+        }
+    }
+
+
+    private static class PathVariableNamedValueInfo extends NamedValueInfo {
+
+        public PathVariableNamedValueInfo(PathVariable annotation) {
+            super(annotation.value(), true, ValueConstants.DEFAULT_NONE);
+        }
+    }
 
 }

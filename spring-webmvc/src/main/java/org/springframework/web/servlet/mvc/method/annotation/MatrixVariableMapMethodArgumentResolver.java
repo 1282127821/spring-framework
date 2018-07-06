@@ -44,47 +44,47 @@ import org.springframework.web.servlet.HandlerMapping;
  */
 public class MatrixVariableMapMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		MatrixVariable matrixVariable = parameter.getParameterAnnotation(MatrixVariable.class);
-		if (matrixVariable != null) {
-			if (Map.class.isAssignableFrom(parameter.getParameterType())) {
-				return !StringUtils.hasText(matrixVariable.name());
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        MatrixVariable matrixVariable = parameter.getParameterAnnotation(MatrixVariable.class);
+        if (matrixVariable != null) {
+            if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+                return !StringUtils.hasText(matrixVariable.name());
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
 
-		@SuppressWarnings("unchecked")
-		Map<String, MultiValueMap<String, String>> matrixVariables =
-				(Map<String, MultiValueMap<String, String>>) request.getAttribute(
-						HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+        @SuppressWarnings("unchecked")
+        Map<String, MultiValueMap<String, String>> matrixVariables =
+                (Map<String, MultiValueMap<String, String>>) request
+                        .getAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
 
-		if (CollectionUtils.isEmpty(matrixVariables)) {
-			return Collections.emptyMap();
-		}
+        if (CollectionUtils.isEmpty(matrixVariables)) {
+            return Collections.emptyMap();
+        }
 
-		String pathVariable = parameter.getParameterAnnotation(MatrixVariable.class).pathVar();
+        String pathVariable = parameter.getParameterAnnotation(MatrixVariable.class).pathVar();
 
-		if (!pathVariable.equals(ValueConstants.DEFAULT_NONE)) {
-			MultiValueMap<String, String> map = matrixVariables.get(pathVariable);
-			return (map != null) ? map : Collections.emptyMap();
-		}
+        if (!pathVariable.equals(ValueConstants.DEFAULT_NONE)) {
+            MultiValueMap<String, String> map = matrixVariables.get(pathVariable);
+            return (map != null) ? map : Collections.emptyMap();
+        }
 
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-		for (MultiValueMap<String, String> vars : matrixVariables.values()) {
-			for (String name : vars.keySet()) {
-				for (String value : vars.get(name)) {
-					map.add(name, value);
-				}
-			}
-		}
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+        for (MultiValueMap<String, String> vars : matrixVariables.values()) {
+            for (String name : vars.keySet()) {
+                for (String value : vars.get(name)) {
+                    map.add(name, value);
+                }
+            }
+        }
 
-		return map;
-	}
+        return map;
+    }
 
 }

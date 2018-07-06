@@ -27,12 +27,12 @@ import javax.servlet.ServletException;
 @SuppressWarnings("serial")
 public class HttpSessionRequiredException extends ServletException {
 
-	/**
-	 * Create a new HttpSessionRequiredException.
-	 * @param msg the detail message
-	 */
-	public HttpSessionRequiredException(String msg) {
-		super(msg);
-	}
+    /**
+     * Create a new HttpSessionRequiredException.
+     * @param msg the detail message
+     */
+    public HttpSessionRequiredException(String msg) {
+        super(msg);
+    }
 
 }

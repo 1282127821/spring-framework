@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpHeaders;
@@ -52,181 +51,179 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class ResponseBodyEmitterReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	private static final Log logger = LogFactory.getLog(ResponseBodyEmitterReturnValueHandler.class);
+    private static final Log logger = LogFactory.getLog(ResponseBodyEmitterReturnValueHandler.class);
 
-	private final List<HttpMessageConverter<?>> messageConverters;
-
-
-	public ResponseBodyEmitterReturnValueHandler(List<HttpMessageConverter<?>> messageConverters) {
-		Assert.notEmpty(messageConverters, "'messageConverters' must not be empty");
-		this.messageConverters = messageConverters;
-	}
+    private final List<HttpMessageConverter<?>> messageConverters;
 
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		if (ResponseBodyEmitter.class.isAssignableFrom(returnType.getParameterType())) {
-			return true;
-		}
-		else if (ResponseEntity.class.isAssignableFrom(returnType.getParameterType())) {
-			Class<?> bodyType = ResolvableType.forMethodParameter(returnType).getGeneric(0).resolve();
-			return (bodyType != null && ResponseBodyEmitter.class.isAssignableFrom(bodyType));
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		if (returnValue != null) {
-			if (returnValue instanceof ResponseBodyEmitter) {
-				return true;
-			}
-			else if (returnValue instanceof ResponseEntity) {
-				Object body = ((ResponseEntity) returnValue).getBody();
-				return (body != null && body instanceof ResponseBodyEmitter);
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
-
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
-
-		HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-		ServerHttpResponse outputMessage = new ServletServerHttpResponse(response);
-
-		if (ResponseEntity.class.isAssignableFrom(returnValue.getClass())) {
-			ResponseEntity<?> responseEntity = (ResponseEntity<?>) returnValue;
-			outputMessage.setStatusCode(responseEntity.getStatusCode());
-			outputMessage.getHeaders().putAll(responseEntity.getHeaders());
-			returnValue = responseEntity.getBody();
-			if (returnValue == null) {
-				mavContainer.setRequestHandled(true);
-				return;
-			}
-		}
-
-		ServletRequest request = webRequest.getNativeRequest(ServletRequest.class);
-		ShallowEtagHeaderFilter.disableContentCaching(request);
-
-		Assert.isInstanceOf(ResponseBodyEmitter.class, returnValue);
-		ResponseBodyEmitter emitter = (ResponseBodyEmitter) returnValue;
-		emitter.extendResponse(outputMessage);
-
-		// Commit the response and wrap to ignore further header changes
-		outputMessage.getBody();
-		outputMessage.flush();
-		outputMessage = new StreamingServletServerHttpResponse(outputMessage);
-
-		DeferredResult<?> deferredResult = new DeferredResult<Object>(emitter.getTimeout());
-		WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
-
-		HttpMessageConvertingHandler handler = new HttpMessageConvertingHandler(outputMessage, deferredResult);
-		emitter.initialize(handler);
-	}
+    public ResponseBodyEmitterReturnValueHandler(List<HttpMessageConverter<?>> messageConverters) {
+        Assert.notEmpty(messageConverters, "'messageConverters' must not be empty");
+        this.messageConverters = messageConverters;
+    }
 
 
-	/**
-	 * ResponseBodyEmitter.Handler that writes with HttpMessageConverter's.
-	 */
-	private class HttpMessageConvertingHandler implements ResponseBodyEmitter.Handler {
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        if (ResponseBodyEmitter.class.isAssignableFrom(returnType.getParameterType())) {
+            return true;
+        } else if (ResponseEntity.class.isAssignableFrom(returnType.getParameterType())) {
+            Class<?> bodyType = ResolvableType.forMethodParameter(returnType).getGeneric(0).resolve();
+            return (bodyType != null && ResponseBodyEmitter.class.isAssignableFrom(bodyType));
+        }
+        return false;
+    }
 
-		private final ServerHttpResponse outputMessage;
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        if (returnValue != null) {
+            if (returnValue instanceof ResponseBodyEmitter) {
+                return true;
+            } else if (returnValue instanceof ResponseEntity) {
+                Object body = ((ResponseEntity) returnValue).getBody();
+                return (body != null && body instanceof ResponseBodyEmitter);
+            }
+        }
+        return false;
+    }
 
-		private final DeferredResult<?> deferredResult;
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		public HttpMessageConvertingHandler(ServerHttpResponse outputMessage, DeferredResult<?> deferredResult) {
-			this.outputMessage = outputMessage;
-			this.deferredResult = deferredResult;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		@Override
-		public void send(Object data, MediaType mediaType) throws IOException {
-			sendInternal(data, mediaType);
-		}
+        HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
+        ServerHttpResponse outputMessage = new ServletServerHttpResponse(response);
 
-		@SuppressWarnings("unchecked")
-		private <T> void sendInternal(T data, MediaType mediaType) throws IOException {
-			for (HttpMessageConverter<?> converter : ResponseBodyEmitterReturnValueHandler.this.messageConverters) {
-				if (converter.canWrite(data.getClass(), mediaType)) {
-					((HttpMessageConverter<T>) converter).write(data, mediaType, this.outputMessage);
-					this.outputMessage.flush();
-					if (logger.isDebugEnabled()) {
-						logger.debug("Written [" + data + "] using [" + converter + "]");
-					}
-					return;
-				}
-			}
-			throw new IllegalArgumentException("No suitable converter for " + data.getClass());
-		}
+        if (ResponseEntity.class.isAssignableFrom(returnValue.getClass())) {
+            ResponseEntity<?> responseEntity = (ResponseEntity<?>) returnValue;
+            outputMessage.setStatusCode(responseEntity.getStatusCode());
+            outputMessage.getHeaders().putAll(responseEntity.getHeaders());
+            returnValue = responseEntity.getBody();
+            if (returnValue == null) {
+                mavContainer.setRequestHandled(true);
+                return;
+            }
+        }
 
-		@Override
-		public void complete() {
-			this.deferredResult.setResult(null);
-		}
+        ServletRequest request = webRequest.getNativeRequest(ServletRequest.class);
+        ShallowEtagHeaderFilter.disableContentCaching(request);
 
-		@Override
-		public void completeWithError(Throwable failure) {
-			this.deferredResult.setErrorResult(failure);
-		}
+        Assert.isInstanceOf(ResponseBodyEmitter.class, returnValue);
+        ResponseBodyEmitter emitter = (ResponseBodyEmitter) returnValue;
+        emitter.extendResponse(outputMessage);
 
-		@Override
-		public void onTimeout(Runnable callback) {
-			this.deferredResult.onTimeout(callback);
-		}
+        // Commit the response and wrap to ignore further header changes
+        outputMessage.getBody();
+        outputMessage.flush();
+        outputMessage = new StreamingServletServerHttpResponse(outputMessage);
 
-		@Override
-		public void onCompletion(Runnable callback) {
-			this.deferredResult.onCompletion(callback);
-		}
-	}
+        DeferredResult<?> deferredResult = new DeferredResult<Object>(emitter.getTimeout());
+        WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
+
+        HttpMessageConvertingHandler handler = new HttpMessageConvertingHandler(outputMessage, deferredResult);
+        emitter.initialize(handler);
+    }
 
 
-	/**
-	 * Wrap to silently ignore header changes HttpMessageConverter's that would
-	 * otherwise cause HttpHeaders to raise exceptions.
-	 */
-	private static class StreamingServletServerHttpResponse implements ServerHttpResponse {
+    /**
+     * ResponseBodyEmitter.Handler that writes with HttpMessageConverter's.
+     */
+    private class HttpMessageConvertingHandler implements ResponseBodyEmitter.Handler {
 
-		private final ServerHttpResponse delegate;
+        private final ServerHttpResponse outputMessage;
 
-		private final HttpHeaders mutableHeaders = new HttpHeaders();
+        private final DeferredResult<?> deferredResult;
 
-		public StreamingServletServerHttpResponse(ServerHttpResponse delegate) {
-			this.delegate = delegate;
-			this.mutableHeaders.putAll(delegate.getHeaders());
-		}
+        public HttpMessageConvertingHandler(ServerHttpResponse outputMessage, DeferredResult<?> deferredResult) {
+            this.outputMessage = outputMessage;
+            this.deferredResult = deferredResult;
+        }
 
-		@Override
-		public void setStatusCode(HttpStatus status) {
-			this.delegate.setStatusCode(status);
-		}
+        @Override
+        public void send(Object data, MediaType mediaType) throws IOException {
+            sendInternal(data, mediaType);
+        }
 
-		@Override
-		public HttpHeaders getHeaders() {
-			return this.mutableHeaders;
-		}
+        @SuppressWarnings("unchecked")
+        private <T> void sendInternal(T data, MediaType mediaType) throws IOException {
+            for (HttpMessageConverter<?> converter : ResponseBodyEmitterReturnValueHandler.this.messageConverters) {
+                if (converter.canWrite(data.getClass(), mediaType)) {
+                    ((HttpMessageConverter<T>) converter).write(data, mediaType, this.outputMessage);
+                    this.outputMessage.flush();
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Written [" + data + "] using [" + converter + "]");
+                    }
+                    return;
+                }
+            }
+            throw new IllegalArgumentException("No suitable converter for " + data.getClass());
+        }
 
-		@Override
-		public OutputStream getBody() throws IOException {
-			return this.delegate.getBody();
-		}
+        @Override
+        public void complete() {
+            this.deferredResult.setResult(null);
+        }
 
-		@Override
-		public void flush() throws IOException {
-			this.delegate.flush();
-		}
+        @Override
+        public void completeWithError(Throwable failure) {
+            this.deferredResult.setErrorResult(failure);
+        }
 
-		@Override
-		public void close() {
-			this.delegate.close();
-		}
-	}
+        @Override
+        public void onTimeout(Runnable callback) {
+            this.deferredResult.onTimeout(callback);
+        }
+
+        @Override
+        public void onCompletion(Runnable callback) {
+            this.deferredResult.onCompletion(callback);
+        }
+    }
+
+
+    /**
+     * Wrap to silently ignore header changes HttpMessageConverter's that would
+     * otherwise cause HttpHeaders to raise exceptions.
+     */
+    private static class StreamingServletServerHttpResponse implements ServerHttpResponse {
+
+        private final ServerHttpResponse delegate;
+
+        private final HttpHeaders mutableHeaders = new HttpHeaders();
+
+        public StreamingServletServerHttpResponse(ServerHttpResponse delegate) {
+            this.delegate = delegate;
+            this.mutableHeaders.putAll(delegate.getHeaders());
+        }
+
+        @Override
+        public void setStatusCode(HttpStatus status) {
+            this.delegate.setStatusCode(status);
+        }
+
+        @Override
+        public HttpHeaders getHeaders() {
+            return this.mutableHeaders;
+        }
+
+        @Override
+        public OutputStream getBody() throws IOException {
+            return this.delegate.getBody();
+        }
+
+        @Override
+        public void flush() throws IOException {
+            this.delegate.flush();
+        }
+
+        @Override
+        public void close() {
+            this.delegate.close();
+        }
+    }
 
 }

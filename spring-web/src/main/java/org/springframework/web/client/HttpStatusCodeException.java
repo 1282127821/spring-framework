@@ -31,120 +31,119 @@ import org.springframework.http.HttpStatus;
  */
 public abstract class HttpStatusCodeException extends RestClientException {
 
-	private static final long serialVersionUID = -5807494703720513267L;
+    private static final long serialVersionUID = -5807494703720513267L;
 
-	private static final String DEFAULT_CHARSET = "ISO-8859-1";
-
-
-	private final HttpStatus statusCode;
-
-	private final String statusText;
-
-	private final byte[] responseBody;
-
-	private final HttpHeaders responseHeaders;
-
-	private final String responseCharset;
+    private static final String DEFAULT_CHARSET = "ISO-8859-1";
 
 
-	/**
-	 * Construct a new instance of {@code HttpStatusCodeException} based on an
-	 * {@link HttpStatus}.
-	 * @param statusCode the status code
-	 */
-	protected HttpStatusCodeException(HttpStatus statusCode) {
-		this(statusCode, statusCode.name(), null, null, null);
-	}
+    private final HttpStatus statusCode;
 
-	/**
-	 * Construct a new instance of {@code HttpStatusCodeException} based on an
-	 * {@link HttpStatus} and status text.
-	 * @param statusCode the status code
-	 * @param statusText the status text
-	 */
-	protected HttpStatusCodeException(HttpStatus statusCode, String statusText) {
-		this(statusCode, statusText, null, null, null);
-	}
+    private final String statusText;
 
-	/**
-	 * Construct a new instance of {@code HttpStatusCodeException} based on an
-	 * {@link HttpStatus}, status text, and response body content.
-	 * @param statusCode the status code
-	 * @param statusText the status text
-	 * @param responseBody the response body content, may be {@code null}
-	 * @param responseCharset the response body charset, may be {@code null}
-	 * @since 3.0.5
-	 */
-	protected HttpStatusCodeException(
-			HttpStatus statusCode, String statusText, byte[] responseBody, Charset responseCharset) {
+    private final byte[] responseBody;
 
-		this(statusCode, statusText, null, responseBody, responseCharset);
-	}
+    private final HttpHeaders responseHeaders;
 
-	/**
-	 * Construct a new instance of {@code HttpStatusCodeException} based on an
-	 * {@link HttpStatus}, status text, and response body content.
-	 * @param statusCode the status code
-	 * @param statusText the status text
-	 * @param responseHeaders the response headers, may be {@code null}
-	 * @param responseBody the response body content, may be {@code null}
-	 * @param responseCharset the response body charset, may be {@code null}
-	 * @since 3.1.2
-	 */
-	protected HttpStatusCodeException(HttpStatus statusCode, String statusText,
-			HttpHeaders responseHeaders, byte[] responseBody, Charset responseCharset) {
-
-		super(statusCode.value() + " " + statusText);
-		this.statusCode = statusCode;
-		this.statusText = statusText;
-		this.responseHeaders = responseHeaders;
-		this.responseBody = responseBody != null ? responseBody : new byte[0];
-		this.responseCharset = responseCharset != null ? responseCharset.name() : DEFAULT_CHARSET;
-	}
+    private final String responseCharset;
 
 
-	/**
-	 * Return the HTTP status code.
-	 */
-	public HttpStatus getStatusCode() {
-		return this.statusCode;
-	}
+    /**
+     * Construct a new instance of {@code HttpStatusCodeException} based on an
+     * {@link HttpStatus}.
+     * @param statusCode the status code
+     */
+    protected HttpStatusCodeException(HttpStatus statusCode) {
+        this(statusCode, statusCode.name(), null, null, null);
+    }
 
-	/**
-	 * Return the HTTP status text.
-	 */
-	public String getStatusText() {
-		return this.statusText;
-	}
+    /**
+     * Construct a new instance of {@code HttpStatusCodeException} based on an
+     * {@link HttpStatus} and status text.
+     * @param statusCode the status code
+     * @param statusText the status text
+     */
+    protected HttpStatusCodeException(HttpStatus statusCode, String statusText) {
+        this(statusCode, statusText, null, null, null);
+    }
 
-	/**
-	 * Return the HTTP response headers.
-	 * @since 3.1.2
-	 */
-	public HttpHeaders getResponseHeaders() {
-		return this.responseHeaders;
-	}
+    /**
+     * Construct a new instance of {@code HttpStatusCodeException} based on an
+     * {@link HttpStatus}, status text, and response body content.
+     * @param statusCode the status code
+     * @param statusText the status text
+     * @param responseBody the response body content, may be {@code null}
+     * @param responseCharset the response body charset, may be {@code null}
+     * @since 3.0.5
+     */
+    protected HttpStatusCodeException(HttpStatus statusCode, String statusText, byte[] responseBody,
+            Charset responseCharset) {
 
-	/**
-	 * Return the response body as a byte array.
-	 * @since 3.0.5
-	 */
-	public byte[] getResponseBodyAsByteArray() {
-		return this.responseBody;
-	}
+        this(statusCode, statusText, null, responseBody, responseCharset);
+    }
 
-	/**
-	 * Return the response body as a string.
-	 * @since 3.0.5
-	 */
-	public String getResponseBodyAsString() {
-		try {
-			return new String(this.responseBody, this.responseCharset);
-		}
-		catch (UnsupportedEncodingException ex) {
-			// should not occur
-			throw new IllegalStateException(ex);
-		}
-	}
+    /**
+     * Construct a new instance of {@code HttpStatusCodeException} based on an
+     * {@link HttpStatus}, status text, and response body content.
+     * @param statusCode the status code
+     * @param statusText the status text
+     * @param responseHeaders the response headers, may be {@code null}
+     * @param responseBody the response body content, may be {@code null}
+     * @param responseCharset the response body charset, may be {@code null}
+     * @since 3.1.2
+     */
+    protected HttpStatusCodeException(HttpStatus statusCode, String statusText, HttpHeaders responseHeaders,
+            byte[] responseBody, Charset responseCharset) {
+
+        super(statusCode.value() + " " + statusText);
+        this.statusCode = statusCode;
+        this.statusText = statusText;
+        this.responseHeaders = responseHeaders;
+        this.responseBody = responseBody != null ? responseBody : new byte[0];
+        this.responseCharset = responseCharset != null ? responseCharset.name() : DEFAULT_CHARSET;
+    }
+
+
+    /**
+     * Return the HTTP status code.
+     */
+    public HttpStatus getStatusCode() {
+        return this.statusCode;
+    }
+
+    /**
+     * Return the HTTP status text.
+     */
+    public String getStatusText() {
+        return this.statusText;
+    }
+
+    /**
+     * Return the HTTP response headers.
+     * @since 3.1.2
+     */
+    public HttpHeaders getResponseHeaders() {
+        return this.responseHeaders;
+    }
+
+    /**
+     * Return the response body as a byte array.
+     * @since 3.0.5
+     */
+    public byte[] getResponseBodyAsByteArray() {
+        return this.responseBody;
+    }
+
+    /**
+     * Return the response body as a string.
+     * @since 3.0.5
+     */
+    public String getResponseBodyAsString() {
+        try {
+            return new String(this.responseBody, this.responseCharset);
+        } catch (UnsupportedEncodingException ex) {
+            // should not occur
+            throw new IllegalStateException(ex);
+        }
+    }
 
 }

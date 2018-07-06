@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 public interface MediaTypeExpression {
 
-	MediaType getMediaType();
+    MediaType getMediaType();
 
-	boolean isNegated();
+    boolean isNegated();
 
 }

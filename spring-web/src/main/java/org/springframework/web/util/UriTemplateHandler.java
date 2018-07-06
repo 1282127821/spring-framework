@@ -27,20 +27,20 @@ import java.util.Map;
  */
 public interface UriTemplateHandler {
 
-	/**
-	 * Expand the give URI template with a map of URI variables.
-	 * @param uriTemplate the URI template string
-	 * @param uriVariables the URI variables
-	 * @return the resulting URI
-	 */
-	URI expand(String uriTemplate, Map<String, ?> uriVariables);
+    /**
+     * Expand the give URI template with a map of URI variables.
+     * @param uriTemplate the URI template string
+     * @param uriVariables the URI variables
+     * @return the resulting URI
+     */
+    URI expand(String uriTemplate, Map<String, ?> uriVariables);
 
-	/**
-	 * Expand the give URI template with an array of URI variable values.
-	 * @param uriTemplate the URI template string
-	 * @param uriVariableValues the URI variable values
-	 * @return the resulting URI
-	 */
-	URI expand(String uriTemplate, Object... uriVariableValues);
+    /**
+     * Expand the give URI template with an array of URI variable values.
+     * @param uriTemplate the URI template string
+     * @param uriVariableValues the URI variable values
+     * @return the resulting URI
+     */
+    URI expand(String uriTemplate, Object... uriVariableValues);
 
 }

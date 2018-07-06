@@ -39,44 +39,44 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
 
-	/**
-	 * @param beanFactory a bean factory to use for resolving  ${...}
-	 * placeholder and #{...} SpEL expressions in default values;
-	 * or {@code null} if default values are not expected to contain expressions
-	 */
-	public ExpressionValueMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
-		super(beanFactory);
-	}
+    /**
+     * @param beanFactory a bean factory to use for resolving  ${...}
+     * placeholder and #{...} SpEL expressions in default values;
+     * or {@code null} if default values are not expected to contain expressions
+     */
+    public ExpressionValueMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
+        super(beanFactory);
+    }
 
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.hasParameterAnnotation(Value.class);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(Value.class);
+    }
 
-	@Override
-	protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
-		Value annotation = parameter.getParameterAnnotation(Value.class);
-		return new ExpressionValueNamedValueInfo(annotation);
-	}
+    @Override
+    protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
+        Value annotation = parameter.getParameterAnnotation(Value.class);
+        return new ExpressionValueNamedValueInfo(annotation);
+    }
 
-	@Override
-	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest webRequest) throws Exception {
-		// No name to resolve
-		return null;
-	}
+    @Override
+    protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest webRequest) throws Exception {
+        // No name to resolve
+        return null;
+    }
 
-	@Override
-	protected void handleMissingValue(String name, MethodParameter parameter) throws ServletException {
-		throw new UnsupportedOperationException("@Value is never required: " + parameter.getMethod());
-	}
+    @Override
+    protected void handleMissingValue(String name, MethodParameter parameter) throws ServletException {
+        throw new UnsupportedOperationException("@Value is never required: " + parameter.getMethod());
+    }
 
 
-	private static class ExpressionValueNamedValueInfo extends NamedValueInfo {
+    private static class ExpressionValueNamedValueInfo extends NamedValueInfo {
 
-		private ExpressionValueNamedValueInfo(Value annotation) {
-			super("@Value", false, annotation.value());
-		}
-	}
+        private ExpressionValueNamedValueInfo(Value annotation) {
+            super("@Value", false, annotation.value());
+        }
+    }
 
 }

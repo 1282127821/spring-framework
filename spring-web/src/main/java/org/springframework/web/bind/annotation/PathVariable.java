@@ -42,9 +42,9 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PathVariable {
 
-	/**
-	 * The URI template variable to bind to.
-	 */
-	String value() default "";
+    /**
+     * The URI template variable to bind to.
+     */
+    String value() default "";
 
 }

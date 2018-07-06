@@ -38,43 +38,43 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ServletContextParameterFactoryBean implements FactoryBean<String>, ServletContextAware {
 
-	private String initParamName;
+    private String initParamName;
 
-	private String paramValue;
-
-
-	/**
-	 * Set the name of the ServletContext init parameter to expose.
-	 */
-	public void setInitParamName(String initParamName) {
-		this.initParamName = initParamName;
-	}
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		if (this.initParamName == null) {
-			throw new IllegalArgumentException("initParamName is required");
-		}
-		this.paramValue = servletContext.getInitParameter(this.initParamName);
-		if (this.paramValue == null) {
-			throw new IllegalStateException("No ServletContext init parameter '" + this.initParamName + "' found");
-		}
-	}
+    private String paramValue;
 
 
-	@Override
-	public String getObject() {
-		return this.paramValue;
-	}
+    /**
+     * Set the name of the ServletContext init parameter to expose.
+     */
+    public void setInitParamName(String initParamName) {
+        this.initParamName = initParamName;
+    }
 
-	@Override
-	public Class<String> getObjectType() {
-		return String.class;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        if (this.initParamName == null) {
+            throw new IllegalArgumentException("initParamName is required");
+        }
+        this.paramValue = servletContext.getInitParameter(this.initParamName);
+        if (this.paramValue == null) {
+            throw new IllegalStateException("No ServletContext init parameter '" + this.initParamName + "' found");
+        }
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public String getObject() {
+        return this.paramValue;
+    }
+
+    @Override
+    public Class<String> getObjectType() {
+        return String.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

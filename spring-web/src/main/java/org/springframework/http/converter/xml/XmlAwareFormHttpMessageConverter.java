@@ -32,9 +32,9 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 @Deprecated
 public class XmlAwareFormHttpMessageConverter extends FormHttpMessageConverter {
 
-	public XmlAwareFormHttpMessageConverter() {
-		super();
-		addPartConverter(new SourceHttpMessageConverter<Source>());
-	}
+    public XmlAwareFormHttpMessageConverter() {
+        super();
+        addPartConverter(new SourceHttpMessageConverter<Source>());
+    }
 
 }

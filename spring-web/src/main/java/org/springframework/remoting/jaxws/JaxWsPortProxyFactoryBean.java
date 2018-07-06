@@ -31,38 +31,37 @@ import org.springframework.beans.factory.FactoryBean;
  * @see #setServiceInterface
  * @see LocalJaxWsServiceFactoryBean
  */
-public class JaxWsPortProxyFactoryBean extends JaxWsPortClientInterceptor
-		implements FactoryBean<Object> {
+public class JaxWsPortProxyFactoryBean extends JaxWsPortClientInterceptor implements FactoryBean<Object> {
 
-	private Object serviceProxy;
-
-
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-
-		// Build a proxy that also exposes the JAX-WS BindingProvider interface.
-		ProxyFactory pf = new ProxyFactory();
-		pf.addInterface(getServiceInterface());
-		pf.addInterface(BindingProvider.class);
-		pf.addAdvice(this);
-		this.serviceProxy = pf.getProxy(getBeanClassLoader());
-	}
+    private Object serviceProxy;
 
 
-	@Override
-	public Object getObject() {
-		return this.serviceProxy;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
 
-	@Override
-	public Class<?> getObjectType() {
-		return getServiceInterface();
-	}
+        // Build a proxy that also exposes the JAX-WS BindingProvider interface.
+        ProxyFactory pf = new ProxyFactory();
+        pf.addInterface(getServiceInterface());
+        pf.addInterface(BindingProvider.class);
+        pf.addAdvice(this);
+        this.serviceProxy = pf.getProxy(getBeanClassLoader());
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+
+    @Override
+    public Object getObject() {
+        return this.serviceProxy;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return getServiceInterface();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

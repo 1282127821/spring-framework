@@ -21,7 +21,6 @@ import java.net.URI;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -41,44 +40,44 @@ import org.springframework.util.Assert;
  */
 public abstract class HttpAccessor {
 
-	/**
-	 * Logger available to subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
+    /**
+     * Logger available to subclasses.
+     */
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-
-
-	/**
-	 * Set the request factory that this accessor uses for obtaining
-	 * {@link ClientHttpRequest HttpRequests}.
-	 */
-	public void setRequestFactory(ClientHttpRequestFactory requestFactory) {
-		Assert.notNull(requestFactory, "'requestFactory' must not be null");
-		this.requestFactory = requestFactory;
-	}
-
-	/**
-	 * Return the request factory that this accessor uses for obtaining {@link ClientHttpRequest HttpRequests}.
-	 */
-	public ClientHttpRequestFactory getRequestFactory() {
-		return this.requestFactory;
-	}
+    private ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 
 
-	/**
-	 * Create a new {@link ClientHttpRequest} via this template's {@link ClientHttpRequestFactory}.
-	 * @param url the URL to connect to
-	 * @param method the HTTP method to exectute (GET, POST, etc.)
-	 * @return the created request
-	 * @throws IOException in case of I/O errors
-	 */
-	protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
-		ClientHttpRequest request = getRequestFactory().createRequest(url, method);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Created " + method.name() + " request for \"" + url + "\"");
-		}
-		return request;
-	}
+    /**
+     * Set the request factory that this accessor uses for obtaining
+     * {@link ClientHttpRequest HttpRequests}.
+     */
+    public void setRequestFactory(ClientHttpRequestFactory requestFactory) {
+        Assert.notNull(requestFactory, "'requestFactory' must not be null");
+        this.requestFactory = requestFactory;
+    }
+
+    /**
+     * Return the request factory that this accessor uses for obtaining {@link ClientHttpRequest HttpRequests}.
+     */
+    public ClientHttpRequestFactory getRequestFactory() {
+        return this.requestFactory;
+    }
+
+
+    /**
+     * Create a new {@link ClientHttpRequest} via this template's {@link ClientHttpRequestFactory}.
+     * @param url the URL to connect to
+     * @param method the HTTP method to exectute (GET, POST, etc.)
+     * @return the created request
+     * @throws IOException in case of I/O errors
+     */
+    protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
+        ClientHttpRequest request = getRequestFactory().createRequest(url, method);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Created " + method.name() + " request for \"" + url + "\"");
+        }
+        return request;
+    }
 
 }

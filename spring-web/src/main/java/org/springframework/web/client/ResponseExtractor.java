@@ -34,12 +34,12 @@ import org.springframework.http.client.ClientHttpResponse;
  */
 public interface ResponseExtractor<T> {
 
-	/**
-	 * Extract data from the given {@code ClientHttpResponse} and return it.
-	 * @param response the HTTP response
-	 * @return the extracted data
-	 * @throws IOException in case of I/O errors
-	 */
-	T extractData(ClientHttpResponse response) throws IOException;
+    /**
+     * Extract data from the given {@code ClientHttpResponse} and return it.
+     * @param response the HTTP response
+     * @return the extracted data
+     * @throws IOException in case of I/O errors
+     */
+    T extractData(ClientHttpResponse response) throws IOException;
 
 }

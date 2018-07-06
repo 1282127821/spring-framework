@@ -29,12 +29,12 @@ import groovy.text.markup.MarkupTemplateEngine;
  */
 public interface GroovyMarkupConfig {
 
-	/**
-	 * Return the Groovy {@link MarkupTemplateEngine} for the current
-	 * web application context. May be unique to one servlet, or shared
-	 * in the root context.
-	 * @return the Groovy MarkupTemplateEngine engine
-	 */
-	MarkupTemplateEngine getTemplateEngine();
+    /**
+     * Return the Groovy {@link MarkupTemplateEngine} for the current
+     * web application context. May be unique to one servlet, or shared
+     * in the root context.
+     * @return the Groovy MarkupTemplateEngine engine
+     */
+    MarkupTemplateEngine getTemplateEngine();
 
 }

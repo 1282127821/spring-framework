@@ -42,136 +42,133 @@ import org.springframework.web.method.ControllerAdviceBean;
  */
 class RequestResponseBodyAdviceChain implements RequestBodyAdvice, ResponseBodyAdvice<Object> {
 
-	private final List<Object> requestBodyAdvice = new ArrayList<Object>(4);
+    private final List<Object> requestBodyAdvice = new ArrayList<Object>(4);
 
-	private final List<Object> responseBodyAdvice = new ArrayList<Object>(4);
-
-
-	/**
-	 * Create an instance from a list of objects that are either of type
-	 * {@code ControllerAdviceBean} or {@code RequestBodyAdvice}.
-	 */
-	public RequestResponseBodyAdviceChain(List<Object> requestResponseBodyAdvice) {
-		initAdvice(requestResponseBodyAdvice);
-	}
-
-	private void initAdvice(List<Object> requestResponseBodyAdvice) {
-		if (requestResponseBodyAdvice == null) {
-			return;
-		}
-		for (Object advice : requestResponseBodyAdvice) {
-			Class<?> beanType = (advice instanceof ControllerAdviceBean ?
-					((ControllerAdviceBean) advice).getBeanType() : advice.getClass());
-			if (RequestBodyAdvice.class.isAssignableFrom(beanType)) {
-				this.requestBodyAdvice.add(advice);
-			}
-			else if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
-				this.responseBodyAdvice.add(advice);
-			}
-		}
-	}
-
-	private List<Object> getAdvice(Class<?> adviceType) {
-		if (RequestBodyAdvice.class == adviceType) {
-			return this.requestBodyAdvice;
-		}
-		else if (ResponseBodyAdvice.class == adviceType) {
-			return this.responseBodyAdvice;
-		}
-		else {
-			throw new IllegalArgumentException("Unexpected adviceType: " + adviceType);
-		}
-	}
+    private final List<Object> responseBodyAdvice = new ArrayList<Object>(4);
 
 
-	@Override
-	public boolean supports(MethodParameter param, Type type, Class<? extends HttpMessageConverter<?>> converterType) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
+    /**
+     * Create an instance from a list of objects that are either of type
+     * {@code ControllerAdviceBean} or {@code RequestBodyAdvice}.
+     */
+    public RequestResponseBodyAdviceChain(List<Object> requestResponseBodyAdvice) {
+        initAdvice(requestResponseBodyAdvice);
+    }
 
-	@Override
-	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
+    private void initAdvice(List<Object> requestResponseBodyAdvice) {
+        if (requestResponseBodyAdvice == null) {
+            return;
+        }
+        for (Object advice : requestResponseBodyAdvice) {
+            Class<?> beanType = (advice instanceof ControllerAdviceBean ? ((ControllerAdviceBean) advice).getBeanType()
+                    : advice.getClass());
+            if (RequestBodyAdvice.class.isAssignableFrom(beanType)) {
+                this.requestBodyAdvice.add(advice);
+            } else if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
+                this.responseBodyAdvice.add(advice);
+            }
+        }
+    }
 
-	@Override
-	public Object handleEmptyBody(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
-			Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+    private List<Object> getAdvice(Class<?> adviceType) {
+        if (RequestBodyAdvice.class == adviceType) {
+            return this.requestBodyAdvice;
+        } else if (ResponseBodyAdvice.class == adviceType) {
+            return this.responseBodyAdvice;
+        } else {
+            throw new IllegalArgumentException("Unexpected adviceType: " + adviceType);
+        }
+    }
 
-		for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
-			if (advice.supports(parameter, targetType, converterType)) {
-				body = advice.handleEmptyBody(body, inputMessage, parameter, targetType, converterType);
-			}
-		}
-		return body;
-	}
 
-	@Override
-	public HttpInputMessage beforeBodyRead(HttpInputMessage request, MethodParameter parameter,
-			Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
+    @Override
+    public boolean supports(MethodParameter param, Type type, Class<? extends HttpMessageConverter<?>> converterType) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
-		for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
-			if (advice.supports(parameter, targetType, converterType)) {
-				request = advice.beforeBodyRead(request, parameter, targetType, converterType);
-			}
-		}
-		return request;
-	}
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
-	@Override
-	public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
-			Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+    @Override
+    public Object handleEmptyBody(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
+            Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
 
-		for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
-			if (advice.supports(parameter, targetType, converterType)) {
-				body = advice.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
-			}
-		}
-		return body;
-	}
+        for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
+            if (advice.supports(parameter, targetType, converterType)) {
+                body = advice.handleEmptyBody(body, inputMessage, parameter, targetType, converterType);
+            }
+        }
+        return body;
+    }
 
-	@Override
-	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType contentType,
-			Class<? extends HttpMessageConverter<?>> converterType,
-			ServerHttpRequest request, ServerHttpResponse response) {
+    @Override
+    public HttpInputMessage beforeBodyRead(HttpInputMessage request, MethodParameter parameter, Type targetType,
+            Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
 
-		return processBody(body, returnType, contentType, converterType, request, response);
-	}
+        for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
+            if (advice.supports(parameter, targetType, converterType)) {
+                request = advice.beforeBodyRead(request, parameter, targetType, converterType);
+            }
+        }
+        return request;
+    }
 
-	@SuppressWarnings("unchecked")
-	private <T> Object processBody(Object body, MethodParameter returnType, MediaType contentType,
-			Class<? extends HttpMessageConverter<?>> converterType,
-			ServerHttpRequest request, ServerHttpResponse response) {
+    @Override
+    public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
+            Class<? extends HttpMessageConverter<?>> converterType) {
 
-		for (ResponseBodyAdvice<?> advice : getMatchingAdvice(returnType, ResponseBodyAdvice.class)) {
-			if (advice.supports(returnType, converterType)) {
-				body = ((ResponseBodyAdvice<T>) advice).beforeBodyWrite((T) body, returnType,
-						contentType, converterType, request, response);
-			}
-		}
-		return body;
-	}
+        for (RequestBodyAdvice advice : getMatchingAdvice(parameter, RequestBodyAdvice.class)) {
+            if (advice.supports(parameter, targetType, converterType)) {
+                body = advice.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
+            }
+        }
+        return body;
+    }
 
-	@SuppressWarnings("unchecked")
-	private <A> List<A> getMatchingAdvice(MethodParameter parameter, Class<? extends A> adviceType) {
-		List<Object> availableAdvice = getAdvice(adviceType);
-		if (CollectionUtils.isEmpty(availableAdvice)) {
-			return Collections.emptyList();
-		}
-		List<A> result = new ArrayList<A>(availableAdvice.size());
-		for (Object advice : availableAdvice) {
-			if (advice instanceof ControllerAdviceBean) {
-				ControllerAdviceBean adviceBean = (ControllerAdviceBean) advice;
-				if (!adviceBean.isApplicableToBeanType(parameter.getContainingClass())) {
-					continue;
-				}
-				advice = adviceBean.resolveBean();
-			}
-			if (adviceType.isAssignableFrom(advice.getClass())) {
-				result.add((A) advice);
-			}
-		}
-		return result;
-	}
+    @Override
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType contentType,
+            Class<? extends HttpMessageConverter<?>> converterType, ServerHttpRequest request,
+            ServerHttpResponse response) {
+
+        return processBody(body, returnType, contentType, converterType, request, response);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Object processBody(Object body, MethodParameter returnType, MediaType contentType,
+            Class<? extends HttpMessageConverter<?>> converterType, ServerHttpRequest request,
+            ServerHttpResponse response) {
+
+        for (ResponseBodyAdvice<?> advice : getMatchingAdvice(returnType, ResponseBodyAdvice.class)) {
+            if (advice.supports(returnType, converterType)) {
+                body = ((ResponseBodyAdvice<T>) advice).beforeBodyWrite((T) body, returnType, contentType,
+                        converterType, request, response);
+            }
+        }
+        return body;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <A> List<A> getMatchingAdvice(MethodParameter parameter, Class<? extends A> adviceType) {
+        List<Object> availableAdvice = getAdvice(adviceType);
+        if (CollectionUtils.isEmpty(availableAdvice)) {
+            return Collections.emptyList();
+        }
+        List<A> result = new ArrayList<A>(availableAdvice.size());
+        for (Object advice : availableAdvice) {
+            if (advice instanceof ControllerAdviceBean) {
+                ControllerAdviceBean adviceBean = (ControllerAdviceBean) advice;
+                if (!adviceBean.isApplicableToBeanType(parameter.getContainingClass())) {
+                    continue;
+                }
+                advice = adviceBean.resolveBean();
+            }
+            if (adviceType.isAssignableFrom(advice.getClass())) {
+                result.add((A) advice);
+            }
+        }
+        return result;
+    }
 
 }

@@ -29,41 +29,41 @@ package org.springframework.web.servlet.tags;
  */
 public class Param {
 
-	private String name;
+    private String name;
 
-	private String value;
+    private String value;
 
-	/**
-	 * @return the raw parameter name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the raw parameter name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Set the raw name of the parameter
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Set the raw name of the parameter
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return the raw parameter value
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * @return the raw parameter value
+     */
+    public String getValue() {
+        return value;
+    }
 
-	/**
-	 * Set the raw value of the parameter
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
+    /**
+     * Set the raw value of the parameter
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@Override
-	public String toString() {
-		return "JSP Tag Param: name '" + name + "', value '" + value + "'";
-	}
+    @Override
+    public String toString() {
+        return "JSP Tag Param: name '" + name + "', value '" + value + "'";
+    }
 
 }

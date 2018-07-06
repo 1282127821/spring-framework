@@ -40,16 +40,16 @@ import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
  */
 public class FreeMarkerViewResolver extends AbstractTemplateViewResolver {
 
-	public FreeMarkerViewResolver() {
-		setViewClass(requiredViewClass());
-	}
+    public FreeMarkerViewResolver() {
+        setViewClass(requiredViewClass());
+    }
 
-	/**
-	 * Requires {@link FreeMarkerView}.
-	 */
-	@Override
-	protected Class<?> requiredViewClass() {
-		return FreeMarkerView.class;
-	}
+    /**
+     * Requires {@link FreeMarkerView}.
+     */
+    @Override
+    protected Class<?> requiredViewClass() {
+        return FreeMarkerView.class;
+    }
 
 }

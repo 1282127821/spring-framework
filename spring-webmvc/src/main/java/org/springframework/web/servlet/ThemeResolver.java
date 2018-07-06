@@ -46,22 +46,22 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ThemeResolver {
 
-	/**
-	 * Resolve the current theme name via the given request.
-	 * Should return a default theme as fallback in any case.
-	 * @param request request to be used for resolution
-	 * @return the current theme name
-	 */
-	String resolveThemeName(HttpServletRequest request);
+    /**
+     * Resolve the current theme name via the given request.
+     * Should return a default theme as fallback in any case.
+     * @param request request to be used for resolution
+     * @return the current theme name
+     */
+    String resolveThemeName(HttpServletRequest request);
 
-	/**
-	 * Set the current theme name to the given one.
-	 * @param request request to be used for theme name modification
-	 * @param response response to be used for theme name modification
-	 * @param themeName the new theme name
-	 * @throws UnsupportedOperationException if the ThemeResolver implementation
-	 * does not support dynamic changing of the theme
-	 */
-	void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName);
+    /**
+     * Set the current theme name to the given one.
+     * @param request request to be used for theme name modification
+     * @param response response to be used for theme name modification
+     * @param themeName the new theme name
+     * @throws UnsupportedOperationException if the ThemeResolver implementation
+     * does not support dynamic changing of the theme
+     */
+    void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName);
 
 }

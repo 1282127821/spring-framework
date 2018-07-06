@@ -43,51 +43,50 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class RequestHeaderMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
 
-	/**
-	 * @param beanFactory a bean factory to use for resolving  ${...}
-	 * placeholder and #{...} SpEL expressions in default values;
-	 * or {@code null} if default values are not expected to have expressions
-	 */
-	public RequestHeaderMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
-		super(beanFactory);
-	}
+    /**
+     * @param beanFactory a bean factory to use for resolving  ${...}
+     * placeholder and #{...} SpEL expressions in default values;
+     * or {@code null} if default values are not expected to have expressions
+     */
+    public RequestHeaderMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
+        super(beanFactory);
+    }
 
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return (parameter.hasParameterAnnotation(RequestHeader.class) &&
-				!Map.class.isAssignableFrom(parameter.getParameterType()));
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return (parameter.hasParameterAnnotation(RequestHeader.class)
+                && !Map.class.isAssignableFrom(parameter.getParameterType()));
+    }
 
-	@Override
-	protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
-		RequestHeader annotation = parameter.getParameterAnnotation(RequestHeader.class);
-		return new RequestHeaderNamedValueInfo(annotation);
-	}
+    @Override
+    protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
+        RequestHeader annotation = parameter.getParameterAnnotation(RequestHeader.class);
+        return new RequestHeaderNamedValueInfo(annotation);
+    }
 
-	@Override
-	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
-		String[] headerValues = request.getHeaderValues(name);
-		if (headerValues != null) {
-			return (headerValues.length == 1 ? headerValues[0] : headerValues);
-		}
-		else {
-			return null;
-		}
-	}
+    @Override
+    protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
+        String[] headerValues = request.getHeaderValues(name);
+        if (headerValues != null) {
+            return (headerValues.length == 1 ? headerValues[0] : headerValues);
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	protected void handleMissingValue(String name, MethodParameter parameter) throws ServletRequestBindingException {
-		throw new ServletRequestBindingException("Missing request header '" + name +
-				"' for method parameter of type " + parameter.getParameterType().getSimpleName());
-	}
+    @Override
+    protected void handleMissingValue(String name, MethodParameter parameter) throws ServletRequestBindingException {
+        throw new ServletRequestBindingException("Missing request header '" + name + "' for method parameter of type "
+                + parameter.getParameterType().getSimpleName());
+    }
 
 
-	private static class RequestHeaderNamedValueInfo extends NamedValueInfo {
+    private static class RequestHeaderNamedValueInfo extends NamedValueInfo {
 
-		private RequestHeaderNamedValueInfo(RequestHeader annotation) {
-			super(annotation.name(), annotation.required(), annotation.defaultValue());
-		}
-	}
+        private RequestHeaderNamedValueInfo(RequestHeader annotation) {
+            super(annotation.name(), annotation.required(), annotation.defaultValue());
+        }
+    }
 
 }

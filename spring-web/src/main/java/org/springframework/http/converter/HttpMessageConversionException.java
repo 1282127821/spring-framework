@@ -27,21 +27,21 @@ import org.springframework.core.NestedRuntimeException;
 @SuppressWarnings("serial")
 public class HttpMessageConversionException extends NestedRuntimeException {
 
-	/**
-	 * Create a new HttpMessageConversionException.
-	 * @param msg the detail message
-	 */
-	public HttpMessageConversionException(String msg) {
-		super(msg);
-	}
+    /**
+     * Create a new HttpMessageConversionException.
+     * @param msg the detail message
+     */
+    public HttpMessageConversionException(String msg) {
+        super(msg);
+    }
 
-	/**
-	 * Create a new HttpMessageConversionException.
-	 * @param msg the detail message
-	 * @param cause the root cause (if any)
-	 */
-	public HttpMessageConversionException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    /**
+     * Create a new HttpMessageConversionException.
+     * @param msg the detail message
+     * @param cause the root cause (if any)
+     */
+    public HttpMessageConversionException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

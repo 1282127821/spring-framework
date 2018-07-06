@@ -28,11 +28,11 @@ import org.springframework.web.context.request.WebRequest;
  */
 public interface WebBindingInitializer {
 
-	/**
-	 * Initialize the given DataBinder for the given request.
-	 * @param binder the DataBinder to initialize
-	 * @param request the web request that the data binding happens within
-	 */
-	void initBinder(WebDataBinder binder, WebRequest request);
+    /**
+     * Initialize the given DataBinder for the given request.
+     * @param binder the DataBinder to initialize
+     * @param request the web request that the data binding happens within
+     */
+    void initBinder(WebDataBinder binder, WebRequest request);
 
 }

@@ -32,16 +32,16 @@ package org.springframework.web.bind.support;
  */
 public interface SessionStatus {
 
-	/**
-	 * Mark the current handler's session processing as complete, allowing for
-	 * cleanup of session attributes.
-	 */
-	void setComplete();
+    /**
+     * Mark the current handler's session processing as complete, allowing for
+     * cleanup of session attributes.
+     */
+    void setComplete();
 
-	/**
-	 * Return whether the current handler's session processing has been marked
-	 * as complete.
-	 */
-	boolean isComplete();
+    /**
+     * Return whether the current handler's session processing has been marked
+     * as complete.
+     */
+    boolean isComplete();
 
 }

@@ -38,21 +38,21 @@ import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
  */
 public class GroovyMarkupViewResolver extends AbstractTemplateViewResolver {
 
-	public GroovyMarkupViewResolver() {
-		setViewClass(requiredViewClass());
-	}
+    public GroovyMarkupViewResolver() {
+        setViewClass(requiredViewClass());
+    }
 
-	@Override
-	protected Class<?> requiredViewClass() {
-		return GroovyMarkupView.class;
-	}
+    @Override
+    protected Class<?> requiredViewClass() {
+        return GroovyMarkupView.class;
+    }
 
-	/**
-	 * This resolver supports i18n, so cache keys should contain the locale.
-	 */
-	@Override
-	protected Object getCacheKey(String viewName, Locale locale) {
-		return viewName + "_" + locale;
-	}
+    /**
+     * This resolver supports i18n, so cache keys should contain the locale.
+     */
+    @Override
+    protected Object getCacheKey(String viewName, Locale locale) {
+        return viewName + "_" + locale;
+    }
 
 }

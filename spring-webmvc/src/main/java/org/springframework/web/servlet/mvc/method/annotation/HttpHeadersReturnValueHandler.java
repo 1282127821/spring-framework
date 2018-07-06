@@ -34,27 +34,27 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class HttpHeadersReturnValueHandler implements HandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return HttpHeaders.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return HttpHeaders.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	@SuppressWarnings("resource")
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    @SuppressWarnings("resource")
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		mavContainer.setRequestHandled(true);
+        mavContainer.setRequestHandled(true);
 
-		Assert.isInstanceOf(HttpHeaders.class, returnValue);
-		HttpHeaders headers = (HttpHeaders) returnValue;
+        Assert.isInstanceOf(HttpHeaders.class, returnValue);
+        HttpHeaders headers = (HttpHeaders) returnValue;
 
-		if (!headers.isEmpty()) {
-			HttpServletResponse servletResponse = webRequest.getNativeResponse(HttpServletResponse.class);
-			ServletServerHttpResponse outputMessage = new ServletServerHttpResponse(servletResponse);
-			outputMessage.getHeaders().putAll(headers);
-			outputMessage.getBody(); // flush headers
-		}
-	}
+        if (!headers.isEmpty()) {
+            HttpServletResponse servletResponse = webRequest.getNativeResponse(HttpServletResponse.class);
+            ServletServerHttpResponse outputMessage = new ServletServerHttpResponse(servletResponse);
+            outputMessage.getHeaders().putAll(headers);
+            outputMessage.getBody(); // flush headers
+        }
+    }
 
 }

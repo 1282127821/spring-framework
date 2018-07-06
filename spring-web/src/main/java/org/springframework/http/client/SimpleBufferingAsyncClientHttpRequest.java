@@ -39,59 +39,58 @@ import org.springframework.util.concurrent.ListenableFuture;
  */
 final class SimpleBufferingAsyncClientHttpRequest extends AbstractBufferingAsyncClientHttpRequest {
 
-	private final HttpURLConnection connection;
+    private final HttpURLConnection connection;
 
-	private final boolean outputStreaming;
+    private final boolean outputStreaming;
 
-	private final AsyncListenableTaskExecutor taskExecutor;
-
-
-	SimpleBufferingAsyncClientHttpRequest(HttpURLConnection connection,
-			boolean outputStreaming, AsyncListenableTaskExecutor taskExecutor) {
-
-		this.connection = connection;
-		this.outputStreaming = outputStreaming;
-		this.taskExecutor = taskExecutor;
-	}
+    private final AsyncListenableTaskExecutor taskExecutor;
 
 
-	@Override
-	public HttpMethod getMethod() {
-		return HttpMethod.resolve(this.connection.getRequestMethod());
-	}
+    SimpleBufferingAsyncClientHttpRequest(HttpURLConnection connection, boolean outputStreaming,
+            AsyncListenableTaskExecutor taskExecutor) {
 
-	@Override
-	public URI getURI() {
-		try {
-			return this.connection.getURL().toURI();
-		}
-		catch (URISyntaxException ex) {
-			throw new IllegalStateException("Could not get HttpURLConnection URI: " + ex.getMessage(), ex);
-		}
-	}
+        this.connection = connection;
+        this.outputStreaming = outputStreaming;
+        this.taskExecutor = taskExecutor;
+    }
 
-	@Override
-	protected ListenableFuture<ClientHttpResponse> executeInternal(
-			final HttpHeaders headers, final byte[] bufferedOutput) throws IOException {
 
-		return this.taskExecutor.submitListenable(new Callable<ClientHttpResponse>() {
-			@Override
-			public ClientHttpResponse call() throws Exception {
-				SimpleBufferingClientHttpRequest.addHeaders(connection, headers);
-				// JDK <1.8 doesn't support getOutputStream with HTTP DELETE
-				if (HttpMethod.DELETE == getMethod() && bufferedOutput.length == 0) {
-					connection.setDoOutput(false);
-				}
-				if (connection.getDoOutput() && outputStreaming) {
-					connection.setFixedLengthStreamingMode(bufferedOutput.length);
-				}
-				connection.connect();
-				if (connection.getDoOutput()) {
-					FileCopyUtils.copy(bufferedOutput, connection.getOutputStream());
-				}
-				return new SimpleClientHttpResponse(connection);
-			}
-		});
-	}
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.resolve(this.connection.getRequestMethod());
+    }
+
+    @Override
+    public URI getURI() {
+        try {
+            return this.connection.getURL().toURI();
+        } catch (URISyntaxException ex) {
+            throw new IllegalStateException("Could not get HttpURLConnection URI: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    protected ListenableFuture<ClientHttpResponse> executeInternal(final HttpHeaders headers,
+            final byte[] bufferedOutput) throws IOException {
+
+        return this.taskExecutor.submitListenable(new Callable<ClientHttpResponse>() {
+            @Override
+            public ClientHttpResponse call() throws Exception {
+                SimpleBufferingClientHttpRequest.addHeaders(connection, headers);
+                // JDK <1.8 doesn't support getOutputStream with HTTP DELETE
+                if (HttpMethod.DELETE == getMethod() && bufferedOutput.length == 0) {
+                    connection.setDoOutput(false);
+                }
+                if (connection.getDoOutput() && outputStreaming) {
+                    connection.setFixedLengthStreamingMode(bufferedOutput.length);
+                }
+                connection.connect();
+                if (connection.getDoOutput()) {
+                    FileCopyUtils.copy(bufferedOutput, connection.getOutputStream());
+                }
+                return new SimpleClientHttpResponse(connection);
+            }
+        });
+    }
 
 }

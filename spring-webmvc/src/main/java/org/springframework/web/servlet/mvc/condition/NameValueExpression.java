@@ -30,10 +30,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 public interface NameValueExpression<T> {
 
-	String getName();
+    String getName();
 
-	T getValue();
+    T getValue();
 
-	boolean isNegated();
+    boolean isNegated();
 
 }

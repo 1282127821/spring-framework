@@ -31,41 +31,41 @@ import org.springframework.core.MethodParameter;
 @SuppressWarnings("serial")
 public class MissingPathVariableException extends ServletRequestBindingException {
 
-	private final String variableName;
+    private final String variableName;
 
-	private final MethodParameter parameter;
-
-
-	/**
-	 * Constructor for MissingPathVariableException.
-	 * @param variableName the name of the missing path variable
-	 * @param parameter the method parameter
-	 */
-	public MissingPathVariableException(String variableName, MethodParameter parameter) {
-		super("");
-		this.variableName = variableName;
-		this.parameter = parameter;
-	}
+    private final MethodParameter parameter;
 
 
-	@Override
-	public String getMessage() {
-		return "Missing URI template variable '" + this.variableName +
-				"' for method parameter of type " + this.parameter.getParameterType().getSimpleName();
-	}
+    /**
+     * Constructor for MissingPathVariableException.
+     * @param variableName the name of the missing path variable
+     * @param parameter the method parameter
+     */
+    public MissingPathVariableException(String variableName, MethodParameter parameter) {
+        super("");
+        this.variableName = variableName;
+        this.parameter = parameter;
+    }
 
-	/**
-	 * Return the expected name of the path variable.
-	 */
-	public final String getVariableName() {
-		return this.variableName;
-	}
 
-	/**
-	 * Return the method parameter bound to the path variable.
-	 */
-	public final MethodParameter getParameter() {
-		return this.parameter;
-	}
+    @Override
+    public String getMessage() {
+        return "Missing URI template variable '" + this.variableName + "' for method parameter of type "
+                + this.parameter.getParameterType().getSimpleName();
+    }
+
+    /**
+     * Return the expected name of the path variable.
+     */
+    public final String getVariableName() {
+        return this.variableName;
+    }
+
+    /**
+     * Return the method parameter bound to the path variable.
+     */
+    public final MethodParameter getParameter() {
+        return this.parameter;
+    }
 
 }

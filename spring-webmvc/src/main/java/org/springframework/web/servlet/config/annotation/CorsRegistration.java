@@ -42,58 +42,58 @@ import org.springframework.web.cors.CorsConfiguration;
  */
 public class CorsRegistration {
 
-	private final String pathPattern;
+    private final String pathPattern;
 
-	private final CorsConfiguration config;
+    private final CorsConfiguration config;
 
-	public CorsRegistration(String pathPattern) {
-		this.pathPattern = pathPattern;
-		// Same implicit default values as the @CrossOrigin annotation + allows simple methods
-		this.config = new CorsConfiguration();
-		this.config.setAllowedOrigins(Arrays.asList(CrossOrigin.DEFAULT_ORIGINS));
-		this.config.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),
-				HttpMethod.HEAD.name(), HttpMethod.POST.name()));
-		this.config.setAllowedHeaders(Arrays.asList(CrossOrigin.DEFAULT_ALLOWED_HEADERS));
-		this.config.setAllowCredentials(CrossOrigin.DEFAULT_ALLOW_CREDENTIALS);
-		this.config.setMaxAge(CrossOrigin.DEFAULT_MAX_AGE);
-	}
+    public CorsRegistration(String pathPattern) {
+        this.pathPattern = pathPattern;
+        // Same implicit default values as the @CrossOrigin annotation + allows simple methods
+        this.config = new CorsConfiguration();
+        this.config.setAllowedOrigins(Arrays.asList(CrossOrigin.DEFAULT_ORIGINS));
+        this.config.setAllowedMethods(
+                Arrays.asList(HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.POST.name()));
+        this.config.setAllowedHeaders(Arrays.asList(CrossOrigin.DEFAULT_ALLOWED_HEADERS));
+        this.config.setAllowCredentials(CrossOrigin.DEFAULT_ALLOW_CREDENTIALS);
+        this.config.setMaxAge(CrossOrigin.DEFAULT_MAX_AGE);
+    }
 
-	public CorsRegistration allowedOrigins(String... origins) {
-		this.config.setAllowedOrigins(new ArrayList<String>(Arrays.asList(origins)));
-		return this;
-	}
+    public CorsRegistration allowedOrigins(String... origins) {
+        this.config.setAllowedOrigins(new ArrayList<String>(Arrays.asList(origins)));
+        return this;
+    }
 
-	public CorsRegistration allowedMethods(String... methods) {
-		this.config.setAllowedMethods(new ArrayList<String>(Arrays.asList(methods)));
-		return this;
-	}
+    public CorsRegistration allowedMethods(String... methods) {
+        this.config.setAllowedMethods(new ArrayList<String>(Arrays.asList(methods)));
+        return this;
+    }
 
-	public CorsRegistration allowedHeaders(String... headers) {
-		this.config.setAllowedHeaders(new ArrayList<String>(Arrays.asList(headers)));
-		return this;
-	}
+    public CorsRegistration allowedHeaders(String... headers) {
+        this.config.setAllowedHeaders(new ArrayList<String>(Arrays.asList(headers)));
+        return this;
+    }
 
-	public CorsRegistration exposedHeaders(String... headers) {
-		this.config.setExposedHeaders(new ArrayList<String>(Arrays.asList(headers)));
-		return this;
-	}
+    public CorsRegistration exposedHeaders(String... headers) {
+        this.config.setExposedHeaders(new ArrayList<String>(Arrays.asList(headers)));
+        return this;
+    }
 
-	public CorsRegistration maxAge(long maxAge) {
-		this.config.setMaxAge(maxAge);
-		return this;
-	}
+    public CorsRegistration maxAge(long maxAge) {
+        this.config.setMaxAge(maxAge);
+        return this;
+    }
 
-	public CorsRegistration allowCredentials(boolean allowCredentials) {
-		this.config.setAllowCredentials(allowCredentials);
-		return this;
-	}
+    public CorsRegistration allowCredentials(boolean allowCredentials) {
+        this.config.setAllowCredentials(allowCredentials);
+        return this;
+    }
 
-	protected String getPathPattern() {
-		return this.pathPattern;
-	}
+    protected String getPathPattern() {
+        return this.pathPattern;
+    }
 
-	protected CorsConfiguration getCorsConfiguration() {
-		return this.config;
-	}
+    protected CorsConfiguration getCorsConfiguration() {
+        return this.config;
+    }
 
 }

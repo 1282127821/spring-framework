@@ -23,6 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.StringUtils;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.SettableListenableFuture;
+
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
@@ -30,12 +36,6 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.SettableListenableFuture;
 
 /**
  * {@link ClientHttpRequest} implementation that uses OkHttp to execute requests.
@@ -48,97 +48,96 @@ import org.springframework.util.concurrent.SettableListenableFuture;
  */
 class OkHttpClientHttpRequest extends AbstractBufferingAsyncClientHttpRequest implements ClientHttpRequest {
 
-	private final OkHttpClient client;
+    private final OkHttpClient client;
 
-	private final URI uri;
+    private final URI uri;
 
-	private final HttpMethod method;
-
-
-	public OkHttpClientHttpRequest(OkHttpClient client, URI uri, HttpMethod method) {
-		this.client = client;
-		this.uri = uri;
-		this.method = method;
-	}
+    private final HttpMethod method;
 
 
-	@Override
-	public HttpMethod getMethod() {
-		return this.method;
-	}
-
-	@Override
-	public URI getURI() {
-		return this.uri;
-	}
-
-	@Override
-	protected ListenableFuture<ClientHttpResponse> executeInternal(HttpHeaders headers, byte[] content)
-			throws IOException {
-
-		MediaType contentType = getContentType(headers);
-		RequestBody body = (content.length > 0 ? RequestBody.create(contentType, content) : null);
-
-		URL url = this.uri.toURL();
-		String methodName = this.method.name();
-		Request.Builder builder = new Request.Builder().url(url).method(methodName, body);
-
-		for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-			String headerName = entry.getKey();
-			for (String headerValue : entry.getValue()) {
-				builder.addHeader(headerName, headerValue);
-			}
-		}
-		Request request = builder.build();
-
-		return new OkHttpListenableFuture(this.client.newCall(request));
-	}
-
-	private MediaType getContentType(HttpHeaders headers) {
-		String rawContentType = headers.getFirst("Content-Type");
-		return (StringUtils.hasText(rawContentType) ? MediaType.parse(rawContentType) : null);
-	}
-
-	@Override
-	public ClientHttpResponse execute() throws IOException {
-		try {
-			return executeAsync().get();
-		}
-		catch (InterruptedException ex) {
-			throw new IOException(ex.getMessage(), ex);
-		}
-		catch (ExecutionException ex) {
-			Throwable cause = ex.getCause();
-			if (cause instanceof IOException) {
-				throw (IOException) cause;
-			}
-			throw new IOException(cause.getMessage(), cause);
-		}
-	}
+    public OkHttpClientHttpRequest(OkHttpClient client, URI uri, HttpMethod method) {
+        this.client = client;
+        this.uri = uri;
+        this.method = method;
+    }
 
 
-	private static class OkHttpListenableFuture extends SettableListenableFuture<ClientHttpResponse> {
+    @Override
+    public HttpMethod getMethod() {
+        return this.method;
+    }
 
-	    private final Call call;
+    @Override
+    public URI getURI() {
+        return this.uri;
+    }
 
-	    public OkHttpListenableFuture(Call call) {
-	        this.call = call;
-	        this.call.enqueue(new Callback() {
-				@Override
-		        public void onResponse(Response response) {
-			        set(new OkHttpClientHttpResponse(response));
-		        }
-		        @Override
-		        public void onFailure(Request request, IOException ex) {
-			        setException(ex);
-		        }
-	        });
-	    }
+    @Override
+    protected ListenableFuture<ClientHttpResponse> executeInternal(HttpHeaders headers, byte[] content)
+            throws IOException {
 
-	    @Override
-	    protected void interruptTask() {
-	        this.call.cancel();
-	    }
-	}
+        MediaType contentType = getContentType(headers);
+        RequestBody body = (content.length > 0 ? RequestBody.create(contentType, content) : null);
+
+        URL url = this.uri.toURL();
+        String methodName = this.method.name();
+        Request.Builder builder = new Request.Builder().url(url).method(methodName, body);
+
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            String headerName = entry.getKey();
+            for (String headerValue : entry.getValue()) {
+                builder.addHeader(headerName, headerValue);
+            }
+        }
+        Request request = builder.build();
+
+        return new OkHttpListenableFuture(this.client.newCall(request));
+    }
+
+    private MediaType getContentType(HttpHeaders headers) {
+        String rawContentType = headers.getFirst("Content-Type");
+        return (StringUtils.hasText(rawContentType) ? MediaType.parse(rawContentType) : null);
+    }
+
+    @Override
+    public ClientHttpResponse execute() throws IOException {
+        try {
+            return executeAsync().get();
+        } catch (InterruptedException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        } catch (ExecutionException ex) {
+            Throwable cause = ex.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw new IOException(cause.getMessage(), cause);
+        }
+    }
+
+
+    private static class OkHttpListenableFuture extends SettableListenableFuture<ClientHttpResponse> {
+
+        private final Call call;
+
+        public OkHttpListenableFuture(Call call) {
+            this.call = call;
+            this.call.enqueue(new Callback() {
+                @Override
+                public void onResponse(Response response) {
+                    set(new OkHttpClientHttpResponse(response));
+                }
+
+                @Override
+                public void onFailure(Request request, IOException ex) {
+                    setException(ex);
+                }
+            });
+        }
+
+        @Override
+        protected void interruptTask() {
+            this.call.cancel();
+        }
+    }
 
 }

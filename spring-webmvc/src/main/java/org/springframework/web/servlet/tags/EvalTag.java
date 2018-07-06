@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
@@ -48,161 +49,158 @@ import org.springframework.web.util.TagUtils;
 @SuppressWarnings("serial")
 public class EvalTag extends HtmlEscapingAwareTag {
 
-	/**
-	 * {@link javax.servlet.jsp.PageContext} attribute for the
-	 * page-level {@link EvaluationContext} instance.
-	 */
-	private static final String EVALUATION_CONTEXT_PAGE_ATTRIBUTE =
-			"org.springframework.web.servlet.tags.EVALUATION_CONTEXT";
+    /**
+     * {@link javax.servlet.jsp.PageContext} attribute for the
+     * page-level {@link EvaluationContext} instance.
+     */
+    private static final String EVALUATION_CONTEXT_PAGE_ATTRIBUTE =
+            "org.springframework.web.servlet.tags.EVALUATION_CONTEXT";
 
 
-	private final ExpressionParser expressionParser = new SpelExpressionParser();
+    private final ExpressionParser expressionParser = new SpelExpressionParser();
 
-	private Expression expression;
+    private Expression expression;
 
-	private String var;
+    private String var;
 
-	private int scope = PageContext.PAGE_SCOPE;
+    private int scope = PageContext.PAGE_SCOPE;
 
-	private boolean javaScriptEscape = false;
-
-
-	/**
-	 * Set the expression to evaluate.
-	 */
-	public void setExpression(String expression) {
-		this.expression = this.expressionParser.parseExpression(expression);
-	}
-
-	/**
-	 * Set the variable name to expose the evaluation result under.
-	 * Defaults to rendering the result to the current JspWriter.
-	 */
-	public void setVar(String var) {
-		this.var = var;
-	}
-
-	/**
-	 * Set the scope to export the evaluation result to.
-	 * This attribute has no meaning unless var is also defined.
-	 */
-	public void setScope(String scope) {
-		this.scope = TagUtils.getScope(scope);
-	}
-
-	/**
-	 * Set JavaScript escaping for this tag, as boolean value.
-	 * Default is "false".
-	 */
-	public void setJavaScriptEscape(boolean javaScriptEscape) throws JspException {
-		this.javaScriptEscape = javaScriptEscape;
-	}
+    private boolean javaScriptEscape = false;
 
 
-	@Override
-	public int doStartTagInternal() throws JspException {
-		return EVAL_BODY_INCLUDE;
-	}
+    /**
+     * Set the expression to evaluate.
+     */
+    public void setExpression(String expression) {
+        this.expression = this.expressionParser.parseExpression(expression);
+    }
 
-	@Override
-	public int doEndTag() throws JspException {
-		EvaluationContext evaluationContext =
-				(EvaluationContext) this.pageContext.getAttribute(EVALUATION_CONTEXT_PAGE_ATTRIBUTE);
-		if (evaluationContext == null) {
-			evaluationContext = createEvaluationContext(this.pageContext);
-			this.pageContext.setAttribute(EVALUATION_CONTEXT_PAGE_ATTRIBUTE, evaluationContext);
-		}
-		if (this.var != null) {
-			Object result = this.expression.getValue(evaluationContext);
-			this.pageContext.setAttribute(this.var, result, this.scope);
-		}
-		else {
-			try {
-				String result = this.expression.getValue(evaluationContext, String.class);
-				result = ObjectUtils.getDisplayString(result);
-				result = htmlEscape(result);
-				result = (this.javaScriptEscape ? JavaScriptUtils.javaScriptEscape(result) : result);
-				this.pageContext.getOut().print(result);
-			}
-			catch (IOException ex) {
-				throw new JspException(ex);
-			}
-		}
-		return EVAL_PAGE;
-	}
+    /**
+     * Set the variable name to expose the evaluation result under.
+     * Defaults to rendering the result to the current JspWriter.
+     */
+    public void setVar(String var) {
+        this.var = var;
+    }
 
-	private EvaluationContext createEvaluationContext(PageContext pageContext) {
-		StandardEvaluationContext context = new StandardEvaluationContext();
-		context.addPropertyAccessor(new JspPropertyAccessor(pageContext));
-		context.addPropertyAccessor(new MapAccessor());
-		context.addPropertyAccessor(new EnvironmentAccessor());
-		context.setBeanResolver(new BeanFactoryResolver(getRequestContext().getWebApplicationContext()));
-		ConversionService conversionService = getConversionService(pageContext);
-		if (conversionService != null) {
-			context.setTypeConverter(new StandardTypeConverter(conversionService));
-		}
-		return context;
-	}
+    /**
+     * Set the scope to export the evaluation result to.
+     * This attribute has no meaning unless var is also defined.
+     */
+    public void setScope(String scope) {
+        this.scope = TagUtils.getScope(scope);
+    }
 
-	private ConversionService getConversionService(PageContext pageContext) {
-		return (ConversionService) pageContext.getRequest().getAttribute(ConversionService.class.getName());
-	}
+    /**
+     * Set JavaScript escaping for this tag, as boolean value.
+     * Default is "false".
+     */
+    public void setJavaScriptEscape(boolean javaScriptEscape) throws JspException {
+        this.javaScriptEscape = javaScriptEscape;
+    }
 
 
-	@SuppressWarnings("deprecation")
-	private static class JspPropertyAccessor implements PropertyAccessor {
+    @Override
+    public int doStartTagInternal() throws JspException {
+        return EVAL_BODY_INCLUDE;
+    }
 
-		private final PageContext pageContext;
+    @Override
+    public int doEndTag() throws JspException {
+        EvaluationContext evaluationContext =
+                (EvaluationContext) this.pageContext.getAttribute(EVALUATION_CONTEXT_PAGE_ATTRIBUTE);
+        if (evaluationContext == null) {
+            evaluationContext = createEvaluationContext(this.pageContext);
+            this.pageContext.setAttribute(EVALUATION_CONTEXT_PAGE_ATTRIBUTE, evaluationContext);
+        }
+        if (this.var != null) {
+            Object result = this.expression.getValue(evaluationContext);
+            this.pageContext.setAttribute(this.var, result, this.scope);
+        } else {
+            try {
+                String result = this.expression.getValue(evaluationContext, String.class);
+                result = ObjectUtils.getDisplayString(result);
+                result = htmlEscape(result);
+                result = (this.javaScriptEscape ? JavaScriptUtils.javaScriptEscape(result) : result);
+                this.pageContext.getOut().print(result);
+            } catch (IOException ex) {
+                throw new JspException(ex);
+            }
+        }
+        return EVAL_PAGE;
+    }
 
-		private final javax.servlet.jsp.el.VariableResolver variableResolver;
+    private EvaluationContext createEvaluationContext(PageContext pageContext) {
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        context.addPropertyAccessor(new JspPropertyAccessor(pageContext));
+        context.addPropertyAccessor(new MapAccessor());
+        context.addPropertyAccessor(new EnvironmentAccessor());
+        context.setBeanResolver(new BeanFactoryResolver(getRequestContext().getWebApplicationContext()));
+        ConversionService conversionService = getConversionService(pageContext);
+        if (conversionService != null) {
+            context.setTypeConverter(new StandardTypeConverter(conversionService));
+        }
+        return context;
+    }
 
-		public JspPropertyAccessor(PageContext pageContext) {
-			this.pageContext = pageContext;
-			this.variableResolver = pageContext.getVariableResolver();
-		}
+    private ConversionService getConversionService(PageContext pageContext) {
+        return (ConversionService) pageContext.getRequest().getAttribute(ConversionService.class.getName());
+    }
 
-		@Override
-		public Class<?>[] getSpecificTargetClasses() {
-			return null;
-		}
 
-		@Override
-		public boolean canRead(EvaluationContext context, Object target, String name) throws AccessException {
-			return (target == null &&
-					(resolveImplicitVariable(name) != null || this.pageContext.findAttribute(name) != null));
-		}
+    @SuppressWarnings("deprecation")
+    private static class JspPropertyAccessor implements PropertyAccessor {
 
-		@Override
-		public TypedValue read(EvaluationContext context, Object target, String name) throws AccessException {
-			Object implicitVar = resolveImplicitVariable(name);
-			if (implicitVar != null) {
-				return new TypedValue(implicitVar);
-			}
-			return new TypedValue(this.pageContext.findAttribute(name));
-		}
+        private final PageContext pageContext;
 
-		@Override
-		public boolean canWrite(EvaluationContext context, Object target, String name) {
-			return false;
-		}
+        private final javax.servlet.jsp.el.VariableResolver variableResolver;
 
-		@Override
-		public void write(EvaluationContext context, Object target, String name, Object newValue) {
-			throw new UnsupportedOperationException();
-		}
+        public JspPropertyAccessor(PageContext pageContext) {
+            this.pageContext = pageContext;
+            this.variableResolver = pageContext.getVariableResolver();
+        }
 
-		private Object resolveImplicitVariable(String name) throws AccessException {
-			if (this.variableResolver == null) {
-				return null;
-			}
-			try {
-				return this.variableResolver.resolveVariable(name);
-			}
-			catch (Exception ex) {
-				throw new AccessException(
-						"Unexpected exception occurred accessing '" + name + "' as an implicit variable", ex);
-			}
-		}
-	}
+        @Override
+        public Class<?>[] getSpecificTargetClasses() {
+            return null;
+        }
+
+        @Override
+        public boolean canRead(EvaluationContext context, Object target, String name) throws AccessException {
+            return (target == null
+                    && (resolveImplicitVariable(name) != null || this.pageContext.findAttribute(name) != null));
+        }
+
+        @Override
+        public TypedValue read(EvaluationContext context, Object target, String name) throws AccessException {
+            Object implicitVar = resolveImplicitVariable(name);
+            if (implicitVar != null) {
+                return new TypedValue(implicitVar);
+            }
+            return new TypedValue(this.pageContext.findAttribute(name));
+        }
+
+        @Override
+        public boolean canWrite(EvaluationContext context, Object target, String name) {
+            return false;
+        }
+
+        @Override
+        public void write(EvaluationContext context, Object target, String name, Object newValue) {
+            throw new UnsupportedOperationException();
+        }
+
+        private Object resolveImplicitVariable(String name) throws AccessException {
+            if (this.variableResolver == null) {
+                return null;
+            }
+            try {
+                return this.variableResolver.resolveVariable(name);
+            } catch (Exception ex) {
+                throw new AccessException(
+                        "Unexpected exception occurred accessing '" + name + "' as an implicit variable", ex);
+            }
+        }
+    }
 
 }

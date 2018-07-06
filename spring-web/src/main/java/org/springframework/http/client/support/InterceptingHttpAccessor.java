@@ -34,31 +34,30 @@ import org.springframework.util.CollectionUtils;
  */
 public abstract class InterceptingHttpAccessor extends HttpAccessor {
 
-	private List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+    private List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
-	/**
-	 * Sets the request interceptors that this accessor should use.
-	 */
-	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
-		this.interceptors = interceptors;
-	}
+    /**
+     * Sets the request interceptors that this accessor should use.
+     */
+    public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
+        this.interceptors = interceptors;
+    }
 
-	/**
-	 * Return the request interceptor that this accessor uses.
-	 */
-	public List<ClientHttpRequestInterceptor> getInterceptors() {
-		return interceptors;
-	}
+    /**
+     * Return the request interceptor that this accessor uses.
+     */
+    public List<ClientHttpRequestInterceptor> getInterceptors() {
+        return interceptors;
+    }
 
-	@Override
-	public ClientHttpRequestFactory getRequestFactory() {
-		ClientHttpRequestFactory delegate = super.getRequestFactory();
-		if (!CollectionUtils.isEmpty(getInterceptors())) {
-			return new InterceptingClientHttpRequestFactory(delegate, getInterceptors());
-		}
-		else {
-			return delegate;
-		}
-	}
+    @Override
+    public ClientHttpRequestFactory getRequestFactory() {
+        ClientHttpRequestFactory delegate = super.getRequestFactory();
+        if (!CollectionUtils.isEmpty(getInterceptors())) {
+            return new InterceptingClientHttpRequestFactory(delegate, getInterceptors());
+        } else {
+            return delegate;
+        }
+    }
 
 }

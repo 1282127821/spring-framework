@@ -16,13 +16,13 @@
 
 package org.springframework.http.converter.xml;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 /**
  * Implementation of {@link org.springframework.http.converter.HttpMessageConverter HttpMessageConverter}
@@ -42,35 +42,34 @@ import org.springframework.util.Assert;
  */
 public class MappingJackson2XmlHttpMessageConverter extends AbstractJackson2HttpMessageConverter {
 
-	/**
-	 * Construct a new {@code MappingJackson2XmlHttpMessageConverter} using default configuration
-	 * provided by {@code Jackson2ObjectMapperBuilder}.
-	 */
-	public MappingJackson2XmlHttpMessageConverter() {
-		this(Jackson2ObjectMapperBuilder.xml().build());
-	}
+    /**
+     * Construct a new {@code MappingJackson2XmlHttpMessageConverter} using default configuration
+     * provided by {@code Jackson2ObjectMapperBuilder}.
+     */
+    public MappingJackson2XmlHttpMessageConverter() {
+        this(Jackson2ObjectMapperBuilder.xml().build());
+    }
 
-	/**
-	 * Construct a new {@code MappingJackson2XmlHttpMessageConverter} with a custom {@link ObjectMapper}
-	 * (must be a {@link XmlMapper} instance).
-	 * You can use {@link Jackson2ObjectMapperBuilder} to build it easily.
-	 * @see Jackson2ObjectMapperBuilder#xml()
-	 */
-	public MappingJackson2XmlHttpMessageConverter(ObjectMapper objectMapper) {
-		super(objectMapper, new MediaType("application", "xml", DEFAULT_CHARSET),
-				new MediaType("text", "xml", DEFAULT_CHARSET),
-				new MediaType("application", "*+xml", DEFAULT_CHARSET));
-		Assert.isAssignable(XmlMapper.class, objectMapper.getClass());
-	}
+    /**
+     * Construct a new {@code MappingJackson2XmlHttpMessageConverter} with a custom {@link ObjectMapper}
+     * (must be a {@link XmlMapper} instance).
+     * You can use {@link Jackson2ObjectMapperBuilder} to build it easily.
+     * @see Jackson2ObjectMapperBuilder#xml()
+     */
+    public MappingJackson2XmlHttpMessageConverter(ObjectMapper objectMapper) {
+        super(objectMapper, new MediaType("application", "xml", DEFAULT_CHARSET),
+                new MediaType("text", "xml", DEFAULT_CHARSET), new MediaType("application", "*+xml", DEFAULT_CHARSET));
+        Assert.isAssignable(XmlMapper.class, objectMapper.getClass());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * The {@code objectMapper} parameter must be a {@link XmlMapper} instance.
-	 */
-	@Override
-	public void setObjectMapper(ObjectMapper objectMapper) {
-		Assert.isAssignable(XmlMapper.class, objectMapper.getClass());
-		super.setObjectMapper(objectMapper);
-	}
+    /**
+     * {@inheritDoc}
+     * The {@code objectMapper} parameter must be a {@link XmlMapper} instance.
+     */
+    @Override
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        Assert.isAssignable(XmlMapper.class, objectMapper.getClass());
+        super.setObjectMapper(objectMapper);
+    }
 
 }

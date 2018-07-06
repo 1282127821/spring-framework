@@ -27,12 +27,12 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
  */
 class ControllerTypePredicate {
 
-	public boolean isControllerType(Class<?> beanClass) {
-		return Controller.class.isAssignableFrom(beanClass);
-	}
+    public boolean isControllerType(Class<?> beanClass) {
+        return Controller.class.isAssignableFrom(beanClass);
+    }
 
-	public boolean isMultiActionControllerType(Class<?> beanClass) {
-		return MultiActionController.class.isAssignableFrom(beanClass);
-	}
+    public boolean isMultiActionControllerType(Class<?> beanClass) {
+        return MultiActionController.class.isAssignableFrom(beanClass);
+    }
 
 }

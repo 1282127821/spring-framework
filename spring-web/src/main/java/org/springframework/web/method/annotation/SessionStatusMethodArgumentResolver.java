@@ -32,16 +32,16 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class SessionStatusMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return SessionStatus.class == parameter.getParameterType();
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return SessionStatus.class == parameter.getParameterType();
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		return mavContainer.getSessionStatus();
-	}
+        return mavContainer.getSessionStatus();
+    }
 
 }

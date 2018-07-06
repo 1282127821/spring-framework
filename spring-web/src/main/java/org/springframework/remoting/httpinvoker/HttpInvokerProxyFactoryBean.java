@@ -52,35 +52,34 @@ import org.springframework.beans.factory.FactoryBean;
  * @see org.springframework.remoting.caucho.HessianProxyFactoryBean
  * @see org.springframework.remoting.caucho.BurlapProxyFactoryBean
  */
-public class HttpInvokerProxyFactoryBean extends HttpInvokerClientInterceptor
-		implements FactoryBean<Object> {
+public class HttpInvokerProxyFactoryBean extends HttpInvokerClientInterceptor implements FactoryBean<Object> {
 
-	private Object serviceProxy;
-
-
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-		if (getServiceInterface() == null) {
-			throw new IllegalArgumentException("Property 'serviceInterface' is required");
-		}
-		this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(getBeanClassLoader());
-	}
+    private Object serviceProxy;
 
 
-	@Override
-	public Object getObject() {
-		return this.serviceProxy;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
+        if (getServiceInterface() == null) {
+            throw new IllegalArgumentException("Property 'serviceInterface' is required");
+        }
+        this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(getBeanClassLoader());
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return getServiceInterface();
-	}
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public Object getObject() {
+        return this.serviceProxy;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return getServiceInterface();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

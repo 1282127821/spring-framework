@@ -32,93 +32,92 @@ import org.springframework.http.StreamingHttpOutputMessage;
  * @since 4.2
  */
 public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHttpMessageConverter<T>
-		implements GenericHttpMessageConverter<T> {
+        implements GenericHttpMessageConverter<T> {
 
-	/**
-	 * Construct an {@code AbstractGenericHttpMessageConverter} with no supported media types.
-	 * @see #setSupportedMediaTypes
-	 */
-	protected AbstractGenericHttpMessageConverter() {
-	}
+    /**
+     * Construct an {@code AbstractGenericHttpMessageConverter} with no supported media types.
+     * @see #setSupportedMediaTypes
+     */
+    protected AbstractGenericHttpMessageConverter() {}
 
-	/**
-	 * Construct an {@code AbstractGenericHttpMessageConverter} with one supported media type.
-	 * @param supportedMediaType the supported media type
-	 */
-	protected AbstractGenericHttpMessageConverter(MediaType supportedMediaType) {
-		super(supportedMediaType);
-	}
+    /**
+     * Construct an {@code AbstractGenericHttpMessageConverter} with one supported media type.
+     * @param supportedMediaType the supported media type
+     */
+    protected AbstractGenericHttpMessageConverter(MediaType supportedMediaType) {
+        super(supportedMediaType);
+    }
 
-	/**
-	 * Construct an {@code AbstractGenericHttpMessageConverter} with multiple supported media type.
-	 * @param supportedMediaTypes the supported media types
-	 */
-	protected AbstractGenericHttpMessageConverter(MediaType... supportedMediaTypes) {
-		super(supportedMediaTypes);
-	}
-
-
-	@Override
-	public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
-		return canRead(contextClass, mediaType);
-	}
-
-	@Override
-	public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
-		return canWrite(clazz, mediaType);
-	}
-
-	/**
-	 * This implementation sets the default headers by calling {@link #addDefaultHeaders},
-	 * and then calls {@link #writeInternal}.
-	 */
-	public final void write(final T t, final Type type, MediaType contentType, HttpOutputMessage outputMessage)
-			throws IOException, HttpMessageNotWritableException {
-
-		final HttpHeaders headers = outputMessage.getHeaders();
-		addDefaultHeaders(headers, t, contentType);
-
-		if (outputMessage instanceof StreamingHttpOutputMessage) {
-			StreamingHttpOutputMessage streamingOutputMessage = (StreamingHttpOutputMessage) outputMessage;
-			streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {
-				@Override
-				public void writeTo(final OutputStream outputStream) throws IOException {
-					writeInternal(t, type, new HttpOutputMessage() {
-						@Override
-						public OutputStream getBody() throws IOException {
-							return outputStream;
-						}
-						@Override
-						public HttpHeaders getHeaders() {
-							return headers;
-						}
-					});
-				}
-			});
-		}
-		else {
-			writeInternal(t, type, outputMessage);
-			outputMessage.getBody().flush();
-		}
-	}
+    /**
+     * Construct an {@code AbstractGenericHttpMessageConverter} with multiple supported media type.
+     * @param supportedMediaTypes the supported media types
+     */
+    protected AbstractGenericHttpMessageConverter(MediaType... supportedMediaTypes) {
+        super(supportedMediaTypes);
+    }
 
 
-	@Override
-	protected void writeInternal(T t, HttpOutputMessage outputMessage)
-			throws IOException, HttpMessageNotWritableException {
+    @Override
+    public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
+        return canRead(contextClass, mediaType);
+    }
 
-		writeInternal(t, null, outputMessage);
-	}
+    @Override
+    public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
+        return canWrite(clazz, mediaType);
+    }
 
-	/**
-	 * Abstract template method that writes the actual body. Invoked from {@link #write}.
-	 * @param t the object to write to the output message
-	 * @param type the type of object to write, can be {@code null} if not specified.
-	 * @param outputMessage the HTTP output message to write to
-	 * @throws IOException in case of I/O errors
-	 * @throws HttpMessageNotWritableException in case of conversion errors
-	 */
-	protected abstract void writeInternal(T t, Type type, HttpOutputMessage outputMessage)
-			throws IOException, HttpMessageNotWritableException;
+    /**
+     * This implementation sets the default headers by calling {@link #addDefaultHeaders},
+     * and then calls {@link #writeInternal}.
+     */
+    public final void write(final T t, final Type type, MediaType contentType, HttpOutputMessage outputMessage)
+            throws IOException, HttpMessageNotWritableException {
+
+        final HttpHeaders headers = outputMessage.getHeaders();
+        addDefaultHeaders(headers, t, contentType);
+
+        if (outputMessage instanceof StreamingHttpOutputMessage) {
+            StreamingHttpOutputMessage streamingOutputMessage = (StreamingHttpOutputMessage) outputMessage;
+            streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {
+                @Override
+                public void writeTo(final OutputStream outputStream) throws IOException {
+                    writeInternal(t, type, new HttpOutputMessage() {
+                        @Override
+                        public OutputStream getBody() throws IOException {
+                            return outputStream;
+                        }
+
+                        @Override
+                        public HttpHeaders getHeaders() {
+                            return headers;
+                        }
+                    });
+                }
+            });
+        } else {
+            writeInternal(t, type, outputMessage);
+            outputMessage.getBody().flush();
+        }
+    }
+
+
+    @Override
+    protected void writeInternal(T t, HttpOutputMessage outputMessage)
+            throws IOException, HttpMessageNotWritableException {
+
+        writeInternal(t, null, outputMessage);
+    }
+
+    /**
+     * Abstract template method that writes the actual body. Invoked from {@link #write}.
+     * @param t the object to write to the output message
+     * @param type the type of object to write, can be {@code null} if not specified.
+     * @param outputMessage the HTTP output message to write to
+     * @throws IOException in case of I/O errors
+     * @throws HttpMessageNotWritableException in case of conversion errors
+     */
+    protected abstract void writeInternal(T t, Type type, HttpOutputMessage outputMessage)
+            throws IOException, HttpMessageNotWritableException;
 
 }

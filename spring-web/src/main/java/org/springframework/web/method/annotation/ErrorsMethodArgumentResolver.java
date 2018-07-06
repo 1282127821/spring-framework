@@ -40,28 +40,29 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class ErrorsMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		Class<?> paramType = parameter.getParameterType();
-		return Errors.class.isAssignableFrom(paramType);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        Class<?> paramType = parameter.getParameterType();
+        return Errors.class.isAssignableFrom(paramType);
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		ModelMap model = mavContainer.getModel();
-		if (model.size() > 0) {
-			int lastIndex = model.size()-1;
-			String lastKey = new ArrayList<String>(model.keySet()).get(lastIndex);
-			if (lastKey.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
-				return model.get(lastKey);
-			}
-		}
+        ModelMap model = mavContainer.getModel();
+        if (model.size() > 0) {
+            int lastIndex = model.size() - 1;
+            String lastKey = new ArrayList<String>(model.keySet()).get(lastIndex);
+            if (lastKey.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
+                return model.get(lastKey);
+            }
+        }
 
-		throw new IllegalStateException(
-				"An Errors/BindingResult argument is expected to be declared immediately after the model attribute, " +
-				"the @RequestBody or the @RequestPart arguments to which they apply: " + parameter.getMethod());
-	}
+        throw new IllegalStateException(
+                "An Errors/BindingResult argument is expected to be declared immediately after the model attribute, "
+                        + "the @RequestBody or the @RequestPart arguments to which they apply: "
+                        + parameter.getMethod());
+    }
 
 }

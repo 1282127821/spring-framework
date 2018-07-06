@@ -38,43 +38,43 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @UsesJava8
 public class CompletionStageReturnValueHandler implements AsyncHandlerMethodReturnValueHandler {
 
-	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
-		return CompletionStage.class.isAssignableFrom(returnType.getParameterType());
-	}
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return CompletionStage.class.isAssignableFrom(returnType.getParameterType());
+    }
 
-	@Override
-	public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
-		return (returnValue != null && returnValue instanceof CompletionStage);
-	}
+    @Override
+    public boolean isAsyncReturnValue(Object returnValue, MethodParameter returnType) {
+        return (returnValue != null && returnValue instanceof CompletionStage);
+    }
 
-	@Override
-	public void handleReturnValue(Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest) throws Exception {
 
-		if (returnValue == null) {
-			mavContainer.setRequestHandled(true);
-			return;
-		}
+        if (returnValue == null) {
+            mavContainer.setRequestHandled(true);
+            return;
+        }
 
-		final DeferredResult<Object> deferredResult = new DeferredResult<Object>();
-		WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
+        final DeferredResult<Object> deferredResult = new DeferredResult<Object>();
+        WebAsyncUtils.getAsyncManager(webRequest).startDeferredResultProcessing(deferredResult, mavContainer);
 
-		@SuppressWarnings("unchecked")
-		CompletionStage<Object> future = (CompletionStage<Object>) returnValue;
-		future.thenAccept(new Consumer<Object>() {
-			@Override
-			public void accept(Object result) {
-				deferredResult.setResult(result);
-			}
-		});
-		future.exceptionally(new Function<Throwable, Object>() {
-			@Override
-			public Object apply(Throwable ex) {
-				deferredResult.setErrorResult(ex);
-				return null;
-			}
-		});
-	}
+        @SuppressWarnings("unchecked")
+        CompletionStage<Object> future = (CompletionStage<Object>) returnValue;
+        future.thenAccept(new Consumer<Object>() {
+            @Override
+            public void accept(Object result) {
+                deferredResult.setResult(result);
+            }
+        });
+        future.exceptionally(new Function<Throwable, Object>() {
+            @Override
+            public Object apply(Throwable ex) {
+                deferredResult.setErrorResult(ex);
+                return null;
+            }
+        });
+    }
 
 }

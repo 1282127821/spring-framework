@@ -35,105 +35,100 @@ import org.springframework.http.client.ClientHttpResponse;
  */
 class MessageBodyClientHttpResponseWrapper implements ClientHttpResponse {
 
-	private final ClientHttpResponse response;
+    private final ClientHttpResponse response;
 
-	private PushbackInputStream pushbackInputStream;
-
-
-	public MessageBodyClientHttpResponseWrapper(ClientHttpResponse response) throws IOException {
-		this.response = response;
-	}
+    private PushbackInputStream pushbackInputStream;
 
 
-	/**
-	 * Indicates whether the response has a message body.
-	 * <p>Implementation returns {@code false} for:
-	 * <ul>
-	 * <li>a response status of {@code 1XX}, {@code 204} or {@code 304}</li>
-	 * <li>a {@code Content-Length} header of {@code 0}</li>
-	 * </ul>
-	 * @return {@code true} if the response has a message body, {@code false} otherwise
-	 * @throws IOException in case of I/O errors
-	 */
-	public boolean hasMessageBody() throws IOException {
-		HttpStatus responseStatus = this.getStatusCode();
-		if (responseStatus.is1xxInformational() || responseStatus == HttpStatus.NO_CONTENT ||
-				responseStatus == HttpStatus.NOT_MODIFIED) {
-			return false;
-		}
-		else if (this.getHeaders().getContentLength() == 0) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Indicates whether the response has an empty message body.
-	 * <p>Implementation tries to read the first bytes of the response stream:
-	 * <ul>
-	 * <li>if no bytes are available, the message body is empty</li>
-	 * <li>otherwise it is not empty and the stream is reset to its start for further reading</li>
-	 * </ul>
-	 * @return {@code true} if the response has a zero-length message body, {@code false} otherwise
-	 * @throws IOException in case of I/O errors
-	 */
-	public boolean hasEmptyMessageBody() throws IOException {
-		InputStream body = this.response.getBody();
-		if (body == null) {
-			return true;
-		}
-		else if (body.markSupported()) {
-			body.mark(1);
-			if (body.read() == -1) {
-				return true;
-			}
-			else {
-				body.reset();
-				return false;
-			}
-		}
-		else {
-			this.pushbackInputStream = new PushbackInputStream(body);
-			int b = this.pushbackInputStream.read();
-			if (b == -1) {
-				return true;
-			}
-			else {
-				this.pushbackInputStream.unread(b);
-				return false;
-			}
-		}
-	}
+    public MessageBodyClientHttpResponseWrapper(ClientHttpResponse response) throws IOException {
+        this.response = response;
+    }
 
 
-	@Override
-	public HttpHeaders getHeaders() {
-		return this.response.getHeaders();
-	}
+    /**
+     * Indicates whether the response has a message body.
+     * <p>Implementation returns {@code false} for:
+     * <ul>
+     * <li>a response status of {@code 1XX}, {@code 204} or {@code 304}</li>
+     * <li>a {@code Content-Length} header of {@code 0}</li>
+     * </ul>
+     * @return {@code true} if the response has a message body, {@code false} otherwise
+     * @throws IOException in case of I/O errors
+     */
+    public boolean hasMessageBody() throws IOException {
+        HttpStatus responseStatus = this.getStatusCode();
+        if (responseStatus.is1xxInformational() || responseStatus == HttpStatus.NO_CONTENT
+                || responseStatus == HttpStatus.NOT_MODIFIED) {
+            return false;
+        } else if (this.getHeaders().getContentLength() == 0) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public InputStream getBody() throws IOException {
-		return (this.pushbackInputStream != null ? this.pushbackInputStream : this.response.getBody());
-	}
+    /**
+     * Indicates whether the response has an empty message body.
+     * <p>Implementation tries to read the first bytes of the response stream:
+     * <ul>
+     * <li>if no bytes are available, the message body is empty</li>
+     * <li>otherwise it is not empty and the stream is reset to its start for further reading</li>
+     * </ul>
+     * @return {@code true} if the response has a zero-length message body, {@code false} otherwise
+     * @throws IOException in case of I/O errors
+     */
+    public boolean hasEmptyMessageBody() throws IOException {
+        InputStream body = this.response.getBody();
+        if (body == null) {
+            return true;
+        } else if (body.markSupported()) {
+            body.mark(1);
+            if (body.read() == -1) {
+                return true;
+            } else {
+                body.reset();
+                return false;
+            }
+        } else {
+            this.pushbackInputStream = new PushbackInputStream(body);
+            int b = this.pushbackInputStream.read();
+            if (b == -1) {
+                return true;
+            } else {
+                this.pushbackInputStream.unread(b);
+                return false;
+            }
+        }
+    }
 
-	@Override
-	public HttpStatus getStatusCode() throws IOException {
-		return this.response.getStatusCode();
-	}
 
-	@Override
-	public int getRawStatusCode() throws IOException {
-		return this.response.getRawStatusCode();
-	}
+    @Override
+    public HttpHeaders getHeaders() {
+        return this.response.getHeaders();
+    }
 
-	@Override
-	public String getStatusText() throws IOException {
-		return this.response.getStatusText();
-	}
+    @Override
+    public InputStream getBody() throws IOException {
+        return (this.pushbackInputStream != null ? this.pushbackInputStream : this.response.getBody());
+    }
 
-	@Override
-	public void close() {
-		this.response.close();
-	}
+    @Override
+    public HttpStatus getStatusCode() throws IOException {
+        return this.response.getStatusCode();
+    }
+
+    @Override
+    public int getRawStatusCode() throws IOException {
+        return this.response.getRawStatusCode();
+    }
+
+    @Override
+    public String getStatusText() throws IOException {
+        return this.response.getStatusText();
+    }
+
+    @Override
+    public void close() {
+        this.response.close();
+    }
 
 }

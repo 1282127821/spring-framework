@@ -35,33 +35,33 @@ import org.springframework.http.server.ServerHttpResponse;
  */
 public abstract class AbstractMappingJacksonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-	@Override
-	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		return AbstractJackson2HttpMessageConverter.class.isAssignableFrom(converterType);
-	}
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return AbstractJackson2HttpMessageConverter.class.isAssignableFrom(converterType);
+    }
 
-	@Override
-	public final Object beforeBodyWrite(Object body, MethodParameter returnType,
-			MediaType contentType, Class<? extends HttpMessageConverter<?>> converterType,
-			ServerHttpRequest request, ServerHttpResponse response) {
+    @Override
+    public final Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType contentType,
+            Class<? extends HttpMessageConverter<?>> converterType, ServerHttpRequest request,
+            ServerHttpResponse response) {
 
-		MappingJacksonValue container = getOrCreateContainer(body);
-		beforeBodyWriteInternal(container, contentType, returnType, request, response);
-		return container;
-	}
+        MappingJacksonValue container = getOrCreateContainer(body);
+        beforeBodyWriteInternal(container, contentType, returnType, request, response);
+        return container;
+    }
 
-	/**
-	 * Wrap the body in a {@link MappingJacksonValue} value container (for providing
-	 * additional serialization instructions) or simply cast it if already wrapped.
-	 */
-	protected MappingJacksonValue getOrCreateContainer(Object body) {
-		return (body instanceof MappingJacksonValue ? (MappingJacksonValue) body : new MappingJacksonValue(body));
-	}
+    /**
+     * Wrap the body in a {@link MappingJacksonValue} value container (for providing
+     * additional serialization instructions) or simply cast it if already wrapped.
+     */
+    protected MappingJacksonValue getOrCreateContainer(Object body) {
+        return (body instanceof MappingJacksonValue ? (MappingJacksonValue) body : new MappingJacksonValue(body));
+    }
 
-	/**
-	 * Invoked only if the converter type is {@code MappingJackson2HttpMessageConverter}.
-	 */
-	protected abstract void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
-			MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response);
+    /**
+     * Invoked only if the converter type is {@code MappingJackson2HttpMessageConverter}.
+     */
+    protected abstract void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
+            MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response);
 
 }

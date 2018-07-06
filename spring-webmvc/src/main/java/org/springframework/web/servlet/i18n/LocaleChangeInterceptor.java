@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -40,111 +39,108 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 
-	/**
-	 * Default name of the locale specification parameter: "locale".
-	 */
-	public static final String DEFAULT_PARAM_NAME = "locale";
+    /**
+     * Default name of the locale specification parameter: "locale".
+     */
+    public static final String DEFAULT_PARAM_NAME = "locale";
 
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private String paramName = DEFAULT_PARAM_NAME;
+    private String paramName = DEFAULT_PARAM_NAME;
 
-	private String[] httpMethods;
+    private String[] httpMethods;
 
-	private boolean ignoreInvalidLocale = false;
-
-
-	/**
-	 * Set the name of the parameter that contains a locale specification
-	 * in a locale change request. Default is "locale".
-	 */
-	public void setParamName(String paramName) {
-		this.paramName = paramName;
-	}
-
-	/**
-	 * Return the name of the parameter that contains a locale specification
-	 * in a locale change request.
-	 */
-	public String getParamName() {
-		return this.paramName;
-	}
-
-	/**
-	 * Configure the HTTP method(s) over which the locale can be changed.
-	 * @param httpMethods the methods
-	 * @since 4.2
-	 */
-	public void setHttpMethods(String... httpMethods) {
-		this.httpMethods = httpMethods;
-	}
-
-	/**
-	 * Return the configured HTTP methods.
-	 * @since 4.2
-	 */
-	public String[] getHttpMethods() {
-		return this.httpMethods;
-	}
-
-	/**
-	 * Set whether to ignore an invalid value for the locale parameter.
-	 * @since 4.2.2
-	 */
-	public void setIgnoreInvalidLocale(boolean ignoreInvalidLocale) {
-		this.ignoreInvalidLocale = ignoreInvalidLocale;
-	}
-
-	/**
-	 * Return whether to ignore an invalid value for the locale parameter.
-	 * @since 4.2.2
-	 */
-	public boolean isIgnoreInvalidLocale() {
-		return this.ignoreInvalidLocale;
-	}
+    private boolean ignoreInvalidLocale = false;
 
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws ServletException {
+    /**
+     * Set the name of the parameter that contains a locale specification
+     * in a locale change request. Default is "locale".
+     */
+    public void setParamName(String paramName) {
+        this.paramName = paramName;
+    }
 
-		String newLocale = request.getParameter(getParamName());
-		if (newLocale != null) {
-			if (checkHttpMethod(request.getMethod())) {
-				LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-				if (localeResolver == null) {
-					throw new IllegalStateException(
-							"No LocaleResolver found: not in a DispatcherServlet request?");
-				}
-				try {
-					localeResolver.setLocale(request, response, StringUtils.parseLocaleString(newLocale));
-				}
-				catch (IllegalArgumentException ex) {
-					if (isIgnoreInvalidLocale()) {
-						logger.debug("Ignoring invalid locale value [" + newLocale + "]: " + ex.getMessage());
-					}
-					else {
-						throw ex;
-					}
-				}
-			}
-		}
-		// Proceed in any case.
-		return true;
-	}
+    /**
+     * Return the name of the parameter that contains a locale specification
+     * in a locale change request.
+     */
+    public String getParamName() {
+        return this.paramName;
+    }
 
-	private boolean checkHttpMethod(String currentMethod) {
-		String[] configuredMethods = getHttpMethods();
-		if (ObjectUtils.isEmpty(configuredMethods)) {
-			return true;
-		}
-		for (String configuredMethod : configuredMethods) {
-			if (configuredMethod.equalsIgnoreCase(currentMethod)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Configure the HTTP method(s) over which the locale can be changed.
+     * @param httpMethods the methods
+     * @since 4.2
+     */
+    public void setHttpMethods(String... httpMethods) {
+        this.httpMethods = httpMethods;
+    }
+
+    /**
+     * Return the configured HTTP methods.
+     * @since 4.2
+     */
+    public String[] getHttpMethods() {
+        return this.httpMethods;
+    }
+
+    /**
+     * Set whether to ignore an invalid value for the locale parameter.
+     * @since 4.2.2
+     */
+    public void setIgnoreInvalidLocale(boolean ignoreInvalidLocale) {
+        this.ignoreInvalidLocale = ignoreInvalidLocale;
+    }
+
+    /**
+     * Return whether to ignore an invalid value for the locale parameter.
+     * @since 4.2.2
+     */
+    public boolean isIgnoreInvalidLocale() {
+        return this.ignoreInvalidLocale;
+    }
+
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws ServletException {
+
+        String newLocale = request.getParameter(getParamName());
+        if (newLocale != null) {
+            if (checkHttpMethod(request.getMethod())) {
+                LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+                if (localeResolver == null) {
+                    throw new IllegalStateException("No LocaleResolver found: not in a DispatcherServlet request?");
+                }
+                try {
+                    localeResolver.setLocale(request, response, StringUtils.parseLocaleString(newLocale));
+                } catch (IllegalArgumentException ex) {
+                    if (isIgnoreInvalidLocale()) {
+                        logger.debug("Ignoring invalid locale value [" + newLocale + "]: " + ex.getMessage());
+                    } else {
+                        throw ex;
+                    }
+                }
+            }
+        }
+        // Proceed in any case.
+        return true;
+    }
+
+    private boolean checkHttpMethod(String currentMethod) {
+        String[] configuredMethods = getHttpMethods();
+        if (ObjectUtils.isEmpty(configuredMethods)) {
+            return true;
+        }
+        for (String configuredMethod : configuredMethods) {
+            if (configuredMethod.equalsIgnoreCase(currentMethod)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

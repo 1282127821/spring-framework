@@ -17,6 +17,7 @@
 package org.springframework.web.filter;
 
 import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,44 +53,44 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  */
 public class CorsFilter extends OncePerRequestFilter {
 
-	private CorsProcessor processor = new DefaultCorsProcessor();
+    private CorsProcessor processor = new DefaultCorsProcessor();
 
-	private final CorsConfigurationSource configSource;
+    private final CorsConfigurationSource configSource;
 
 
-	/**
-	 * Constructor accepting a {@link CorsConfigurationSource} used by the filter to find
-	 * the {@link CorsConfiguration} to use for each incoming request.
-	 * @see UrlBasedCorsConfigurationSource
-	 */
-	public CorsFilter(CorsConfigurationSource configSource) {
-		this.configSource = configSource;
-	}
+    /**
+     * Constructor accepting a {@link CorsConfigurationSource} used by the filter to find
+     * the {@link CorsConfiguration} to use for each incoming request.
+     * @see UrlBasedCorsConfigurationSource
+     */
+    public CorsFilter(CorsConfigurationSource configSource) {
+        this.configSource = configSource;
+    }
 
-	/**
-	 * Configure a custom {@link CorsProcessor} to use to apply the matched
-	 * {@link CorsConfiguration} for a request.
-	 * <p>By default {@link DefaultCorsProcessor} is used.
-	 */
-	public void setCorsProcessor(CorsProcessor processor) {
-		Assert.notNull(processor, "CorsProcessor must not be null");
-		this.processor = processor;
-	}
+    /**
+     * Configure a custom {@link CorsProcessor} to use to apply the matched
+     * {@link CorsConfiguration} for a request.
+     * <p>By default {@link DefaultCorsProcessor} is used.
+     */
+    public void setCorsProcessor(CorsProcessor processor) {
+        Assert.notNull(processor, "CorsProcessor must not be null");
+        this.processor = processor;
+    }
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-		if (CorsUtils.isCorsRequest(request)) {
-			CorsConfiguration corsConfiguration = this.configSource.getCorsConfiguration(request);
-			if (corsConfiguration != null) {
-				boolean isValid = this.processor.processRequest(corsConfiguration, request, response);
-				if (!isValid || CorsUtils.isPreFlightRequest(request)) {
-					return;
-				}
-			}
-		}
-		filterChain.doFilter(request, response);
-	}
+        if (CorsUtils.isCorsRequest(request)) {
+            CorsConfiguration corsConfiguration = this.configSource.getCorsConfiguration(request);
+            if (corsConfiguration != null) {
+                boolean isValid = this.processor.processRequest(corsConfiguration, request, response);
+                if (!isValid || CorsUtils.isPreFlightRequest(request)) {
+                    return;
+                }
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
 
 }

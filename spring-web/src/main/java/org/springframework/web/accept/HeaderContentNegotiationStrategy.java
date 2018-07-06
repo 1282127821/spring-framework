@@ -35,28 +35,26 @@ import org.springframework.web.context.request.NativeWebRequest;
 public class HeaderContentNegotiationStrategy implements ContentNegotiationStrategy {
 
 
-	/**
-	 * {@inheritDoc}
-	 * @throws HttpMediaTypeNotAcceptableException if the 'Accept' header
-	 * cannot be parsed.
-	 */
-	@Override
-	public List<MediaType> resolveMediaTypes(NativeWebRequest request)
-			throws HttpMediaTypeNotAcceptableException {
+    /**
+     * {@inheritDoc}
+     * @throws HttpMediaTypeNotAcceptableException if the 'Accept' header
+     * cannot be parsed.
+     */
+    @Override
+    public List<MediaType> resolveMediaTypes(NativeWebRequest request) throws HttpMediaTypeNotAcceptableException {
 
-		String header = request.getHeader(HttpHeaders.ACCEPT);
-		if (!StringUtils.hasText(header)) {
-			return Collections.emptyList();
-		}
-		try {
-			List<MediaType> mediaTypes = MediaType.parseMediaTypes(header);
-			MediaType.sortBySpecificityAndQuality(mediaTypes);
-			return mediaTypes;
-		}
-		catch (InvalidMediaTypeException ex) {
-			throw new HttpMediaTypeNotAcceptableException(
-					"Could not parse 'Accept' header [" + header + "]: " + ex.getMessage());
-		}
-	}
+        String header = request.getHeader(HttpHeaders.ACCEPT);
+        if (!StringUtils.hasText(header)) {
+            return Collections.emptyList();
+        }
+        try {
+            List<MediaType> mediaTypes = MediaType.parseMediaTypes(header);
+            MediaType.sortBySpecificityAndQuality(mediaTypes);
+            return mediaTypes;
+        } catch (InvalidMediaTypeException ex) {
+            throw new HttpMediaTypeNotAcceptableException(
+                    "Could not parse 'Accept' header [" + header + "]: " + ex.getMessage());
+        }
+    }
 
 }

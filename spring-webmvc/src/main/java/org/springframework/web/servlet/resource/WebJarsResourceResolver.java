@@ -17,12 +17,12 @@
 package org.springframework.web.servlet.resource;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.Resource;
 import org.webjars.MultipleMatchesException;
 import org.webjars.WebJarAssetLocator;
-
-import org.springframework.core.io.Resource;
 
 /**
  * A {@code ResourceResolver} that delegates to the chain to locate a resource and then
@@ -45,63 +45,61 @@ import org.springframework.core.io.Resource;
  */
 public class WebJarsResourceResolver extends AbstractResourceResolver {
 
-	private final static String WEBJARS_LOCATION = "META-INF/resources/webjars";
+    private final static String WEBJARS_LOCATION = "META-INF/resources/webjars";
 
-	private final static int WEBJARS_LOCATION_LENGTH = WEBJARS_LOCATION.length();
+    private final static int WEBJARS_LOCATION_LENGTH = WEBJARS_LOCATION.length();
 
-	private final WebJarAssetLocator webJarAssetLocator = new WebJarAssetLocator();
+    private final WebJarAssetLocator webJarAssetLocator = new WebJarAssetLocator();
 
 
-	@Override
-	protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-			List<? extends Resource> locations, ResourceResolverChain chain) {
+    @Override
+    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
+            List<? extends Resource> locations, ResourceResolverChain chain) {
 
-		Resource resolved = chain.resolveResource(request, requestPath, locations);
-		if (resolved == null) {
-			String webJarResourcePath = findWebJarResourcePath(requestPath);
-			if (webJarResourcePath != null) {
-				return chain.resolveResource(request, webJarResourcePath, locations);
-			}
-		}
-		return resolved;
-	}
+        Resource resolved = chain.resolveResource(request, requestPath, locations);
+        if (resolved == null) {
+            String webJarResourcePath = findWebJarResourcePath(requestPath);
+            if (webJarResourcePath != null) {
+                return chain.resolveResource(request, webJarResourcePath, locations);
+            }
+        }
+        return resolved;
+    }
 
-	@Override
-	protected String resolveUrlPathInternal(String resourceUrlPath,
-			List<? extends Resource> locations, ResourceResolverChain chain) {
+    @Override
+    protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
+            ResourceResolverChain chain) {
 
-		String path = chain.resolveUrlPath(resourceUrlPath, locations);
-		if (path == null) {
-			String webJarResourcePath = findWebJarResourcePath(resourceUrlPath);
-			if (webJarResourcePath != null) {
-				return chain.resolveUrlPath(webJarResourcePath, locations);
-			}
-		}
-		return path;
-	}
+        String path = chain.resolveUrlPath(resourceUrlPath, locations);
+        if (path == null) {
+            String webJarResourcePath = findWebJarResourcePath(resourceUrlPath);
+            if (webJarResourcePath != null) {
+                return chain.resolveUrlPath(webJarResourcePath, locations);
+            }
+        }
+        return path;
+    }
 
-	protected String findWebJarResourcePath(String path) {
-		try {
-			int startOffset = (path.startsWith("/") ? 1 : 0);
-			int endOffset = path.indexOf("/", 1);
-			if (endOffset != -1) {
-				String webjar = path.substring(startOffset, endOffset);
-				String partialPath = path.substring(endOffset);
-				String webJarPath = webJarAssetLocator.getFullPath(webjar, partialPath);
-				return webJarPath.substring(WEBJARS_LOCATION_LENGTH);
-			}
-		}
-		catch (MultipleMatchesException ex) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("WebJar version conflict for \"" + path + "\"", ex);
-			}
-		}
-		catch (IllegalArgumentException ex) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("No WebJar resource found for \"" + path + "\"");
-			}
-		}
-		return null;
-	}
+    protected String findWebJarResourcePath(String path) {
+        try {
+            int startOffset = (path.startsWith("/") ? 1 : 0);
+            int endOffset = path.indexOf("/", 1);
+            if (endOffset != -1) {
+                String webjar = path.substring(startOffset, endOffset);
+                String partialPath = path.substring(endOffset);
+                String webJarPath = webJarAssetLocator.getFullPath(webjar, partialPath);
+                return webJarPath.substring(WEBJARS_LOCATION_LENGTH);
+            }
+        } catch (MultipleMatchesException ex) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("WebJar version conflict for \"" + path + "\"", ex);
+            }
+        } catch (IllegalArgumentException ex) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No WebJar resource found for \"" + path + "\"");
+            }
+        }
+        return null;
+    }
 
 }

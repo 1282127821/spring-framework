@@ -30,13 +30,13 @@ import org.springframework.core.NestedRuntimeException;
 @SuppressWarnings("serial")
 public class HandlerMethodInvocationException extends NestedRuntimeException {
 
-	/**
-	 * Create a new HandlerMethodInvocationException for the given Method handle and cause.
-	 * @param handlerMethod the handler method handle
-	 * @param cause the cause of the invocation failure
-	 */
-	public HandlerMethodInvocationException(Method handlerMethod, Throwable cause) {
-		super("Failed to invoke handler method [" + handlerMethod + "]", cause);
-	}
+    /**
+     * Create a new HandlerMethodInvocationException for the given Method handle and cause.
+     * @param handlerMethod the handler method handle
+     * @param cause the cause of the invocation failure
+     */
+    public HandlerMethodInvocationException(Method handlerMethod, Throwable cause) {
+        super("Failed to invoke handler method [" + handlerMethod + "]", cause);
+    }
 
 }

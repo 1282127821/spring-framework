@@ -44,20 +44,20 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public interface WebArgumentResolver {
 
-	/**
-	 * Marker to be returned when the resolver does not know how to
-	 * handle the given method parameter.
-	 */
-	Object UNRESOLVED = new Object();
+    /**
+     * Marker to be returned when the resolver does not know how to
+     * handle the given method parameter.
+     */
+    Object UNRESOLVED = new Object();
 
 
-	/**
-	 * Resolve an argument for the given handler method parameter within the given web request.
-	 * @param methodParameter the handler method parameter to resolve
-	 * @param webRequest the current web request, allowing access to the native request as well
-	 * @return the argument value, or {@code UNRESOLVED} if not resolvable
-	 * @throws Exception in case of resolution failure
-	 */
-	Object resolveArgument(MethodParameter methodParameter, NativeWebRequest webRequest) throws Exception;
+    /**
+     * Resolve an argument for the given handler method parameter within the given web request.
+     * @param methodParameter the handler method parameter to resolve
+     * @param webRequest the current web request, allowing access to the native request as well
+     * @return the argument value, or {@code UNRESOLVED} if not resolvable
+     * @throws Exception in case of resolution failure
+     */
+    Object resolveArgument(MethodParameter methodParameter, NativeWebRequest webRequest) throws Exception;
 
 }

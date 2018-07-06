@@ -37,11 +37,11 @@ import java.io.OutputStream;
  */
 public interface StreamingResponseBody {
 
-	/**
-	 * A callback for writing to the response body.
-	 * @param outputStream the stream for the response body
-	 * @throws IOException an exception while writing
-	 */
-	void writeTo(OutputStream outputStream) throws IOException;
+    /**
+     * A callback for writing to the response body.
+     * @param outputStream the stream for the response body
+     * @throws IOException an exception while writing
+     */
+    void writeTo(OutputStream outputStream) throws IOException;
 
 }

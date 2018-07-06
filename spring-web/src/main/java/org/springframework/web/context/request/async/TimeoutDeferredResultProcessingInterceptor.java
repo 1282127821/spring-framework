@@ -36,13 +36,13 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class TimeoutDeferredResultProcessingInterceptor extends DeferredResultProcessingInterceptorAdapter {
 
-	@Override
-	public <T> boolean handleTimeout(NativeWebRequest request, DeferredResult<T> deferredResult) throws Exception {
-		HttpServletResponse servletResponse = request.getNativeResponse(HttpServletResponse.class);
-		if (!servletResponse.isCommitted()) {
-			servletResponse.sendError(HttpStatus.SERVICE_UNAVAILABLE.value());
-		}
-		return false;
-	}
+    @Override
+    public <T> boolean handleTimeout(NativeWebRequest request, DeferredResult<T> deferredResult) throws Exception {
+        HttpServletResponse servletResponse = request.getNativeResponse(HttpServletResponse.class);
+        if (!servletResponse.isCommitted()) {
+            servletResponse.sendError(HttpStatus.SERVICE_UNAVAILABLE.value());
+        }
+        return false;
+    }
 
 }

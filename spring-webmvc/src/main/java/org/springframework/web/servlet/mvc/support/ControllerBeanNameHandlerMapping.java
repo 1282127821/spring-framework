@@ -40,55 +40,55 @@ import org.springframework.util.StringUtils;
  */
 public class ControllerBeanNameHandlerMapping extends AbstractControllerUrlHandlerMapping {
 
-	private String urlPrefix = "";
+    private String urlPrefix = "";
 
-	private String urlSuffix = "";
-
-
-	/**
-	 * Set an optional prefix to prepend to generated URL mappings.
-	 * <p>By default this is an empty String. If you want a prefix like
-	 * "/myapp/", you can set it for all beans mapped by this mapping.
-	 */
-	public void setUrlPrefix(String urlPrefix) {
-		this.urlPrefix = (urlPrefix != null ? urlPrefix : "");
-	}
-
-	/**
-	 * Set an optional suffix to append to generated URL mappings.
-	 * <p>By default this is an empty String. If you want a suffix like
-	 * ".do", you can set it for all beans mapped by this mapping.
-	 */
-	public void setUrlSuffix(String urlSuffix) {
-		this.urlSuffix = (urlSuffix != null ? urlSuffix : "");
-	}
+    private String urlSuffix = "";
 
 
-	@Override
-	protected String[] buildUrlsForHandler(String beanName, Class<?> beanClass) {
-		List<String> urls = new ArrayList<String>();
-		urls.add(generatePathMapping(beanName));
-		String[] aliases = getApplicationContext().getAliases(beanName);
-		for (String alias : aliases) {
-			urls.add(generatePathMapping(alias));
-		}
-		return StringUtils.toStringArray(urls);
-	}
+    /**
+     * Set an optional prefix to prepend to generated URL mappings.
+     * <p>By default this is an empty String. If you want a prefix like
+     * "/myapp/", you can set it for all beans mapped by this mapping.
+     */
+    public void setUrlPrefix(String urlPrefix) {
+        this.urlPrefix = (urlPrefix != null ? urlPrefix : "");
+    }
 
-	/**
-	 * Prepends a '/' if required and appends the URL suffix to the name.
-	 */
-	protected String generatePathMapping(String beanName) {
-		String name = (beanName.startsWith("/") ? beanName : "/" + beanName);
-		StringBuilder path = new StringBuilder();
-		if (!name.startsWith(this.urlPrefix)) {
-			path.append(this.urlPrefix);
-		}
-		path.append(name);
-		if (!name.endsWith(this.urlSuffix)) {
-			path.append(this.urlSuffix);
-		}
-		return path.toString();
-	}
+    /**
+     * Set an optional suffix to append to generated URL mappings.
+     * <p>By default this is an empty String. If you want a suffix like
+     * ".do", you can set it for all beans mapped by this mapping.
+     */
+    public void setUrlSuffix(String urlSuffix) {
+        this.urlSuffix = (urlSuffix != null ? urlSuffix : "");
+    }
+
+
+    @Override
+    protected String[] buildUrlsForHandler(String beanName, Class<?> beanClass) {
+        List<String> urls = new ArrayList<String>();
+        urls.add(generatePathMapping(beanName));
+        String[] aliases = getApplicationContext().getAliases(beanName);
+        for (String alias : aliases) {
+            urls.add(generatePathMapping(alias));
+        }
+        return StringUtils.toStringArray(urls);
+    }
+
+    /**
+     * Prepends a '/' if required and appends the URL suffix to the name.
+     */
+    protected String generatePathMapping(String beanName) {
+        String name = (beanName.startsWith("/") ? beanName : "/" + beanName);
+        StringBuilder path = new StringBuilder();
+        if (!name.startsWith(this.urlPrefix)) {
+            path.append(this.urlPrefix);
+        }
+        path.append(name);
+        if (!name.endsWith(this.urlSuffix)) {
+            path.append(this.urlSuffix);
+        }
+        return path.toString();
+    }
 
 }

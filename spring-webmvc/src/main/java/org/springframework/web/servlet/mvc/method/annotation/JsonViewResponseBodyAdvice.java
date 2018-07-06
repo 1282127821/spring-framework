@@ -16,14 +16,14 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * A {@link ResponseBodyAdvice} implementation that adds support for Jackson's
@@ -45,22 +45,22 @@ import org.springframework.http.server.ServerHttpResponse;
  */
 public class JsonViewResponseBodyAdvice extends AbstractMappingJacksonResponseBodyAdvice {
 
-	@Override
-	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		return (super.supports(returnType, converterType) && returnType.getMethodAnnotation(JsonView.class) != null);
-	}
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return (super.supports(returnType, converterType) && returnType.getMethodAnnotation(JsonView.class) != null);
+    }
 
-	@Override
-	protected void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
-			MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response) {
+    @Override
+    protected void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
+            MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response) {
 
-		JsonView annotation = returnType.getMethodAnnotation(JsonView.class);
-		Class<?>[] classes = annotation.value();
-		if (classes.length != 1) {
-			throw new IllegalArgumentException(
-					"@JsonView only supported for response body advice with exactly 1 class argument: " + returnType);
-		}
-		bodyContainer.setSerializationView(classes[0]);
-	}
+        JsonView annotation = returnType.getMethodAnnotation(JsonView.class);
+        Class<?>[] classes = annotation.value();
+        if (classes.length != 1) {
+            throw new IllegalArgumentException(
+                    "@JsonView only supported for response body advice with exactly 1 class argument: " + returnType);
+        }
+        bodyContainer.setSerializationView(classes[0]);
+    }
 
 }

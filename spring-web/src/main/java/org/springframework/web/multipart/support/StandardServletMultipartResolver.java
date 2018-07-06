@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -45,51 +44,50 @@ import org.springframework.web.multipart.MultipartResolver;
  */
 public class StandardServletMultipartResolver implements MultipartResolver {
 
-	private boolean resolveLazily = false;
+    private boolean resolveLazily = false;
 
 
-	/**
-	 * Set whether to resolve the multipart request lazily at the time of
-	 * file or parameter access.
-	 * <p>Default is "false", resolving the multipart elements immediately, throwing
-	 * corresponding exceptions at the time of the {@link #resolveMultipart} call.
-	 * Switch this to "true" for lazy multipart parsing, throwing parse exceptions
-	 * once the application attempts to obtain multipart files or parameters.
-	 */
-	public void setResolveLazily(boolean resolveLazily) {
-		this.resolveLazily = resolveLazily;
-	}
+    /**
+     * Set whether to resolve the multipart request lazily at the time of
+     * file or parameter access.
+     * <p>Default is "false", resolving the multipart elements immediately, throwing
+     * corresponding exceptions at the time of the {@link #resolveMultipart} call.
+     * Switch this to "true" for lazy multipart parsing, throwing parse exceptions
+     * once the application attempts to obtain multipart files or parameters.
+     */
+    public void setResolveLazily(boolean resolveLazily) {
+        this.resolveLazily = resolveLazily;
+    }
 
 
-	@Override
-	public boolean isMultipart(HttpServletRequest request) {
-		// Same check as in Commons FileUpload...
-		if (!"post".equals(request.getMethod().toLowerCase())) {
-			return false;
-		}
-		String contentType = request.getContentType();
-		return (contentType != null && contentType.toLowerCase().startsWith("multipart/"));
-	}
+    @Override
+    public boolean isMultipart(HttpServletRequest request) {
+        // Same check as in Commons FileUpload...
+        if (!"post".equals(request.getMethod().toLowerCase())) {
+            return false;
+        }
+        String contentType = request.getContentType();
+        return (contentType != null && contentType.toLowerCase().startsWith("multipart/"));
+    }
 
-	@Override
-	public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException {
-		return new StandardMultipartHttpServletRequest(request, this.resolveLazily);
-	}
+    @Override
+    public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException {
+        return new StandardMultipartHttpServletRequest(request, this.resolveLazily);
+    }
 
-	@Override
-	public void cleanupMultipart(MultipartHttpServletRequest request) {
-		// To be on the safe side: explicitly delete the parts,
-		// but only actual file parts (for Resin compatibility)
-		try {
-			for (Part part : request.getParts()) {
-				if (request.getFile(part.getName()) != null) {
-					part.delete();
-				}
-			}
-		}
-		catch (Exception ex) {
-			LogFactory.getLog(getClass()).warn("Failed to perform cleanup of multipart items", ex);
-		}
-	}
+    @Override
+    public void cleanupMultipart(MultipartHttpServletRequest request) {
+        // To be on the safe side: explicitly delete the parts,
+        // but only actual file parts (for Resin compatibility)
+        try {
+            for (Part part : request.getParts()) {
+                if (request.getFile(part.getName()) != null) {
+                    part.delete();
+                }
+            }
+        } catch (Exception ex) {
+            LogFactory.getLog(getClass()).warn("Failed to perform cleanup of multipart items", ex);
+        }
+    }
 
 }

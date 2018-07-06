@@ -17,13 +17,13 @@
 package org.springframework.web.context;
 
 import java.util.Enumeration;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -40,40 +40,38 @@ import org.springframework.beans.factory.DisposableBean;
  */
 public class ContextCleanupListener implements ServletContextListener {
 
-	private static final Log logger = LogFactory.getLog(ContextCleanupListener.class);
+    private static final Log logger = LogFactory.getLog(ContextCleanupListener.class);
 
 
-	@Override
-	public void contextInitialized(ServletContextEvent event) {
-	}
+    @Override
+    public void contextInitialized(ServletContextEvent event) {}
 
-	@Override
-	public void contextDestroyed(ServletContextEvent event) {
-		cleanupAttributes(event.getServletContext());
-	}
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+        cleanupAttributes(event.getServletContext());
+    }
 
 
-	/**
-	 * Find all ServletContext attributes which implement {@link DisposableBean}
-	 * and destroy them, removing all affected ServletContext attributes eventually.
-	 * @param sc the ServletContext to check
-	 */
-	static void cleanupAttributes(ServletContext sc) {
-		Enumeration<String> attrNames = sc.getAttributeNames();
-		while (attrNames.hasMoreElements()) {
-			String attrName = attrNames.nextElement();
-			if (attrName.startsWith("org.springframework.")) {
-				Object attrValue = sc.getAttribute(attrName);
-				if (attrValue instanceof DisposableBean) {
-					try {
-						((DisposableBean) attrValue).destroy();
-					}
-					catch (Throwable ex) {
-						logger.error("Couldn't invoke destroy method of attribute with name '" + attrName + "'", ex);
-					}
-				}
-			}
-		}
-	}
+    /**
+     * Find all ServletContext attributes which implement {@link DisposableBean}
+     * and destroy them, removing all affected ServletContext attributes eventually.
+     * @param sc the ServletContext to check
+     */
+    static void cleanupAttributes(ServletContext sc) {
+        Enumeration<String> attrNames = sc.getAttributeNames();
+        while (attrNames.hasMoreElements()) {
+            String attrName = attrNames.nextElement();
+            if (attrName.startsWith("org.springframework.")) {
+                Object attrValue = sc.getAttribute(attrName);
+                if (attrValue instanceof DisposableBean) {
+                    try {
+                        ((DisposableBean) attrValue).destroy();
+                    } catch (Throwable ex) {
+                        logger.error("Couldn't invoke destroy method of attribute with name '" + attrName + "'", ex);
+                    }
+                }
+            }
+        }
+    }
 
 }

@@ -17,6 +17,7 @@
 package org.springframework.web.servlet.tags;
 
 import java.beans.PropertyEditor;
+
 import javax.servlet.jsp.JspException;
 
 /**
@@ -30,12 +31,12 @@ import javax.servlet.jsp.JspException;
  */
 public interface EditorAwareTag {
 
-	/**
-	 * Retrieve the PropertyEditor for the property that this tag is
-	 * currently bound to. Intended for cooperating nesting tags.
-	 * @return the current PropertyEditor, or {@code null} if none
-	 * @throws JspException if resolving the editor failed
-	 */
-	PropertyEditor getEditor() throws JspException;
+    /**
+     * Retrieve the PropertyEditor for the property that this tag is
+     * currently bound to. Intended for cooperating nesting tags.
+     * @return the current PropertyEditor, or {@code null} if none
+     * @throws JspException if resolving the editor failed
+     */
+    PropertyEditor getEditor() throws JspException;
 
 }
