@@ -849,7 +849,7 @@ public class DispatcherServlet extends FrameworkServlet {
         // to be able to restore the original attributes after the include.
         Map<String, Object> attributesSnapshot = null;
         if (WebUtils.isIncludeRequest(request)) {
-            attributesSnapshot = new HashMap<String, Object>();
+            attributesSnapshot = new HashMap<>(1);
             Enumeration<?> attrNames = request.getAttributeNames();
             while (attrNames.hasMoreElements()) {
                 String attrName = (String) attrNames.nextElement();
@@ -910,14 +910,14 @@ public class DispatcherServlet extends FrameworkServlet {
                 processedRequest = checkMultipart(request);
                 multipartRequestParsed = (processedRequest != request);
 
-                // Determine handler for the current request.
+                // 根据Request信息寻找对应的Handler  Determine handler for the current request.
                 mappedHandler = getHandler(processedRequest);
                 if (mappedHandler == null || mappedHandler.getHandler() == null) {
                     noHandlerFound(processedRequest, response);
                     return;
                 }
 
-                // Determine handler adapter for the current request.
+                // 根据当前的Handler寻找对应的Adapter  Determine handler adapter for the current request.
                 HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
                 // Process last-modified header, if supported by the handler.
@@ -933,11 +933,12 @@ public class DispatcherServlet extends FrameworkServlet {
                     }
                 }
 
+                // 拦截器的 preHandle() 方法调用
                 if (!mappedHandler.applyPreHandle(processedRequest, response)) {
                     return;
                 }
 
-                // Actually invoke the handler.
+                //////// 真正激活Handler并返回视图  //////// Actually invoke the handler.
                 mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
                 if (asyncManager.isConcurrentHandlingStarted()) {
@@ -945,10 +946,12 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 applyDefaultViewName(processedRequest, mv);
+                // 拦截器的 postHandle() 方法调用
                 mappedHandler.applyPostHandle(processedRequest, response, mv);
             } catch (Exception ex) {
                 dispatchException = ex;
             }
+
             processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
         } catch (Exception ex) {
             triggerAfterCompletion(processedRequest, response, mappedHandler, ex);

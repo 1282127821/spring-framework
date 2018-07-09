@@ -954,9 +954,11 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
         long startTime = System.currentTimeMillis();
         Throwable failureCause = null;
 
+        // Expose current LocaleResolver and request as LocalContext.
         LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
         LocaleContext localeContext = buildLocaleContext(request);
 
+        // Expose current RequestAttribute to current thread.
         RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);
 
@@ -976,9 +978,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
         } catch (Throwable ex) {
             failureCause = ex;
             throw new NestedServletException("Request processing failed", ex);
-        }
-
-        finally {
+        } finally {
+            // reset to previous status
             resetContextHolders(request, previousLocaleContext, previousAttributes);
             if (requestAttributes != null) {
                 requestAttributes.requestCompleted();
@@ -996,6 +997,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
                 }
             }
 
+            // publish event
             publishRequestHandledEvent(request, response, startTime, failureCause);
         }
     }
