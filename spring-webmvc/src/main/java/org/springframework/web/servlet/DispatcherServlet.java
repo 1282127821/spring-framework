@@ -565,7 +565,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerMapping> matchingBeans =
                     BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.handlerMappings = new ArrayList<HandlerMapping>(matchingBeans.values());
+                this.handlerMappings = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerMappings in sorted order.
                 AnnotationAwareOrderComparator.sort(this.handlerMappings);
             }
@@ -601,7 +601,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerAdapter> matchingBeans =
                     BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.handlerAdapters = new ArrayList<HandlerAdapter>(matchingBeans.values());
+                this.handlerAdapters = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerAdapters in sorted order.
                 AnnotationAwareOrderComparator.sort(this.handlerAdapters);
             }
@@ -637,7 +637,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerExceptionResolver> matchingBeans = BeanFactoryUtils
                     .beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.handlerExceptionResolvers = new ArrayList<HandlerExceptionResolver>(matchingBeans.values());
+                this.handlerExceptionResolvers = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerExceptionResolvers in sorted order.
                 AnnotationAwareOrderComparator.sort(this.handlerExceptionResolvers);
             }
@@ -696,7 +696,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, ViewResolver> matchingBeans =
                     BeanFactoryUtils.beansOfTypeIncludingAncestors(context, ViewResolver.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.viewResolvers = new ArrayList<ViewResolver>(matchingBeans.values());
+                this.viewResolvers = new ArrayList<>(matchingBeans.values());
                 // We keep ViewResolvers in sorted order.
                 AnnotationAwareOrderComparator.sort(this.viewResolvers);
             }
