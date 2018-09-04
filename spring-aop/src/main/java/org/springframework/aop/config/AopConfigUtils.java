@@ -70,6 +70,7 @@ public abstract class AopConfigUtils {
     }
 
     public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry, Object source) {
+        // InfrastructureAdvisorAutoProxyCreator 实现了BeanPostProcessor，所以会调用 postProcessAfterInitialization 方法
         return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
     }
 
