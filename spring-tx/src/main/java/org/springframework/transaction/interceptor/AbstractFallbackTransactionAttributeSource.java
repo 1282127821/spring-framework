@@ -139,29 +139,30 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
         Class<?> userClass = ClassUtils.getUserClass(targetClass);
         // The method may be on an interface, but we need attributes from the target class.
         // If the target class is null, the method will be unchanged.
+        // method代表接口中的方法，specificMethod代表实现类中的方法
         Method specificMethod = ClassUtils.getMostSpecificMethod(method, userClass);
         // If we are dealing with method with generic parameters, find the original method.
         specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 
-        // First try is the method in the target class.
+        // First try is the method in the target class. 查看方法中是否存在事务声明
         TransactionAttribute txAtt = findTransactionAttribute(specificMethod);
         if (txAtt != null) {
             return txAtt;
         }
 
-        // Second try is the transaction attribute on the target class.
+        // Second try is the transaction attribute on the target class. 查看所在类是否存在事务声明
         txAtt = findTransactionAttribute(specificMethod.getDeclaringClass());
         if (txAtt != null) {
             return txAtt;
         }
 
         if (specificMethod != method) {
-            // Fallback is to look at the original method.
+            // Fallback is to look at the original method. 如果存在接口，则到接口中去寻找；查找接口方法
             txAtt = findTransactionAttribute(method);
             if (txAtt != null) {
                 return txAtt;
             }
-            // Last fallback is the class of the original method.
+            // Last fallback is the class of the original method. 到接口中的类中去寻找
             return findTransactionAttribute(method.getDeclaringClass());
         }
         return null;
