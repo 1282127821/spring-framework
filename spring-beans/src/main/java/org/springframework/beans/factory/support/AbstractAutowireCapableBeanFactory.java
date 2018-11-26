@@ -959,6 +959,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 if (targetType != null) {
                     bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
                     if (bean != null) {
+                        // Notice: It is Initialization  Initialization  Initialization, Not Instantiation
                         bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
                     }
                 }
