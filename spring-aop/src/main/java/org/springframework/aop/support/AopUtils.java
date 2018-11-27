@@ -205,9 +205,11 @@ public abstract class AopUtils {
         for (Class<?> clazz : classes) {
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if ((introductionAwareMethodMatcher != null
-                        && introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions))
-                        || methodMatcher.matches(method, targetClass)) {
+                if (introductionAwareMethodMatcher != null
+                        && introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions)) {
+                    return true;
+                }
+                if (methodMatcher.matches(method, targetClass)) {
                     return true;
                 }
             }
