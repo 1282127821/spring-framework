@@ -564,6 +564,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 
     /**
+     * 挂起操作的主要目的是记录原有事务的状态，以便于后续操作对事务的恢复
      * Suspend the given transaction. Suspends transaction synchronization first,
      * then delegates to the {@code doSuspend} template method.
      * @param transaction the current transaction object
