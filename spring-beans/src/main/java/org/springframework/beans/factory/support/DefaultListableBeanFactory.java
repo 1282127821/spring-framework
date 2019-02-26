@@ -789,6 +789,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
             throws BeanDefinitionStoreException {
 
+        logger.debug("Try to register bean definition: " + beanName);
         Assert.hasText(beanName, "Bean name must not be empty");
         Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 
@@ -846,6 +847,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                     }
                 }
             } else {
+                logger.debug("Really PUT bean into beanDefinitionMap. beanName: " + beanName);
                 // Still in startup registration phase
                 this.beanDefinitionMap.put(beanName, beanDefinition);
                 this.beanDefinitionNames.add(beanName);
